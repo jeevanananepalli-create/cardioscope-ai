@@ -2,7 +2,16 @@
 
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Component, type ComponentRef, type ReactNode, type RefObject, Suspense, useEffect, useMemo, useRef } from "react";
+import {
+  Component,
+  type ComponentRef,
+  type ReactNode,
+  type RefObject,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { type Group, Vector3 } from "three";
 
 import { CoronaryArteries } from "@/components/anatomy/CoronaryArteries";
@@ -10,16 +19,15 @@ import { GltfAnatomy } from "@/components/anatomy/GltfAnatomy";
 import { HeartModel } from "@/components/anatomy/HeartModel";
 import { HumanBody } from "@/components/anatomy/HumanBody";
 import { VesselTooltip } from "@/components/anatomy/VesselTooltip";
-import { CAMERA_BY_MODE, vesselLabelAnchor } from "@/lib/anatomy";
-import type { AnatomySceneProps, ViewMode } from "@/types/anatomy";
+import { cameraFor, vesselLabelAnchor } from "@/lib/anatomy";
+import type { AnatomySceneProps, CameraView, Point3 } from "@/types/anatomy";
 import { type VesselName, VESSELS } from "@/types/prediction";
 
-/** Moves the camera to the default view when the mode changes or a reset is requested. */
-function CameraRig({ mode, resetSignal }: { mode: ViewMode; resetSignal: number }) {
+/** Moves the camera to the default view when the view changes or a reset is requested. */
+function CameraRig({ view, resetSignal }: { view: CameraView; resetSignal: number }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
-  const view = CAMERA_BY_MODE[mode];
 
   useEffect(() => {
     camera.position.set(...view.position);
@@ -46,18 +54,28 @@ function CameraRig({ mode, resetSignal }: { mode: ViewMode; resetSignal: number 
 
 type LabelRefs = RefObject<Partial<Record<VesselName, HTMLDivElement | null>>>;
 
+interface LabelProjectorProps {
+  labels: LabelRefs;
+  /** Label anchor per vessel and the heart's centre, in the parent group's coordinates. */
+  anchors: Record<VesselName, Point3>;
+  center: Point3;
+}
+
 /**
- * Keeps the DOM vessel labels pinned to their vessels. Lives inside the heart group, so the
- * anchors move with it; labels on the far side of the heart are faded.
+ * Keeps the DOM vessel labels pinned to their vessels. Anchors are in the coordinates of
+ * the group this sits in; labels on the far side of the heart are faded.
  */
-function LabelProjector({ labels }: { labels: LabelRefs }) {
+function LabelProjector({ labels, anchors, center }: LabelProjectorProps) {
   const group = useRef<Group>(null);
   const size = useThree((state) => state.size);
-  const anchors = useMemo(
-    () => VESSELS.map((name) => ({ name, local: new Vector3(...vesselLabelAnchor(name)) })),
+  const points = useMemo(
+    () => VESSELS.map((name) => ({ name, local: new Vector3(...anchors[name]) })),
+    [anchors],
+  );
+  const scratch = useMemo(
+    () => ({ world: new Vector3(), center: new Vector3(), toCamera: new Vector3() }),
     [],
   );
-  const scratch = useMemo(() => ({ world: new Vector3(), axis: new Vector3(), toCamera: new Vector3() }), []);
 
   useFrame(({ camera }) => {
     const parent = group.current;
@@ -65,13 +83,16 @@ function LabelProjector({ labels }: { labels: LabelRefs }) {
     // This runs before the renderer updates matrices, so bring them up to date first.
     parent.updateWorldMatrix(true, false);
     camera.updateMatrixWorld();
-    for (const { name, local } of anchors) {
+    const heart = scratch.center.set(...center).applyMatrix4(parent.matrixWorld);
+    for (const { name, local } of points) {
       const element = labels.current[name];
       if (!element) continue;
       const world = scratch.world.copy(local).applyMatrix4(parent.matrixWorld);
-      // Outward direction at the anchor: from the heart's long axis to the anchor.
-      const outward = scratch.axis.set(0, local.y, 0).applyMatrix4(parent.matrixWorld).sub(world).negate();
-      const facing = outward.dot(scratch.toCamera.copy(camera.position).sub(world)) > 0;
+      const outwardX = world.x - heart.x;
+      const outwardY = world.y - heart.y;
+      const outwardZ = world.z - heart.z;
+      const toCamera = scratch.toCamera.copy(camera.position).sub(world);
+      const facing = outwardX * toCamera.x + outwardY * toCamera.y + outwardZ * toCamera.z > 0;
       const projected = world.project(camera);
       const x = (projected.x * 0.5 + 0.5) * size.width;
       const y = (-projected.y * 0.5 + 0.5) * size.height;
@@ -83,6 +104,13 @@ function LabelProjector({ labels }: { labels: LabelRefs }) {
 
   return <group ref={group} />;
 }
+
+const PLACEHOLDER_ANCHORS: Record<VesselName, Point3> = {
+  LAD: vesselLabelAnchor("LAD"),
+  LCX: vesselLabelAnchor("LCX"),
+  RCA: vesselLabelAnchor("RCA"),
+};
+const ORIGIN: Point3 = [0, 0, 0];
 
 /** If a supplied asset fails to load or render, draw the placeholder and report it once. */
 class AssetBoundary extends Component<
@@ -106,11 +134,13 @@ class AssetBoundary extends Component<
 
 interface SceneProps extends AnatomySceneProps {
   onAssetError: () => void;
+  onAssetLoaded: () => void;
 }
 
 export default function AnatomyScene({
   source,
   mode,
+  layers,
   vessels,
   selected,
   hovered,
@@ -118,55 +148,60 @@ export default function AnatomyScene({
   onSelect,
   onHover,
   onAssetError,
+  onAssetLoaded,
 }: SceneProps) {
   const labels: LabelRefs = useRef({});
+  const view = cameraFor(source)[mode];
+
   const placeholder = (
     <>
       <HumanBody visible={mode === "torso"} />
       <HeartModel dimmed={selected !== null} onBackgroundClick={() => onSelect(null)}>
         <CoronaryArteries vessels={vessels} selected={selected} hovered={hovered} onSelect={onSelect} onHover={onHover} />
-        <LabelProjector labels={labels} />
+        <LabelProjector labels={labels} anchors={PLACEHOLDER_ANCHORS} center={ORIGIN} />
       </HeartModel>
     </>
   );
 
   return (
     <>
-    <Canvas
-      // Rendered on demand (interaction or prop change), capped pixel ratio, no shadows or
-      // textures: keeps the view smooth on integrated graphics.
-      frameloop="demand"
-      dpr={[1, 1.5]}
-      gl={{ antialias: true, powerPreference: "default" }}
-      camera={{ fov: 38, near: 0.1, far: 60, position: CAMERA_BY_MODE[mode].position }}
-      onPointerMissed={() => onSelect(null)}
-      aria-label="Interactive 3D view of the heart and coronary vessels"
-      role="img"
-    >
-      <color attach="background" args={["#0f1722"]} />
-      <ambientLight intensity={0.75} />
-      <directionalLight position={[3, 5, 6]} intensity={1.5} />
-      <directionalLight position={[-4, -1, -3]} intensity={0.45} />
-      <CameraRig mode={mode} resetSignal={resetSignal} />
-      {source.kind === "gltf" ? (
-        <AssetBoundary fallback={placeholder} onError={onAssetError}>
-          <Suspense fallback={null}>
-            <GltfAnatomy
-              source={source}
-              showTorso={mode === "torso"}
-              vessels={vessels}
-              selected={selected}
-              hovered={hovered}
-              onSelect={onSelect}
-              onHover={onHover}
-            />
-          </Suspense>
-        </AssetBoundary>
-      ) : (
-        placeholder
-      )}
-    </Canvas>
-    {source.kind === "placeholder" ? (
+      <Canvas
+        // Rendered on demand (interaction or prop change), capped pixel ratio, no shadows or
+        // textures: keeps the view smooth on integrated graphics.
+        frameloop="demand"
+        dpr={[1, 1.5]}
+        gl={{ antialias: true, powerPreference: "default" }}
+        camera={{ fov: 38, near: 0.1, far: 120, position: view.position }}
+        onPointerMissed={() => onSelect(null)}
+        aria-label="Interactive 3D view of the heart and coronary vessels"
+        role="img"
+      >
+        <color attach="background" args={["#0f1722"]} />
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[3, 5, 6]} intensity={1.6} />
+        <directionalLight position={[-4, -1, -3]} intensity={0.5} />
+        <CameraRig view={view} resetSignal={resetSignal} />
+        {source.kind === "gltf" ? (
+          <AssetBoundary fallback={null} onError={onAssetError}>
+            <Suspense fallback={null}>
+              <GltfAnatomy
+                source={source}
+                showBody={mode === "torso"}
+                layers={layers}
+                vessels={vessels}
+                selected={selected}
+                hovered={hovered}
+                onSelect={onSelect}
+                onHover={onHover}
+                onLoaded={onAssetLoaded}
+              />
+              <LabelProjector labels={labels} anchors={source.labelAnchors} center={source.heartCenter} />
+            </Suspense>
+          </AssetBoundary>
+        ) : (
+          placeholder
+        )}
+      </Canvas>
       <div className="viewer__labels" aria-hidden="true">
         {VESSELS.map((name) => (
           <div
@@ -180,7 +215,6 @@ export default function AnatomyScene({
           </div>
         ))}
       </div>
-    ) : null}
     </>
   );
 }

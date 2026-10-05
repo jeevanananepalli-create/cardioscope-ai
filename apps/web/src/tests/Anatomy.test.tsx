@@ -3,7 +3,11 @@ import userEvent from "@testing-library/user-event";
 
 import { AnatomyViewer } from "@/components/anatomy/AnatomyViewer";
 import { useAnatomy } from "@/hooks/useAnatomy";
+import asset from "@/lib/anatomyAsset.json";
 import {
+  ANATOMY_SOURCE,
+  availableLayers,
+  BODYPARTS3D_SOURCE,
   heartProfile,
   heartRadius,
   heartSurfacePoint,
@@ -12,46 +16,15 @@ import {
   vesselVisualStates,
 } from "@/lib/anatomy";
 import { FALLBACK_RISK_CATEGORIES, NO_PREDICTION_COLOR, RISK_COLORS } from "@/lib/constants";
-import type { AnatomySceneProps, AnatomySource } from "@/types/anatomy";
+import type { AnatomySource } from "@/types/anatomy";
 import type { TargetPrediction, VesselName } from "@/types/prediction";
 
 import { predictionFixture } from "./fixtures";
+import { enableWebgl } from "./sceneMock";
 
-// The WebGL scene cannot run in jsdom. This stand-in exposes exactly what the scene is told
-// to draw, and lets a test trigger the same callbacks a pointer would.
-vi.mock("@/components/anatomy/AnatomyScene", () => ({
-  default: (props: AnatomySceneProps & { onAssetError: () => void }) => (
-    <div
-      data-testid="scene"
-      data-mode={props.mode}
-      data-source={props.source.kind}
-      data-selected={props.selected ?? ""}
-      data-hovered={props.hovered ?? ""}
-      data-reset={props.resetSignal}
-    >
-      {(["LAD", "LCX", "RCA"] as const).map((name) => (
-        <button
-          key={name}
-          data-testid={`mesh-${name}`}
-          data-color={props.vessels[name].color}
-          data-category={props.vessels[name].category ?? ""}
-          onClick={() => props.onSelect(name)}
-          onMouseEnter={() => props.onHover(name)}
-        >
-          mesh {name}
-        </button>
-      ))}
-      <button onClick={() => props.onSelect(null)}>empty space</button>
-      <button onClick={props.onAssetError}>fail asset</button>
-    </div>
-  ),
-}));
+vi.mock("@/components/anatomy/AnatomyScene", async () => import("./sceneMock"));
 
-function enableWebgl() {
-  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(
-    () => ({}) as unknown as RenderingContext,
-  );
-}
+const PLACEHOLDER: AnatomySource = { kind: "placeholder" };
 
 function Harness({
   vessels,
@@ -119,7 +92,7 @@ describe("schematic geometry", () => {
 describe("AnatomyViewer", () => {
   it("renders the scene with neutral vessels and the placeholder label before prediction", async () => {
     enableWebgl();
-    render(<Harness vessels={null} />);
+    render(<Harness vessels={null} source={PLACEHOLDER} />);
     const scene = await screen.findByTestId("scene");
     expect(scene).toHaveAttribute("data-source", "placeholder");
     expect(screen.getByTestId("mesh-LAD")).toHaveAttribute("data-color", NO_PREDICTION_COLOR);
@@ -186,12 +159,7 @@ describe("AnatomyViewer", () => {
 
   it("falls back to the placeholder and says so when a supplied asset fails to load", async () => {
     enableWebgl();
-    const source: AnatomySource = {
-      kind: "gltf",
-      url: "/models/heart/missing.glb",
-      attribution: "Test asset",
-      nodes: { heart: [], torso: [], vessels: { LAD: ["LAD"], LCX: ["LCX"], RCA: ["RCA"] } },
-    };
+    const source: AnatomySource = { ...BODYPARTS3D_SOURCE, url: "/models/anatomy/missing.glb" };
     render(<Harness vessels={predictionFixture().vessels} source={source} />);
     const scene = await screen.findByTestId("scene");
     expect(scene).toHaveAttribute("data-source", "gltf");
@@ -199,6 +167,48 @@ describe("AnatomyViewer", () => {
     expect(screen.getByText("The 3D anatomy asset could not be loaded.")).toBeInTheDocument();
     expect(screen.getByTestId("scene")).toHaveAttribute("data-source", "placeholder");
     expect(screen.getByTestId("mesh-LAD")).toHaveAttribute("data-color", RISK_COLORS.very_high);
+    expect(screen.getByText(new RegExp(PLACEHOLDER_NOTICE.slice(0, 40)))).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: /Arteries/ })).not.toBeInTheDocument();
+  });
+
+  it("uses the licensed anatomy by default, with its credit and a not-this-patient note", async () => {
+    enableWebgl();
+    render(<Harness vessels={null} />);
+    const scene = await screen.findByTestId("scene");
+    expect(scene).toHaveAttribute("data-source", "gltf");
+    expect(screen.getByText("Loading anatomy…")).toBeInTheDocument();
+    await userEvent.click(screen.getByText("asset loaded"));
+    expect(screen.queryByText("Loading anatomy…")).not.toBeInTheDocument();
+    const credit = screen.getByRole("link", { name: /BodyParts3D/ });
+    expect(credit).toHaveTextContent(asset.attribution);
+    expect(credit).toHaveAttribute("href", "https://creativecommons.org/licenses/by-sa/2.1/jp/");
+    expect(screen.getByText(/not this patient’s heart or vessels/)).toBeInTheDocument();
+    expect(screen.getByText(/Only LAD, LCX and RCA are coloured by the models/)).toBeInTheDocument();
+    expect(screen.queryByText(new RegExp(PLACEHOLDER_NOTICE.slice(0, 40)))).not.toBeInTheDocument();
+  });
+
+  it("shows arteries by default and lets context layers be toggled", async () => {
+    enableWebgl();
+    render(<Harness vessels={predictionFixture().vessels} />);
+    const scene = await screen.findByTestId("scene");
+    expect(scene).toHaveAttribute("data-layers", "arteries");
+    await userEvent.click(screen.getByRole("checkbox", { name: /Veins/ }));
+    expect(scene).toHaveAttribute("data-layers", "arteries,veins");
+    await userEvent.click(screen.getByRole("checkbox", { name: /Arteries/ }));
+    expect(scene).toHaveAttribute("data-layers", "veins");
+    // Context layers never change what the modelled vessels show.
+    expect(screen.getByTestId("mesh-LAD")).toHaveAttribute("data-color", RISK_COLORS.very_high);
+  });
+
+  it("offers the nervous system layer only when the asset has nerve meshes", async () => {
+    enableWebgl();
+    render(<Harness vessels={null} />);
+    await screen.findByTestId("scene");
+    const nerves = screen.getByRole("checkbox", { name: /Nervous system/ });
+    expect(nerves).toBeDisabled();
+    expect(nerves).not.toBeChecked();
+    expect(screen.getByText("(not available yet)")).toBeInTheDocument();
+    expect(availableLayers(BODYPARTS3D_SOURCE)).toEqual({ arteries: true, veins: true, nerves: false });
   });
 
   it("stays usable without WebGL", async () => {
@@ -209,5 +219,42 @@ describe("AnatomyViewer", () => {
     expect(screen.queryByTestId("scene")).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: /LAD 84%/ }));
     expect(screen.getByTestId("selected")).toHaveTextContent("LAD");
+  });
+});
+
+describe("anatomy asset configuration", () => {
+  it("maps the three modelled vessels to the nodes the build wrote", () => {
+    expect(ANATOMY_SOURCE).toBe(BODYPARTS3D_SOURCE);
+    for (const vessel of ["LAD", "LCX", "RCA"] as const) {
+      const entry = asset.vessels[vessel];
+      expect(BODYPARTS3D_SOURCE.nodes.vessels[vessel]).toEqual([entry.node]);
+      expect(BODYPARTS3D_SOURCE.nodes.hit[vessel]).toEqual([entry.hit_node]);
+      expect(Object.keys(asset.nodes)).toContain(entry.node);
+      expect(BODYPARTS3D_SOURCE.labelAnchors[vessel]).toHaveLength(3);
+    }
+  });
+
+  it("uses the anatomically named parts for each vessel", () => {
+    const parts = (node: keyof typeof asset.nodes) => Object.values(asset.nodes[node].parts).join(" | ");
+    expect(parts("coronary_LAD")).toMatch(/anterior interventricular branch of left coronary artery/);
+    expect(parts("coronary_LCX")).toMatch(/circumflex branch of left coronary artery/);
+    expect(parts("coronary_RCA")).toMatch(/trunk of right coronary artery/);
+    expect(parts("coronary_RCA")).not.toMatch(/left coronary/);
+  });
+
+  it("carries the required attribution and stays within a browser-friendly size", () => {
+    expect(asset.attribution).toBe(
+      "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution-Share Alike 2.1 Japan",
+    );
+    expect(asset.total_faces).toBeLessThan(200_000);
+    expect(asset.file_bytes).toBeLessThan(6_000_000);
+  });
+
+  it("references only nodes that exist in the built file", () => {
+    const built = new Set(Object.keys(asset.nodes));
+    const { nodes } = BODYPARTS3D_SOURCE;
+    for (const name of [...nodes.heart, ...nodes.body, ...nodes.arteries, ...nodes.veins, ...nodes.neutralCoronary]) {
+      expect(built).toContain(name);
+    }
   });
 });

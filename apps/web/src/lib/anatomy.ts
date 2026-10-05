@@ -1,21 +1,64 @@
 import { categoryFor, NO_PREDICTION_COLOR, RISK_COLORS } from "@/lib/constants";
-import type { AnatomySource, VesselVisualStates } from "@/types/anatomy";
+import asset from "@/lib/anatomyAsset.json";
+import type {
+  AnatomySource,
+  CameraView,
+  GltfAnatomySource,
+  LayerVisibility,
+  Point3,
+  ViewMode,
+  VesselVisualStates,
+} from "@/types/anatomy";
 import { type RiskCategory, type TargetPrediction, type VesselName, VESSELS } from "@/types/prediction";
 
 /**
- * The anatomy asset in use.
+ * Real anatomy built from BodyParts3D by scripts/anatomy/build_anatomy.py. The node
+ * names, label anchors and credit line come from the generated anatomyAsset.json.
  *
- * No licensed anatomical model ships with this project, so the built-in
- * schematic placeholder is used. To use a real model, place a GLB under
- * apps/web/public/models/heart/ and replace this with a `gltf` source, e.g.
- *
- *   { kind: "gltf", url: "/models/heart/heart.glb", attribution: "Author, licence, source",
- *     nodes: { heart: ["Heart"], torso: ["Torso"],
- *              vessels: { LAD: ["LAD"], LCX: ["LCX"], RCA: ["RCA"] } } }
- *
- * The file needs separately named meshes for LAD, LCX and RCA.
+ * It is generic reference anatomy (one adult male), not a patient's. LAD, LCX and RCA
+ * are the only parts coloured by model output; everything else is neutral context.
  */
-export const ANATOMY_SOURCE: AnatomySource = { kind: "placeholder" };
+export const BODYPARTS3D_SOURCE: GltfAnatomySource = {
+  kind: "gltf",
+  url: asset.url,
+  attribution: asset.attribution,
+  licenseUrl: asset.license_url,
+  nodes: {
+    heart: ["heart"],
+    body: ["skin"],
+    arteries: ["arteries", "pulmonary_artery"],
+    veins: ["veins"],
+    // No nerve meshes yet: BodyParts3D has none. Filled in when a nerve asset is added.
+    nerves: [],
+    neutralCoronary: ["coronary_left_main"],
+    vessels: {
+      LAD: [asset.vessels.LAD.node],
+      LCX: [asset.vessels.LCX.node],
+      RCA: [asset.vessels.RCA.node],
+    },
+    hit: {
+      LAD: [asset.vessels.LAD.hit_node],
+      LCX: [asset.vessels.LCX.hit_node],
+      RCA: [asset.vessels.RCA.hit_node],
+    },
+  },
+  labelAnchors: {
+    LAD: asset.vessels.LAD.label_anchor as Point3,
+    LCX: asset.vessels.LCX.label_anchor as Point3,
+    RCA: asset.vessels.RCA.label_anchor as Point3,
+  },
+  heartCenter: asset.nodes.heart.bounds.center as Point3,
+  camera: {
+    heart: { position: [0.9, 0.35, 3.5], target: [0.05, 0, 0], minDistance: 1.1, maxDistance: 14 },
+    torso: { position: [0.9, 0.4, 9], target: [0, -0.5, 0], minDistance: 3, maxDistance: 48 },
+  },
+};
+
+/** The anatomy asset in use. The schematic placeholder is the fallback if it cannot load. */
+export const ANATOMY_SOURCE: AnatomySource = BODYPARTS3D_SOURCE;
+
+export const REFERENCE_ANATOMY_NOTICE =
+  "Generic reference anatomy of one adult, not this patient’s heart or vessels.";
 
 export const PLACEHOLDER_NOTICE =
   "Schematic placeholder anatomy. Shapes and vessel paths are illustrative and not anatomically accurate.";
@@ -49,7 +92,7 @@ export function vesselVisualStates(
 // (azimuth, t) pairs: azimuth in degrees around the long axis (0 = front, positive toward
 // the patient's left), t from 0 (base, top) to 1 (apex). They are a diagram, not anatomy.
 
-export type Point3 = [number, number, number];
+export type { Point3 };
 
 const HEART_HALF_HEIGHT = 1.1;
 
@@ -150,7 +193,23 @@ export const TORSO_PROFILE: [number, number][] = [
 ];
 export const TORSO_DEPTH_SCALE = 0.62;
 
-export const CAMERA_BY_MODE = {
-  heart: { position: [0.62, 0.72, 2.25] as Point3, target: HEART_POSITION, minDistance: 0.9, maxDistance: 5 },
-  torso: { position: [0.9, 0.9, 7.2] as Point3, target: [0, 0.3, 0] as Point3, minDistance: 2.5, maxDistance: 14 },
+export const CAMERA_BY_MODE: Record<ViewMode, CameraView> = {
+  heart: { position: [0.62, 0.72, 2.25], target: HEART_POSITION, minDistance: 0.9, maxDistance: 5 },
+  torso: { position: [0.9, 0.9, 7.2], target: [0, 0.3, 0], minDistance: 2.5, maxDistance: 14 },
 };
+
+export function cameraFor(source: AnatomySource): Record<ViewMode, CameraView> {
+  return source.kind === "gltf" ? source.camera : CAMERA_BY_MODE;
+}
+
+export const DEFAULT_LAYERS: LayerVisibility = { arteries: true, veins: false, nerves: false };
+
+/** Layers the given source actually has meshes for. */
+export function availableLayers(source: AnatomySource): LayerVisibility {
+  if (source.kind !== "gltf") return { arteries: false, veins: false, nerves: false };
+  return {
+    arteries: source.nodes.arteries.length > 0,
+    veins: source.nodes.veins.length > 0,
+    nerves: source.nodes.nerves.length > 0,
+  };
+}

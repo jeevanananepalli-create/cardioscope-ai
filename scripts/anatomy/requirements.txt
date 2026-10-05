@@ -1,0 +1,3 @@
+trimesh>=4.4
+fast-simplification>=0.1.7
+numpy>=1.26

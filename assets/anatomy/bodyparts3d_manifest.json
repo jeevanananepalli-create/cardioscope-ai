@@ -1,0 +1,104 @@
+{
+  "source": {
+    "name": "BodyParts3D",
+    "version": "3.0 (polygon data, STL conversion)",
+    "mirror": "https://github.com/Kevin-Mattheus-Moerman/BodyParts3D",
+    "raw_base_url": "https://raw.githubusercontent.com/Kevin-Mattheus-Moerman/BodyParts3D/main/assets/BodyParts3D_data/stl/",
+    "license": "Creative Commons Attribution-Share Alike 2.1 Japan",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+    "attribution": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution-Share Alike 2.1 Japan"
+  },
+  "notes": [
+    "Part ids are Foundational Model of Anatomy (FMA) ids as used by BodyParts3D.",
+    "BodyParts3D models one reference adult male. It is generic anatomy, not any patient.",
+    "The dataset has no diagonal or obtuse marginal branches and no peripheral nerves."
+  ],
+  "nodes": {
+    "heart": {
+      "layer": "heart",
+      "target_faces": 60000,
+      "parts": { "FMA7274": "wall of heart" }
+    },
+    "coronary_LAD": {
+      "layer": "coronary",
+      "vessel": "LAD",
+      "target_faces": 5000,
+      "parts": {
+        "FMA3862nsn": "anterior interventricular branch of left coronary artery",
+        "FMA71670": "set of interventricular septal branches of left coronary artery"
+      }
+    },
+    "coronary_LCX": {
+      "layer": "coronary",
+      "vessel": "LCX",
+      "target_faces": 4000,
+      "parts": { "FMA3895": "circumflex branch of left coronary artery" }
+    },
+    "coronary_RCA": {
+      "layer": "coronary",
+      "vessel": "RCA",
+      "target_faces": 7000,
+      "parts": {
+        "FMA3802": "trunk of right coronary artery",
+        "FMA3818": "marginal branch of right coronary artery",
+        "FMA3840nsn": "posterior interventricular branch of right coronary artery",
+        "FMA76994": "right posterolateral branch of right coronary artery",
+        "FMA71669": "set of interventricular septal branches of right coronary artery"
+      }
+    },
+    "coronary_left_main": {
+      "layer": "coronary",
+      "target_faces": 800,
+      "parts": { "FMA4685": "stem of left coronary artery" }
+    },
+    "arteries": {
+      "layer": "arteries",
+      "target_faces": 26000,
+      "parts": {
+        "FMA3736": "ascending aorta",
+        "FMA3768": "arch of aorta",
+        "FMA3784": "descending aorta",
+        "FMA3932nsn": "brachiocephalic artery",
+        "FMA3941": "right common carotid artery",
+        "FMA4058": "left common carotid artery",
+        "FMA3953": "right subclavian artery",
+        "FMA4694": "left subclavian artery",
+        "FMA50737": "celiac artery",
+        "FMA14771": "common hepatic artery",
+        "FMA14768": "left gastric artery",
+        "FMA14773": "splenic artery",
+        "FMA14749": "superior mesenteric artery",
+        "FMA14750": "inferior mesenteric artery",
+        "FMA14752": "right renal artery",
+        "FMA14753": "left renal artery",
+        "FMA14765": "right common iliac artery",
+        "FMA14766": "left common iliac artery",
+        "FMA18806": "right external iliac artery",
+        "FMA18807": "left external iliac artery",
+        "FMA18809": "right internal iliac artery",
+        "FMA18810": "left internal iliac artery"
+      }
+    },
+    "pulmonary_artery": {
+      "layer": "arteries",
+      "target_faces": 14000,
+      "parts": { "FMA66326": "pulmonary artery" }
+    },
+    "veins": {
+      "layer": "veins",
+      "target_faces": 12000,
+      "parts": {
+        "FMA4720": "superior vena cava",
+        "FMA10951": "inferior vena cava",
+        "FMA4751": "right brachiocephalic vein",
+        "FMA4761": "left brachiocephalic vein",
+        "FMA66643": "pulmonary vein"
+      }
+    },
+    "skin": {
+      "layer": "body",
+      "target_faces": 24000,
+      "parts": { "FMA7163": "skin" }
+    }
+  }
+}

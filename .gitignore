@@ -41,3 +41,6 @@ test-results/
 Thumbs.db
 .idea/
 .vscode/
+
+# Raw third-party anatomy meshes (downloaded by scripts/anatomy/, never committed)
+assets/anatomy/raw/

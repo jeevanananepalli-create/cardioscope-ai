@@ -2,6 +2,19 @@ import type { RiskCategoryKey, VesselName } from "@/types/prediction";
 
 export type ViewMode = "heart" | "torso";
 
+export type Point3 = [number, number, number];
+
+/** Optional anatomy layers the user can show or hide. None of them carries model output. */
+export type AnatomyLayer = "arteries" | "veins" | "nerves";
+export type LayerVisibility = Record<AnatomyLayer, boolean>;
+
+export interface CameraView {
+  position: Point3;
+  target: Point3;
+  minDistance: number;
+  maxDistance: number;
+}
+
 /** How one vessel is drawn. Derived from the model output; never from imaging. */
 export interface VesselVisualState {
   vessel: VesselName;
@@ -14,29 +27,42 @@ export interface VesselVisualState {
 
 export type VesselVisualStates = Record<VesselName, VesselVisualState>;
 
+export interface GltfAnatomySource {
+  kind: "gltf";
+  url: string;
+  /** Required credit line for the asset, shown under the view. */
+  attribution: string;
+  licenseUrl?: string;
+  /** Names of the nodes in the file that make up each part. */
+  nodes: {
+    heart: string[];
+    /** Body outline, shown in torso context. */
+    body: string[];
+    arteries: string[];
+    veins: string[];
+    nerves: string[];
+    /** Coronary segments that no model predicts (drawn neutral). */
+    neutralCoronary: string[];
+    vessels: Record<VesselName, string[]>;
+    /** Invisible, enlarged copies of the vessels used only for pointing. */
+    hit: Record<VesselName, string[]>;
+  };
+  /** A point on each vessel where its label is pinned, and the heart's centre. */
+  labelAnchors: Record<VesselName, Point3>;
+  heartCenter: Point3;
+  camera: Record<ViewMode, CameraView>;
+}
+
 /**
- * Where the anatomy comes from.
- *
- * `placeholder` draws the built-in schematic. `gltf` loads a licensed model
- * from `url`; `nodes` names the meshes in that file for each part, so a real
- * asset can be dropped in without changing any component.
+ * Where the anatomy comes from: the built-in schematic placeholder, or a
+ * licensed glTF/GLB model described by its node names.
  */
-export type AnatomySource =
-  | { kind: "placeholder" }
-  | {
-      kind: "gltf";
-      url: string;
-      attribution: string;
-      nodes: {
-        heart: string[];
-        torso: string[];
-        vessels: Record<VesselName, string[]>;
-      };
-    };
+export type AnatomySource = { kind: "placeholder" } | GltfAnatomySource;
 
 export interface AnatomySceneProps {
   source: AnatomySource;
   mode: ViewMode;
+  layers: LayerVisibility;
   vessels: VesselVisualStates;
   selected: VesselName | null;
   hovered: VesselName | null;

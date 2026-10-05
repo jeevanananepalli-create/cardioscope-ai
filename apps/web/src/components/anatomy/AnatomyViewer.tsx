@@ -1,13 +1,19 @@
 "use client";
 
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Notice } from "@/components/common/Notice";
 import type { AnatomyState } from "@/hooks/useAnatomy";
-import { ANATOMY_SOURCE, PLACEHOLDER_NOTICE, vesselVisualStates } from "@/lib/anatomy";
+import {
+  ANATOMY_SOURCE,
+  availableLayers,
+  PLACEHOLDER_NOTICE,
+  REFERENCE_ANATOMY_NOTICE,
+  vesselVisualStates,
+} from "@/lib/anatomy";
 import { formatPercent } from "@/lib/constants";
-import type { AnatomySource, ViewMode } from "@/types/anatomy";
+import type { AnatomyLayer, AnatomySource, ViewMode } from "@/types/anatomy";
 import { type RiskCategory, type TargetPrediction, type VesselName, VESSELS } from "@/types/prediction";
 
 // three.js is loaded only in the browser, and only when the viewer is shown.
@@ -28,6 +34,14 @@ const MODES: { key: ViewMode; label: string }[] = [
   { key: "torso", label: "Torso context" },
 ];
 
+const LAYERS: { key: AnatomyLayer; label: string }[] = [
+  { key: "arteries", label: "Arteries" },
+  { key: "veins", label: "Veins" },
+  { key: "nerves", label: "Nervous system" },
+];
+
+const PLACEHOLDER: AnatomySource = { kind: "placeholder" };
+
 function webglAvailable(): boolean {
   try {
     const canvas = document.createElement("canvas");
@@ -45,10 +59,15 @@ function webglAvailable(): boolean {
 export function AnatomyViewer({ vessels, categories, anatomy, banner = null, source = ANATOMY_SOURCE }: AnatomyViewerProps) {
   const [canRender, setCanRender] = useState<boolean | null>(null);
   const [assetFailed, setAssetFailed] = useState(false);
+  const [assetLoaded, setAssetLoaded] = useState(false);
   useEffect(() => setCanRender(webglAvailable()), []);
 
   const states = useMemo(() => vesselVisualStates(vessels, categories), [vessels, categories]);
-  const usingPlaceholder = source.kind === "placeholder" || assetFailed;
+  const active = assetFailed ? PLACEHOLDER : source;
+  const layersAvailable = useMemo(() => availableLayers(active), [active]);
+  const handleAssetError = useCallback(() => setAssetFailed(true), []);
+  const handleAssetLoaded = useCallback(() => setAssetLoaded(true), []);
+  const loadingAsset = canRender === true && active.kind === "gltf" && !assetLoaded;
 
   const unavailable = (
     <div className="viewer__fallback">
@@ -74,6 +93,23 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
             </button>
           ))}
         </div>
+        {active.kind === "gltf" ? (
+          <fieldset className="viewer__layers">
+            <legend className="visually-hidden">Context layers (not model output)</legend>
+            {LAYERS.map((layer) => (
+              <label key={layer.key} data-disabled={layersAvailable[layer.key] ? undefined : "true"}>
+                <input
+                  type="checkbox"
+                  checked={layersAvailable[layer.key] && anatomy.layers[layer.key]}
+                  disabled={!layersAvailable[layer.key]}
+                  onChange={() => anatomy.toggleLayer(layer.key)}
+                />
+                {layer.label}
+                {layersAvailable[layer.key] ? null : <span className="muted"> (not available yet)</span>}
+              </label>
+            ))}
+          </fieldset>
+        ) : null}
         <button type="button" className="button" onClick={anatomy.resetCamera}>
           Reset view
         </button>
@@ -105,7 +141,8 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
               <span className="vessel-chip__name">{name}</span>
               <span className="vessel-chip__value num">
                 {state.probability === null ? "—" : formatPercent(state.probability)}
-              </span>            </button>
+              </span>
+            </button>
           );
         })}
       </div>
@@ -118,17 +155,20 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
           <ErrorBoundary label="The 3D view" fallback={unavailable}>
             <Suspense fallback={<div className="viewer__loading">Loading 3D view…</div>}>
               <AnatomyScene
-                source={assetFailed ? { kind: "placeholder" } : source}
+                source={active}
                 mode={anatomy.mode}
+                layers={anatomy.layers}
                 vessels={states}
                 selected={anatomy.selected}
                 hovered={anatomy.hovered}
                 resetSignal={anatomy.resetSignal}
                 onSelect={anatomy.select}
                 onHover={anatomy.setHovered}
-                onAssetError={() => setAssetFailed(true)}
+                onAssetError={handleAssetError}
+                onAssetLoaded={handleAssetLoaded}
               />
             </Suspense>
+            {loadingAsset ? <div className="viewer__loading viewer__loading--overlay">Loading anatomy…</div> : null}
           </ErrorBoundary>
         ) : (
           <div className="viewer__loading">Loading 3D view…</div>
@@ -142,9 +182,30 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
         </Notice>
       ) : null}
       <p className="viewer__caption small muted">
-        {usingPlaceholder ? `${PLACEHOLDER_NOTICE} ` : `Anatomy: ${source.kind === "gltf" ? source.attribution : ""}. `}
+        {active.kind === "gltf" ? (
+          <>
+            {REFERENCE_ANATOMY_NOTICE} Only LAD, LCX and RCA are coloured by the models; other structures are
+            neutral context.{" "}
+          </>
+        ) : (
+          `${PLACEHOLDER_NOTICE} `
+        )}
         Vessel colour shows the model’s predicted stenosis probability. It is a visualization of model
         output, not medical imaging, and does not locate a lesion.
+        {active.kind === "gltf" ? (
+          <>
+            {" "}
+            Anatomy:{" "}
+            {active.licenseUrl ? (
+              <a href={active.licenseUrl} target="_blank" rel="noreferrer">
+                {active.attribution}
+              </a>
+            ) : (
+              active.attribution
+            )}
+            .
+          </>
+        ) : null}
       </p>
     </div>
   );

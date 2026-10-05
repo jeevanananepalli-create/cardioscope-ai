@@ -4,7 +4,9 @@ import type { AnatomySceneProps } from "@/types/anatomy";
  * Stand-in for the WebGL scene (which cannot run in jsdom). It exposes what the scene is
  * told to draw and lets a test trigger the callbacks a pointer would.
  */
-export default function SceneMock(props: AnatomySceneProps & { onAssetError: () => void }) {
+export default function SceneMock(
+  props: AnatomySceneProps & { onAssetError: () => void; onAssetLoaded: () => void },
+) {
   return (
     <div
       data-testid="scene"
@@ -13,6 +15,10 @@ export default function SceneMock(props: AnatomySceneProps & { onAssetError: () 
       data-selected={props.selected ?? ""}
       data-hovered={props.hovered ?? ""}
       data-reset={props.resetSignal}
+      data-layers={Object.entries(props.layers)
+        .filter(([, shown]) => shown)
+        .map(([name]) => name)
+        .join(",")}
     >
       {(["LAD", "LCX", "RCA"] as const).map((name) => (
         <button
@@ -29,6 +35,7 @@ export default function SceneMock(props: AnatomySceneProps & { onAssetError: () 
       ))}
       <button onClick={() => props.onSelect(null)}>empty space</button>
       <button onClick={props.onAssetError}>fail asset</button>
+      <button onClick={props.onAssetLoaded}>asset loaded</button>
     </div>
   );
 }

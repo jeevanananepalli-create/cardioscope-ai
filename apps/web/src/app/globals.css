@@ -1692,3 +1692,39 @@ code {
   color: var(--ink-2);
   overflow-wrap: anywhere;
 }
+
+.viewer__layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 13px;
+}
+
+.viewer__layers label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.viewer__layers label[data-disabled="true"] {
+  cursor: not-allowed;
+  color: var(--muted);
+}
+
+.viewer__layers input {
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.viewer__loading--overlay {
+  pointer-events: none;
+  background: rgba(15, 23, 34, 0.55);
+}
+
+.viewer__caption a {
+  color: inherit;
+}
