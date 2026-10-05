@@ -1,0 +1,8 @@
+# API runtime dependencies. The ML dependencies (pyproject.toml) are also required,
+# because the API loads the pipelines trained by ml/.
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.7
+# tests
+httpx>=0.27
+pytest>=8.0

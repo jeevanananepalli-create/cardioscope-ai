@@ -20,7 +20,7 @@ dev = ["pytest>=8.0"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-testpaths = ["ml/tests"]
+testpaths = ["ml/tests", "apps/api/tests"]
 markers = [
     "requires_dataset: test needs the real Z-Alizadeh Sani dataset in ml/data/raw/",
 ]

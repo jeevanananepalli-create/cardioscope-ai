@@ -15,6 +15,13 @@
 #   ordinal      ordered levels, listed lowest to highest in `categories`
 #   categorical  unordered levels listed in `categories`
 # aliases map raw spellings found in the file to the canonical category.
+# input_limits: [min, max] accepted for a numeric value at inference time. These are
+#   generous plausibility bounds chosen for this prototype to catch typing errors.
+#   They are NOT clinical reference ranges and are not used in training.
+# derived: true marks a feature computed from other inputs (see
+#   ml/src/features/feature_engineering.py); it is a model input but is never
+#   entered by the user. In the dataset BMI = Weight / (Length/100)^2 exactly and
+#   Obesity = Y exactly when BMI >= 25.
 
 targets:
   CAD: {column: Cath, positive: CAD, negative: Normal, label: Coronary artery disease}
@@ -24,11 +31,11 @@ targets:
 
 features:
   # --- Demographic -----------------------------------------------------------
-  - {name: Age, label: Age, group: demographic, kind: numeric, unit: years}
-  - {name: Weight, label: Weight, group: demographic, kind: numeric, unit: kg}
-  - {name: Length, label: Height, group: demographic, kind: numeric, unit: cm}
+  - {name: Age, label: Age, group: demographic, kind: numeric, unit: years, input_limits: [18, 110]}
+  - {name: Weight, label: Weight, group: demographic, kind: numeric, unit: kg, input_limits: [30, 250]}
+  - {name: Length, label: Height, group: demographic, kind: numeric, unit: cm, input_limits: [120, 220]}
   - {name: Sex, label: Sex, group: demographic, kind: categorical, categories: [Male, Female], aliases: {Fmale: Female}}
-  - {name: BMI, label: Body mass index, group: demographic, kind: numeric, unit: kg/m²}
+  - {name: BMI, label: Body mass index, group: demographic, kind: numeric, unit: kg/m², input_limits: [10, 70], derived: true}
 
   # --- History and risk factors ----------------------------------------------
   - {name: DM, label: Diabetes mellitus, group: history, kind: binary}
@@ -36,7 +43,7 @@ features:
   - {name: Current Smoker, label: Current smoker, group: history, kind: binary}
   - {name: EX-Smoker, label: Ex-smoker, group: history, kind: binary}
   - {name: FH, label: Family history, group: history, kind: binary}
-  - {name: Obesity, label: Obesity, group: history, kind: binary}
+  - {name: Obesity, label: Obesity (BMI ≥ 25), group: history, kind: binary, derived: true}
   - {name: CRF, label: Chronic renal failure, group: history, kind: binary}
   - {name: CVA, label: Cerebrovascular accident, group: history, kind: binary}
   - {name: Airway disease, label: Airway disease, group: history, kind: binary}
@@ -45,8 +52,8 @@ features:
   - {name: DLP, label: Dyslipidemia, group: history, kind: binary}
 
   # --- Physical examination --------------------------------------------------
-  - {name: BP, label: Blood pressure, group: examination, kind: numeric, unit: mmHg}
-  - {name: PR, label: Pulse rate, group: examination, kind: numeric, unit: bpm}
+  - {name: BP, label: Blood pressure, group: examination, kind: numeric, unit: mmHg, input_limits: [60, 260]}
+  - {name: PR, label: Pulse rate, group: examination, kind: numeric, unit: bpm, input_limits: [30, 220]}
   - {name: Edema, label: Edema, group: examination, kind: binary}
   - {name: Weak Peripheral Pulse, label: Weak peripheral pulse, group: examination, kind: binary}
   - {name: Lung rales, label: Lung rales, group: examination, kind: binary}
@@ -77,22 +84,22 @@ features:
   - {name: BBB, label: Bundle branch block, group: ecg, kind: categorical, categories: [N, LBBB, RBBB]}
 
   # --- Laboratory ------------------------------------------------------------
-  - {name: FBS, label: Fasting blood sugar, group: laboratory, kind: numeric, unit: mg/dL}
-  - {name: CR, label: Creatinine, group: laboratory, kind: numeric, unit: mg/dL}
-  - {name: TG, label: Triglycerides, group: laboratory, kind: numeric, unit: mg/dL}
-  - {name: LDL, label: LDL cholesterol, group: laboratory, kind: numeric, unit: mg/dL}
-  - {name: HDL, label: HDL cholesterol, group: laboratory, kind: numeric, unit: mg/dL}
-  - {name: BUN, label: Blood urea nitrogen, group: laboratory, kind: numeric, unit: mg/dL}
-  - {name: ESR, label: Erythrocyte sedimentation rate, group: laboratory, kind: numeric, unit: mm/h}
-  - {name: HB, label: Hemoglobin, group: laboratory, kind: numeric, unit: g/dL}
-  - {name: K, label: Potassium, group: laboratory, kind: numeric, unit: mEq/L}
-  - {name: Na, label: Sodium, group: laboratory, kind: numeric, unit: mEq/L}
-  - {name: WBC, label: White blood cell count, group: laboratory, kind: numeric, unit: cells/µL}
-  - {name: Lymph, label: Lymphocytes, group: laboratory, kind: numeric, unit: "%"}
-  - {name: Neut, label: Neutrophils, group: laboratory, kind: numeric, unit: "%"}
-  - {name: PLT, label: Platelets, group: laboratory, kind: numeric, unit: 1000/µL}
+  - {name: FBS, label: Fasting blood sugar, group: laboratory, kind: numeric, unit: mg/dL, input_limits: [30, 600]}
+  - {name: CR, label: Creatinine, group: laboratory, kind: numeric, unit: mg/dL, input_limits: [0.1, 15]}
+  - {name: TG, label: Triglycerides, group: laboratory, kind: numeric, unit: mg/dL, input_limits: [20, 2000]}
+  - {name: LDL, label: LDL cholesterol, group: laboratory, kind: numeric, unit: mg/dL, input_limits: [5, 400]}
+  - {name: HDL, label: HDL cholesterol, group: laboratory, kind: numeric, unit: mg/dL, input_limits: [5, 150]}
+  - {name: BUN, label: Blood urea nitrogen, group: laboratory, kind: numeric, unit: mg/dL, input_limits: [2, 150]}
+  - {name: ESR, label: Erythrocyte sedimentation rate, group: laboratory, kind: numeric, unit: mm/h, input_limits: [0, 150]}
+  - {name: HB, label: Hemoglobin, group: laboratory, kind: numeric, unit: g/dL, input_limits: [3, 25]}
+  - {name: K, label: Potassium, group: laboratory, kind: numeric, unit: mEq/L, input_limits: [2, 8]}
+  - {name: Na, label: Sodium, group: laboratory, kind: numeric, unit: mEq/L, input_limits: [110, 170]}
+  - {name: WBC, label: White blood cell count, group: laboratory, kind: numeric, unit: cells/µL, input_limits: [1000, 50000]}
+  - {name: Lymph, label: Lymphocytes, group: laboratory, kind: numeric, unit: "%", input_limits: [0, 100]}
+  - {name: Neut, label: Neutrophils, group: laboratory, kind: numeric, unit: "%", input_limits: [0, 100]}
+  - {name: PLT, label: Platelets, group: laboratory, kind: numeric, unit: 1000/µL, input_limits: [5, 1500]}
 
   # --- Echocardiography ------------------------------------------------------
-  - {name: EF-TTE, label: Ejection fraction (TTE), group: echo, kind: numeric, unit: "%"}
+  - {name: EF-TTE, label: Ejection fraction (TTE), group: echo, kind: numeric, unit: "%", input_limits: [5, 85]}
   - {name: Region RWMA, label: Regions with wall motion abnormality, group: echo, kind: ordinal, categories: [0, 1, 2, 3, 4]}
   - {name: VHD, label: Valvular heart disease, group: echo, kind: ordinal, categories: [N, Mild, Moderate, Severe]}

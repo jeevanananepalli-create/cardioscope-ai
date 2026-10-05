@@ -98,6 +98,8 @@ class FeatureSpec:
     aliases: Mapping[str, Any] = field(default_factory=dict)
     excluded: bool = False
     exclusion_reason: str | None = None
+    input_limits: tuple[float, float] | None = None
+    derived: bool = False
 
     def canonical(self, value: Any) -> Any:
         """Convert one raw value to its canonical form.
@@ -147,6 +149,8 @@ class FeatureSpec:
             "categories": list(self.categories),
             "excluded": self.excluded,
             "exclusion_reason": self.exclusion_reason,
+            "input_limits": list(self.input_limits) if self.input_limits else None,
+            "derived": self.derived,
         }
 
 
@@ -184,6 +188,11 @@ class FeatureSchema:
                 raise SchemaError(f"{spec.name}: unknown kind {spec.kind!r}")
             if spec.kind in ("ordinal", "categorical") and len(spec.categories) < 2:
                 raise SchemaError(f"{spec.name}: {spec.kind} feature needs at least 2 categories")
+            if spec.input_limits is not None and (
+                spec.kind != "numeric" or len(spec.input_limits) != 2
+                or spec.input_limits[0] >= spec.input_limits[1]
+            ):
+                raise SchemaError(f"{spec.name}: input_limits must be [min, max] on a numeric feature")
             if spec.excluded and not spec.exclusion_reason:
                 raise SchemaError(f"{spec.name}: excluded feature needs an exclusion_reason")
         if set(self.targets) != set(TARGET_NAMES):
@@ -203,6 +212,11 @@ class FeatureSchema:
     @property
     def feature_names(self) -> list[str]:
         return [f.name for f in self.model_features]
+
+    @property
+    def input_features(self) -> tuple[FeatureSpec, ...]:
+        """Model inputs a user supplies (everything except derived features)."""
+        return tuple(f for f in self.model_features if not f.derived)
 
     @property
     def excluded_features(self) -> tuple[FeatureSpec, ...]:
@@ -242,6 +256,8 @@ def schema_from_dict(config: Mapping[str, Any]) -> FeatureSchema:
                 aliases=dict(item.get("aliases", {})),
                 excluded=bool(item.get("excluded", False)),
                 exclusion_reason=item.get("exclusion_reason"),
+                input_limits=tuple(item["input_limits"]) if item.get("input_limits") else None,
+                derived=bool(item.get("derived", False)),
             )
             for item in config["features"]
         )

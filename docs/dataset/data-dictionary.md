@@ -43,7 +43,7 @@ These columns are blacklisted in `ml/src/features/feature_schema.py`.
 | `Current Smoker` | Current smoker | binary | — | 0: 240, 1: 63 | 0 | Yes |
 | `EX-Smoker` | Ex-smoker | binary | — | 0: 293, 1: 10 | 0 | Yes |
 | `FH` | Family history | binary | — | 0: 255, 1: 48 | 0 | Yes |
-| `Obesity` | Obesity | binary | — | 0: 92, 1: 211 | 0 | Yes |
+| `Obesity` | Obesity (BMI ≥ 25) | binary | — | 0: 92, 1: 211 | 0 | Yes |
 | `CRF` | Chronic renal failure | binary | — | 0: 297, 1: 6 | 0 | Yes |
 | `CVA` | Cerebrovascular accident | binary | — | 0: 298, 1: 5 | 0 | Yes |
 | `Airway disease` | Airway disease | binary | — | 0: 292, 1: 11 | 0 | Yes |
