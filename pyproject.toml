@@ -1,0 +1,26 @@
+[project]
+name = "cardioscope-ai"
+version = "0.1.0"
+description = "CardioScope AI - cardiovascular risk visualization and prediction (research/educational prototype)"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scikit-learn>=1.5",
+    "xgboost>=2.1",
+    "shap>=0.46",
+    "matplotlib>=3.8",
+    "joblib>=1.4",
+    "openpyxl>=3.1",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["ml/tests"]
+markers = [
+    "requires_dataset: test needs the real Z-Alizadeh Sani dataset in ml/data/raw/",
+]

@@ -1,0 +1,50 @@
+{
+  "CAD": {
+    "column": "Cath",
+    "positive_label": "CAD",
+    "negative_label": "Normal",
+    "n_positive": 216,
+    "n_negative": 87,
+    "n_total": 303,
+    "positive_rate": 0.7129,
+    "minority_class": "Normal",
+    "minority_share": 0.2871,
+    "imbalance_ratio": 2.483
+  },
+  "LAD": {
+    "column": "LAD",
+    "positive_label": "Stenotic",
+    "negative_label": "Normal",
+    "n_positive": 177,
+    "n_negative": 126,
+    "n_total": 303,
+    "positive_rate": 0.5842,
+    "minority_class": "Normal",
+    "minority_share": 0.4158,
+    "imbalance_ratio": 1.405
+  },
+  "LCX": {
+    "column": "LCX",
+    "positive_label": "Stenotic",
+    "negative_label": "Normal",
+    "n_positive": 119,
+    "n_negative": 184,
+    "n_total": 303,
+    "positive_rate": 0.3927,
+    "minority_class": "Stenotic",
+    "minority_share": 0.3927,
+    "imbalance_ratio": 1.546
+  },
+  "RCA": {
+    "column": "RCA",
+    "positive_label": "Stenotic",
+    "negative_label": "Normal",
+    "n_positive": 114,
+    "n_negative": 189,
+    "n_total": 303,
+    "positive_rate": 0.3762,
+    "minority_class": "Stenotic",
+    "minority_share": 0.3762,
+    "imbalance_ratio": 1.658
+  }
+}

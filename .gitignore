@@ -1,0 +1,43 @@
+# Secrets / local config
+.env
+.env.*
+!.env.example
+
+# Datasets (never committed; see README for setup)
+ml/data/raw/*
+ml/data/interim/*
+ml/data/processed/*
+!ml/data/**/.gitkeep
+
+# Generated model artifacts
+ml/models/**
+!ml/models/**/.gitkeep
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# Node / frontend
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,559 @@
+{
+  "n_rows": 303,
+  "n_columns": 59,
+  "n_model_features": 54,
+  "model_features_by_kind": {
+    "numeric": 21,
+    "categorical": 2,
+    "binary": 28,
+    "ordinal": 3
+  },
+  "excluded_features": [
+    {
+      "name": "Exertional CP",
+      "reason": "Constant in the supplied dataset (every record is N), so it carries no information."
+    }
+  ],
+  "forbidden_columns": [
+    "Cath",
+    "LAD",
+    "LCX",
+    "RCA"
+  ],
+  "n_duplicate_rows": 0,
+  "n_missing_cells": 0,
+  "features": {
+    "Age": {
+      "n_missing": 0,
+      "n_unique": 46,
+      "min": 30.0,
+      "max": 86.0,
+      "mean": 58.897689768976896,
+      "std": 10.392277504534439,
+      "median": 58.0,
+      "q1": 51.0,
+      "q3": 66.0,
+      "integer_valued": true
+    },
+    "Weight": {
+      "n_missing": 0,
+      "n_unique": 54,
+      "min": 48.0,
+      "max": 120.0,
+      "mean": 73.83168316831683,
+      "std": 11.987357556913805,
+      "median": 74.0,
+      "q1": 65.0,
+      "q3": 81.0,
+      "integer_valued": true
+    },
+    "Length": {
+      "n_missing": 0,
+      "n_unique": 44,
+      "min": 140.0,
+      "max": 188.0,
+      "mean": 164.7161716171617,
+      "std": 9.32766141185231,
+      "median": 165.0,
+      "q1": 158.0,
+      "q3": 171.0,
+      "integer_valued": true
+    },
+    "Sex": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "Male": 176,
+        "Female": 127
+      }
+    },
+    "BMI": {
+      "n_missing": 0,
+      "n_unique": 263,
+      "min": 18.115412710007302,
+      "max": 40.90065778377467,
+      "mean": 27.248338858149047,
+      "std": 4.098865084776584,
+      "median": 26.775510204081634,
+      "q1": 24.514380410105744,
+      "q3": 29.411764705882355,
+      "integer_valued": false
+    },
+    "DM": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 213,
+        "1": 90
+      }
+    },
+    "HTN": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 124,
+        "1": 179
+      }
+    },
+    "Current Smoker": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 240,
+        "1": 63
+      }
+    },
+    "EX-Smoker": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 293,
+        "1": 10
+      }
+    },
+    "FH": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 255,
+        "1": 48
+      }
+    },
+    "Obesity": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 92,
+        "1": 211
+      }
+    },
+    "CRF": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 297,
+        "1": 6
+      }
+    },
+    "CVA": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 298,
+        "1": 5
+      }
+    },
+    "Airway disease": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 292,
+        "1": 11
+      }
+    },
+    "Thyroid Disease": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 296,
+        "1": 7
+      }
+    },
+    "CHF": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 302,
+        "1": 1
+      }
+    },
+    "DLP": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 191,
+        "1": 112
+      }
+    },
+    "BP": {
+      "n_missing": 0,
+      "n_unique": 17,
+      "min": 90.0,
+      "max": 190.0,
+      "mean": 129.55445544554456,
+      "std": 18.938105135143843,
+      "median": 130.0,
+      "q1": 120.0,
+      "q3": 140.0,
+      "integer_valued": true
+    },
+    "PR": {
+      "n_missing": 0,
+      "n_unique": 21,
+      "min": 50.0,
+      "max": 110.0,
+      "mean": 75.14191419141915,
+      "std": 8.911800661242637,
+      "median": 70.0,
+      "q1": 70.0,
+      "q3": 80.0,
+      "integer_valued": true
+    },
+    "Edema": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 291,
+        "1": 12
+      }
+    },
+    "Weak Peripheral Pulse": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 298,
+        "1": 5
+      }
+    },
+    "Lung rales": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 292,
+        "1": 11
+      }
+    },
+    "Systolic Murmur": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 262,
+        "1": 41
+      }
+    },
+    "Diastolic Murmur": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 294,
+        "1": 9
+      }
+    },
+    "Typical Chest Pain": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 139,
+        "1": 164
+      }
+    },
+    "Dyspnea": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 169,
+        "1": 134
+      }
+    },
+    "Function Class": {
+      "n_missing": 0,
+      "n_unique": 4,
+      "counts": {
+        "0": 211,
+        "1": 1,
+        "2": 73,
+        "3": 18
+      }
+    },
+    "Atypical": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 210,
+        "1": 93
+      }
+    },
+    "Nonanginal": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 287,
+        "1": 16
+      }
+    },
+    "Exertional CP": {
+      "n_missing": 0,
+      "n_unique": 1,
+      "counts": {
+        "0": 303,
+        "1": 0
+      }
+    },
+    "LowTH Ang": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 301,
+        "1": 2
+      }
+    },
+    "Q Wave": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 287,
+        "1": 16
+      }
+    },
+    "St Elevation": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 289,
+        "1": 14
+      }
+    },
+    "St Depression": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 232,
+        "1": 71
+      }
+    },
+    "Tinversion": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 213,
+        "1": 90
+      }
+    },
+    "LVH": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 283,
+        "1": 20
+      }
+    },
+    "Poor R Progression": {
+      "n_missing": 0,
+      "n_unique": 2,
+      "counts": {
+        "0": 294,
+        "1": 9
+      }
+    },
+    "BBB": {
+      "n_missing": 0,
+      "n_unique": 3,
+      "counts": {
+        "N": 282,
+        "LBBB": 13,
+        "RBBB": 8
+      }
+    },
+    "FBS": {
+      "n_missing": 0,
+      "n_unique": 113,
+      "min": 62.0,
+      "max": 400.0,
+      "mean": 119.18481848184818,
+      "std": 52.079652767030716,
+      "median": 98.0,
+      "q1": 88.5,
+      "q3": 130.0,
+      "integer_valued": true
+    },
+    "CR": {
+      "n_missing": 0,
+      "n_unique": 18,
+      "min": 0.5,
+      "max": 2.2,
+      "mean": 1.0556105610561057,
+      "std": 0.264296279451307,
+      "median": 1.0,
+      "q1": 0.9,
+      "q3": 1.2,
+      "integer_valued": false
+    },
+    "TG": {
+      "n_missing": 0,
+      "n_unique": 147,
+      "min": 37.0,
+      "max": 1050.0,
+      "mean": 150.34323432343234,
+      "std": 97.9594507208518,
+      "median": 122.0,
+      "q1": 90.0,
+      "q3": 177.0,
+      "integer_valued": true
+    },
+    "LDL": {
+      "n_missing": 0,
+      "n_unique": 110,
+      "min": 18.0,
+      "max": 232.0,
+      "mean": 104.64356435643565,
+      "std": 35.39668788292357,
+      "median": 100.0,
+      "q1": 80.0,
+      "q3": 122.0,
+      "integer_valued": true
+    },
+    "HDL": {
+      "n_missing": 0,
+      "n_unique": 47,
+      "min": 15.9,
+      "max": 111.0,
+      "mean": 40.23399339933993,
+      "std": 10.55907692571349,
+      "median": 39.0,
+      "q1": 33.5,
+      "q3": 45.5,
+      "integer_valued": false
+    },
+    "BUN": {
+      "n_missing": 0,
+      "n_unique": 33,
+      "min": 6.0,
+      "max": 52.0,
+      "mean": 17.501650165016503,
+      "std": 6.956760772568409,
+      "median": 16.0,
+      "q1": 13.0,
+      "q3": 20.0,
+      "integer_valued": true
+    },
+    "ESR": {
+      "n_missing": 0,
+      "n_unique": 58,
+      "min": 1.0,
+      "max": 90.0,
+      "mean": 19.462046204620464,
+      "std": 15.936475044964782,
+      "median": 15.0,
+      "q1": 9.0,
+      "q3": 26.0,
+      "integer_valued": true
+    },
+    "HB": {
+      "n_missing": 0,
+      "n_unique": 66,
+      "min": 8.9,
+      "max": 17.6,
+      "mean": 13.153465346534654,
+      "std": 1.6104520583998867,
+      "median": 13.2,
+      "q1": 12.2,
+      "q3": 14.2,
+      "integer_valued": false
+    },
+    "K": {
+      "n_missing": 0,
+      "n_unique": 27,
+      "min": 3.0,
+      "max": 6.6,
+      "mean": 4.230693069306931,
+      "std": 0.45820176321434336,
+      "median": 4.2,
+      "q1": 3.9,
+      "q3": 4.5,
+      "integer_valued": false
+    },
+    "Na": {
+      "n_missing": 0,
+      "n_unique": 25,
+      "min": 128.0,
+      "max": 156.0,
+      "mean": 140.996699669967,
+      "std": 3.8078851179827966,
+      "median": 141.0,
+      "q1": 139.0,
+      "q3": 143.0,
+      "integer_valued": true
+    },
+    "WBC": {
+      "n_missing": 0,
+      "n_unique": 78,
+      "min": 3700.0,
+      "max": 18000.0,
+      "mean": 7562.046204620462,
+      "std": 2413.739323339799,
+      "median": 7100.0,
+      "q1": 5800.0,
+      "q3": 8800.0,
+      "integer_valued": true
+    },
+    "Lymph": {
+      "n_missing": 0,
+      "n_unique": 50,
+      "min": 7.0,
+      "max": 60.0,
+      "mean": 32.399339933993396,
+      "std": 9.972591556076441,
+      "median": 32.0,
+      "q1": 26.0,
+      "q3": 39.0,
+      "integer_valued": true
+    },
+    "Neut": {
+      "n_missing": 0,
+      "n_unique": 52,
+      "min": 32.0,
+      "max": 89.0,
+      "mean": 60.148514851485146,
+      "std": 10.182493226947505,
+      "median": 60.0,
+      "q1": 52.5,
+      "q3": 67.0,
+      "integer_valued": true
+    },
+    "PLT": {
+      "n_missing": 0,
+      "n_unique": 135,
+      "min": 25.0,
+      "max": 742.0,
+      "mean": 221.4884488448845,
+      "std": 60.796199274802106,
+      "median": 210.0,
+      "q1": 183.5,
+      "q3": 250.0,
+      "integer_valued": true
+    },
+    "EF-TTE": {
+      "n_missing": 0,
+      "n_unique": 11,
+      "min": 15.0,
+      "max": 60.0,
+      "mean": 47.23102310231023,
+      "std": 8.92719418236567,
+      "median": 50.0,
+      "q1": 45.0,
+      "q3": 55.0,
+      "integer_valued": true
+    },
+    "Region RWMA": {
+      "n_missing": 0,
+      "n_unique": 5,
+      "counts": {
+        "0": 217,
+        "1": 26,
+        "2": 32,
+        "3": 14,
+        "4": 14
+      }
+    },
+    "VHD": {
+      "n_missing": 0,
+      "n_unique": 4,
+      "counts": {
+        "N": 116,
+        "Mild": 149,
+        "Moderate": 27,
+        "Severe": 11
+      }
+    }
+  }
+}

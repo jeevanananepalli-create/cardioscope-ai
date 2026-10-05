@@ -1,0 +1,60 @@
+column,n_missing,pct_missing
+Age,0,0.0
+Weight,0,0.0
+Length,0,0.0
+Sex,0,0.0
+BMI,0,0.0
+DM,0,0.0
+HTN,0,0.0
+Current Smoker,0,0.0
+EX-Smoker,0,0.0
+FH,0,0.0
+Obesity,0,0.0
+CRF,0,0.0
+CVA,0,0.0
+Airway disease,0,0.0
+Thyroid Disease,0,0.0
+CHF,0,0.0
+DLP,0,0.0
+BP,0,0.0
+PR,0,0.0
+Edema,0,0.0
+Weak Peripheral Pulse,0,0.0
+Lung rales,0,0.0
+Systolic Murmur,0,0.0
+Diastolic Murmur,0,0.0
+Typical Chest Pain,0,0.0
+Dyspnea,0,0.0
+Function Class,0,0.0
+Atypical,0,0.0
+Nonanginal,0,0.0
+Exertional CP,0,0.0
+LowTH Ang,0,0.0
+Q Wave,0,0.0
+St Elevation,0,0.0
+St Depression,0,0.0
+Tinversion,0,0.0
+LVH,0,0.0
+Poor R Progression,0,0.0
+BBB,0,0.0
+FBS,0,0.0
+CR,0,0.0
+TG,0,0.0
+LDL,0,0.0
+HDL,0,0.0
+BUN,0,0.0
+ESR,0,0.0
+HB,0,0.0
+K,0,0.0
+Na,0,0.0
+WBC,0,0.0
+Lymph,0,0.0
+Neut,0,0.0
+PLT,0,0.0
+EF-TTE,0,0.0
+Region RWMA,0,0.0
+VHD,0,0.0
+LAD,0,0.0
+LCX,0,0.0
+RCA,0,0.0
+Cath,0,0.0

@@ -1,0 +1,98 @@
+# Feature schema for the Z-Alizadeh Sani (extension) dataset.
+#
+# This file is the feature WHITELIST: only features listed here can become model
+# inputs. Column names, kinds and category values were taken from inspecting the
+# supplied file (303 rows x 59 columns). Labels and units follow the dataset's
+# published feature description; units are informational only.
+#
+# LAD, LCX, RCA and Cath are targets. They are blacklisted in code
+# (ml/src/features/feature_schema.py) and listing any of them under `features`
+# makes schema loading fail.
+#
+# kind:
+#   numeric      continuous / count measurement
+#   binary       two-state flag, canonical form 0/1 (raw file uses 0/1 or N/Y)
+#   ordinal      ordered levels, listed lowest to highest in `categories`
+#   categorical  unordered levels listed in `categories`
+# aliases map raw spellings found in the file to the canonical category.
+
+targets:
+  CAD: {column: Cath, positive: CAD, negative: Normal, label: Coronary artery disease}
+  LAD: {column: LAD, positive: Stenotic, negative: Normal, label: Left anterior descending artery stenosis}
+  LCX: {column: LCX, positive: Stenotic, negative: Normal, label: Left circumflex artery stenosis}
+  RCA: {column: RCA, positive: Stenotic, negative: Normal, label: Right coronary artery stenosis}
+
+features:
+  # --- Demographic -----------------------------------------------------------
+  - {name: Age, label: Age, group: demographic, kind: numeric, unit: years}
+  - {name: Weight, label: Weight, group: demographic, kind: numeric, unit: kg}
+  - {name: Length, label: Height, group: demographic, kind: numeric, unit: cm}
+  - {name: Sex, label: Sex, group: demographic, kind: categorical, categories: [Male, Female], aliases: {Fmale: Female}}
+  - {name: BMI, label: Body mass index, group: demographic, kind: numeric, unit: kg/m²}
+
+  # --- History and risk factors ----------------------------------------------
+  - {name: DM, label: Diabetes mellitus, group: history, kind: binary}
+  - {name: HTN, label: Hypertension, group: history, kind: binary}
+  - {name: Current Smoker, label: Current smoker, group: history, kind: binary}
+  - {name: EX-Smoker, label: Ex-smoker, group: history, kind: binary}
+  - {name: FH, label: Family history, group: history, kind: binary}
+  - {name: Obesity, label: Obesity, group: history, kind: binary}
+  - {name: CRF, label: Chronic renal failure, group: history, kind: binary}
+  - {name: CVA, label: Cerebrovascular accident, group: history, kind: binary}
+  - {name: Airway disease, label: Airway disease, group: history, kind: binary}
+  - {name: Thyroid Disease, label: Thyroid disease, group: history, kind: binary}
+  - {name: CHF, label: Congestive heart failure, group: history, kind: binary}
+  - {name: DLP, label: Dyslipidemia, group: history, kind: binary}
+
+  # --- Physical examination --------------------------------------------------
+  - {name: BP, label: Blood pressure, group: examination, kind: numeric, unit: mmHg}
+  - {name: PR, label: Pulse rate, group: examination, kind: numeric, unit: bpm}
+  - {name: Edema, label: Edema, group: examination, kind: binary}
+  - {name: Weak Peripheral Pulse, label: Weak peripheral pulse, group: examination, kind: binary}
+  - {name: Lung rales, label: Lung rales, group: examination, kind: binary}
+  - {name: Systolic Murmur, label: Systolic murmur, group: examination, kind: binary}
+  - {name: Diastolic Murmur, label: Diastolic murmur, group: examination, kind: binary}
+
+  # --- Symptoms --------------------------------------------------------------
+  - {name: Typical Chest Pain, label: Typical chest pain, group: symptoms, kind: binary}
+  - {name: Dyspnea, label: Dyspnea, group: symptoms, kind: binary}
+  - {name: Function Class, label: Function class, group: symptoms, kind: ordinal, categories: [0, 1, 2, 3]}
+  - {name: Atypical, label: Atypical chest pain, group: symptoms, kind: binary}
+  - {name: Nonanginal, label: Non-anginal chest pain, group: symptoms, kind: binary}
+  - name: Exertional CP
+    label: Exertional chest pain
+    group: symptoms
+    kind: binary
+    excluded: true
+    exclusion_reason: Constant in the supplied dataset (every record is N), so it carries no information.
+  - {name: LowTH Ang, label: Low-threshold angina, group: symptoms, kind: binary}
+
+  # --- ECG -------------------------------------------------------------------
+  - {name: Q Wave, label: Q wave, group: ecg, kind: binary}
+  - {name: St Elevation, label: ST elevation, group: ecg, kind: binary}
+  - {name: St Depression, label: ST depression, group: ecg, kind: binary}
+  - {name: Tinversion, label: T inversion, group: ecg, kind: binary}
+  - {name: LVH, label: Left ventricular hypertrophy, group: ecg, kind: binary}
+  - {name: Poor R Progression, label: Poor R-wave progression, group: ecg, kind: binary}
+  - {name: BBB, label: Bundle branch block, group: ecg, kind: categorical, categories: [N, LBBB, RBBB]}
+
+  # --- Laboratory ------------------------------------------------------------
+  - {name: FBS, label: Fasting blood sugar, group: laboratory, kind: numeric, unit: mg/dL}
+  - {name: CR, label: Creatinine, group: laboratory, kind: numeric, unit: mg/dL}
+  - {name: TG, label: Triglycerides, group: laboratory, kind: numeric, unit: mg/dL}
+  - {name: LDL, label: LDL cholesterol, group: laboratory, kind: numeric, unit: mg/dL}
+  - {name: HDL, label: HDL cholesterol, group: laboratory, kind: numeric, unit: mg/dL}
+  - {name: BUN, label: Blood urea nitrogen, group: laboratory, kind: numeric, unit: mg/dL}
+  - {name: ESR, label: Erythrocyte sedimentation rate, group: laboratory, kind: numeric, unit: mm/h}
+  - {name: HB, label: Hemoglobin, group: laboratory, kind: numeric, unit: g/dL}
+  - {name: K, label: Potassium, group: laboratory, kind: numeric, unit: mEq/L}
+  - {name: Na, label: Sodium, group: laboratory, kind: numeric, unit: mEq/L}
+  - {name: WBC, label: White blood cell count, group: laboratory, kind: numeric, unit: cells/µL}
+  - {name: Lymph, label: Lymphocytes, group: laboratory, kind: numeric, unit: "%"}
+  - {name: Neut, label: Neutrophils, group: laboratory, kind: numeric, unit: "%"}
+  - {name: PLT, label: Platelets, group: laboratory, kind: numeric, unit: 1000/µL}
+
+  # --- Echocardiography ------------------------------------------------------
+  - {name: EF-TTE, label: Ejection fraction (TTE), group: echo, kind: numeric, unit: "%"}
+  - {name: Region RWMA, label: Regions with wall motion abnormality, group: echo, kind: ordinal, categories: [0, 1, 2, 3, 4]}
+  - {name: VHD, label: Valvular heart disease, group: echo, kind: ordinal, categories: [N, Mild, Moderate, Severe]}

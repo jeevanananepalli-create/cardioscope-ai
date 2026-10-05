@@ -1,0 +1,178 @@
+"""Dataset profiling: summary, missing values, class distribution, data dictionary.
+
+Every number produced here is computed from the supplied dataset.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+import pandas as pd
+
+from ml.src.features.feature_schema import FORBIDDEN_COLUMNS, FeatureSchema, FeatureSpec, is_missing
+
+GROUP_TITLES = {
+    "demographic": "Demographic",
+    "history": "History and risk factors",
+    "examination": "Physical examination",
+    "symptoms": "Symptoms",
+    "ecg": "ECG",
+    "laboratory": "Laboratory",
+    "echo": "Echocardiography",
+}
+
+
+def _canonical_series(series: pd.Series, spec: FeatureSpec) -> pd.Series:
+    return series.map(spec.canonical)
+
+
+def feature_statistics(frame: pd.DataFrame, schema: FeatureSchema) -> dict[str, dict[str, Any]]:
+    """Observed statistics per schema feature (canonical values)."""
+    stats: dict[str, dict[str, Any]] = {}
+    for spec in schema.features:
+        values = _canonical_series(frame[spec.name], spec)
+        present = values.dropna()
+        entry: dict[str, Any] = {
+            "n_missing": int(len(values) - len(present)),
+            "n_unique": int(present.nunique()),
+        }
+        if spec.kind == "numeric":
+            numeric = present.astype(float)
+            entry.update(
+                min=float(numeric.min()),
+                max=float(numeric.max()),
+                mean=float(numeric.mean()),
+                std=float(numeric.std(ddof=1)),
+                median=float(numeric.median()),
+                q1=float(numeric.quantile(0.25)),
+                q3=float(numeric.quantile(0.75)),
+                integer_valued=bool((numeric % 1 == 0).all()),
+            )
+        else:
+            levels = [0, 1] if spec.kind == "binary" else list(spec.categories)
+            counts = present.value_counts()
+            entry["counts"] = {str(level): int(counts.get(level, 0)) for level in levels}
+        stats[spec.name] = entry
+    return stats
+
+
+def dataset_summary(frame: pd.DataFrame, schema: FeatureSchema) -> dict[str, Any]:
+    kinds: dict[str, int] = {}
+    for spec in schema.model_features:
+        kinds[spec.kind] = kinds.get(spec.kind, 0) + 1
+    return {
+        "n_rows": int(len(frame)),
+        "n_columns": int(frame.shape[1]),
+        "n_model_features": len(schema.model_features),
+        "model_features_by_kind": kinds,
+        "excluded_features": [
+            {"name": f.name, "reason": f.exclusion_reason} for f in schema.excluded_features
+        ],
+        "forbidden_columns": sorted(FORBIDDEN_COLUMNS),
+        "n_duplicate_rows": int(frame.duplicated().sum()),
+        "n_missing_cells": int(frame.map(is_missing).sum().sum()),
+        "features": feature_statistics(frame, schema),
+    }
+
+
+def missing_value_report(frame: pd.DataFrame) -> pd.DataFrame:
+    missing = frame.map(is_missing).sum()
+    return pd.DataFrame(
+        {
+            "column": missing.index,
+            "n_missing": missing.to_numpy(dtype=int),
+            "pct_missing": (missing.to_numpy() / len(frame) * 100).round(2),
+        }
+    )
+
+
+def class_distribution(frame: pd.DataFrame, schema: FeatureSchema) -> dict[str, dict[str, Any]]:
+    """Class counts and ratios for each of the four targets."""
+    result: dict[str, dict[str, Any]] = {}
+    for name, target in schema.targets.items():
+        series = frame[target.column]
+        n_positive = int((series == target.positive).sum())
+        n_negative = int((series == target.negative).sum())
+        total = n_positive + n_negative
+        minority = min(n_positive, n_negative)
+        result[name] = {
+            "column": target.column,
+            "positive_label": target.positive,
+            "negative_label": target.negative,
+            "n_positive": n_positive,
+            "n_negative": n_negative,
+            "n_total": total,
+            "positive_rate": round(n_positive / total, 4),
+            "minority_class": target.positive if n_positive <= n_negative else target.negative,
+            "minority_share": round(minority / total, 4),
+            "imbalance_ratio": round(max(n_positive, n_negative) / minority, 3),
+        }
+    return result
+
+
+def _format_number(value: float) -> str:
+    return f"{value:.0f}" if float(value).is_integer() else f"{value:.2f}"
+
+
+def _describe_values(spec: FeatureSpec, stats: dict[str, Any]) -> str:
+    if spec.kind == "numeric":
+        return (
+            f"{_format_number(stats['min'])} – {_format_number(stats['max'])} "
+            f"(median {_format_number(stats['median'])})"
+        )
+    return ", ".join(f"{level}: {count}" for level, count in stats["counts"].items())
+
+
+def render_data_dictionary(
+    frame: pd.DataFrame, schema: FeatureSchema, source_name: str
+) -> str:
+    """Render the data dictionary as Markdown from the schema and observed data."""
+    stats = feature_statistics(frame, schema)
+    classes = class_distribution(frame, schema)
+    lines = [
+        "# Data dictionary",
+        "",
+        "> Generated by `python -m ml.scripts.prepare_data` from the supplied dataset. Do not edit by hand.",
+        "",
+        f"- Source file: `{source_name}`",
+        f"- Records: {len(frame)}",
+        f"- Columns: {frame.shape[1]}",
+        f"- Model input features: {len(schema.model_features)}",
+        f"- Missing cells: {int(frame.map(is_missing).sum().sum())}",
+        "",
+        "Kinds: `numeric` (measurement), `binary` (0 = no, 1 = yes; the raw file uses 0/1 or N/Y),",
+        "`ordinal` (ordered levels), `categorical` (unordered levels). Units follow the dataset's",
+        "published feature description and are informational. Observed values are what this file",
+        "contains; they are not clinical reference ranges.",
+        "",
+        "## Targets (never model inputs)",
+        "",
+        "These columns are blacklisted in `ml/src/features/feature_schema.py`.",
+        "",
+        "| Target | Column | Positive class | Positive | Negative | Positive rate |",
+        "|---|---|---|---|---|---|",
+    ]
+    for name, info in classes.items():
+        lines.append(
+            f"| {name} | `{info['column']}` | {info['positive_label']} | {info['n_positive']} "
+            f"| {info['n_negative']} | {info['positive_rate'] * 100:.1f}% |"
+        )
+    for group, title in GROUP_TITLES.items():
+        specs = [f for f in schema.features if f.group == group]
+        if not specs:
+            continue
+        lines += [
+            "",
+            f"## {title}",
+            "",
+            "| Column | Label | Kind | Unit | Observed values | Missing | Model input |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for spec in specs:
+            used = "No — " + str(spec.exclusion_reason) if spec.excluded else "Yes"
+            lines.append(
+                f"| `{spec.name}` | {spec.label} | {spec.kind} | {spec.unit or '—'} "
+                f"| {_describe_values(spec, stats[spec.name])} | {stats[spec.name]['n_missing']} | {used} |"
+            )
+    lines.append("")
+    return "\n".join(lines)
