@@ -1,0 +1,1121 @@
+{
+  "CAD": {
+    "target": "CAD",
+    "target_label": "Coronary artery disease",
+    "model_version": "0.1.0",
+    "algorithm": "xgboost",
+    "candidate": "xgboost[max_depth=2|weights=none]",
+    "selection_reason": "best mean CV roc_auc is 0.930 (xgboost[max_depth=2|weights=none]); 9 of 22 candidates are within 0.01 of it and 2 of those are also within 0.005 of the best brier (0.089). The simplest of these is xgboost[max_depth=2|weights=none] (roc_auc 0.930, brier 0.089).",
+    "decision_threshold": 0.5,
+    "calibration": {
+      "method": "none",
+      "reason": "Uncalibrated out-of-fold Brier 0.0893 ± 0.0214. sigmoid: Brier change +0.0000 (needs an improvement above 0.0019); isotonic: Brier change +0.0019 (needs an improvement above 0.0066). Decision: kept the model's own probabilities (no calibration).",
+      "threshold_reason": "Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0087 versus 0.5 (needs a gain above 0.0411; mean tuned threshold 0.692). Decision: keep the 0.5 threshold.",
+      "reliability_curve": {
+        "mean_predicted": [
+          0.0764414189029331,
+          0.20850051508462134,
+          0.47706607846189136,
+          0.7197914916621752,
+          0.8522605708807953,
+          0.9209961817284261,
+          0.9564612227037919,
+          0.977197983048179,
+          0.9876827952290369,
+          0.9947312897887112
+        ],
+        "observed_rate": [
+          0.09917355371900827,
+          0.17355371900826447,
+          0.35537190082644626,
+          0.8016528925619835,
+          0.8181818181818182,
+          0.9421487603305785,
+          0.9834710743801653,
+          0.9752066115702479,
+          0.9834710743801653,
+          0.9752066115702479
+        ],
+        "n_predictions": 1210
+      }
+    },
+    "training": {
+      "n_development": 242,
+      "n_holdout": 61,
+      "development_class_counts": {
+        "positive": 172,
+        "negative": 70
+      },
+      "holdout_class_counts": {
+        "positive": 44,
+        "negative": 17
+      },
+      "cross_validation": {
+        "n_splits": 5,
+        "n_repeats": 5
+      }
+    },
+    "cross_validation": {
+      "accuracy": {
+        "mean": 0.8916836734693878,
+        "std": 0.0339296370009815
+      },
+      "balanced_accuracy": {
+        "mean": 0.849310924369748,
+        "std": 0.04548483154746795
+      },
+      "precision": {
+        "mean": 0.9034036602581494,
+        "std": 0.03010936439886493
+      },
+      "recall": {
+        "mean": 0.9500504201680673,
+        "std": 0.030824494668255757
+      },
+      "specificity": {
+        "mean": 0.7485714285714284,
+        "std": 0.08278732690816049
+      },
+      "f1": {
+        "mean": 0.9257482201814372,
+        "std": 0.023397368665166115
+      },
+      "roc_auc": {
+        "mean": 0.9301296518607443,
+        "std": 0.03724912374507976
+      },
+      "brier": {
+        "mean": 0.08933822974784199,
+        "std": 0.021396258035468282
+      },
+      "log_loss": {
+        "mean": 0.3017044587421575,
+        "std": 0.06393362619731907
+      },
+      "train_roc_auc": {
+        "mean": 0.9994185519336264,
+        "std": 0.0003891290472357439
+      }
+    },
+    "nested_cross_validation": {
+      "accuracy": {
+        "mean": 0.8916836734693878,
+        "std": 0.0339296370009815
+      },
+      "balanced_accuracy": {
+        "mean": 0.849310924369748,
+        "std": 0.04548483154746795
+      },
+      "precision": {
+        "mean": 0.9034036602581494,
+        "std": 0.03010936439886493
+      },
+      "recall": {
+        "mean": 0.9500504201680673,
+        "std": 0.030824494668255757
+      },
+      "specificity": {
+        "mean": 0.7485714285714284,
+        "std": 0.08278732690816049
+      },
+      "f1": {
+        "mean": 0.9257482201814372,
+        "std": 0.023397368665166115
+      },
+      "roc_auc": {
+        "mean": 0.9301296518607443,
+        "std": 0.03724912374507976
+      },
+      "brier": {
+        "mean": 0.08933822974784199,
+        "std": 0.021396258035468282
+      },
+      "log_loss": {
+        "mean": 0.3017044587421575,
+        "std": 0.06393362619731907
+      }
+    },
+    "holdout": {
+      "n": 61,
+      "class_counts": {
+        "positive": 44,
+        "negative": 17
+      },
+      "metrics": {
+        "accuracy": 0.8688524590163934,
+        "balanced_accuracy": 0.8008021390374331,
+        "precision": 0.875,
+        "recall": 0.9545454545454546,
+        "specificity": 0.6470588235294118,
+        "f1": 0.9130434782608695,
+        "roc_auc": 0.9010695187165776,
+        "brier": 0.11700278879901463,
+        "log_loss": 0.37732293425507535,
+        "confusion_matrix": {
+          "tn": 11,
+          "fp": 6,
+          "fn": 2,
+          "tp": 42
+        },
+        "threshold": 0.5,
+        "n": 61
+      },
+      "confidence_intervals_95": {
+        "accuracy": {
+          "lower": 0.7868852459016393,
+          "upper": 0.9508196721311475
+        },
+        "balanced_accuracy": {
+          "lower": 0.6831466166452487,
+          "upper": 0.9179331306990881
+        },
+        "precision": {
+          "lower": 0.7755102040816326,
+          "upper": 0.96
+        },
+        "recall": {
+          "lower": 0.8863636363636364,
+          "upper": 1.0
+        },
+        "specificity": {
+          "lower": 0.4117647058823529,
+          "upper": 0.875
+        },
+        "f1": {
+          "lower": 0.85,
+          "upper": 0.9662921348314607
+        },
+        "roc_auc": {
+          "lower": 0.8095238095238095,
+          "upper": 0.974105595980596
+        },
+        "brier": {
+          "lower": 0.06309487646923304,
+          "upper": 0.17820298786128483
+        },
+        "log_loss": {
+          "lower": 0.2185267732905856,
+          "upper": 0.5609001355561345
+        }
+      },
+      "bootstrap_resamples": 2000,
+      "reference_baseline": {
+        "predicted_probability": 0.7107438016528925,
+        "accuracy": 0.7213114754098361,
+        "brier": 0.20113290658055466,
+        "roc_auc": 0.5
+      },
+      "roc_curve": {
+        "false_positive_rate": [
+          0.0,
+          0.0,
+          0.0,
+          0.058823529411764705,
+          0.058823529411764705,
+          0.11764705882352941,
+          0.11764705882352941,
+          0.17647058823529413,
+          0.17647058823529413,
+          0.23529411764705882,
+          0.23529411764705882,
+          0.35294117647058826,
+          0.35294117647058826,
+          0.4117647058823529,
+          0.4117647058823529,
+          0.8823529411764706,
+          0.8823529411764706,
+          1.0
+        ],
+        "true_positive_rate": [
+          0.0,
+          0.022727272727272728,
+          0.5,
+          0.5,
+          0.5454545454545454,
+          0.5454545454545454,
+          0.7954545454545454,
+          0.7954545454545454,
+          0.8863636363636364,
+          0.8863636363636364,
+          0.9090909090909091,
+          0.9090909090909091,
+          0.9545454545454546,
+          0.9545454545454546,
+          0.9772727272727273,
+          0.9772727272727273,
+          1.0,
+          1.0
+        ]
+      },
+      "reliability_curve": {
+        "mean_predicted": [
+          0.28612769896594376,
+          0.7834211935599645,
+          0.9149854083855947,
+          0.9752938449382782,
+          0.9948092500368754
+        ],
+        "observed_rate": [
+          0.15384615384615385,
+          0.6666666666666666,
+          0.9166666666666666,
+          0.9166666666666666,
+          1.0
+        ],
+        "n_bins": 5
+      }
+    }
+  },
+  "LAD": {
+    "target": "LAD",
+    "target_label": "Left anterior descending artery stenosis",
+    "model_version": "0.1.0",
+    "algorithm": "random_forest",
+    "candidate": "random_forest[min_samples_leaf=5|weights=none]",
+    "selection_reason": "best mean CV roc_auc is 0.860 (random_forest[min_samples_leaf=5|weights=none]); 6 of 22 candidates are within 0.01 of it and 5 of those are also within 0.005 of the best brier (0.162). The simplest of these is random_forest[min_samples_leaf=5|weights=none] (roc_auc 0.860, brier 0.166).",
+    "decision_threshold": 0.5,
+    "calibration": {
+      "method": "sigmoid",
+      "reason": "Uncalibrated out-of-fold Brier 0.1663 ± 0.0153. sigmoid: Brier change -0.0187 (needs an improvement above 0.0150); isotonic: Brier change -0.0135 (needs an improvement above 0.0198). Decision: adopted sigmoid calibration.",
+      "threshold_reason": "Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by -0.0085 versus 0.5 (needs a gain above 0.0290; mean tuned threshold 0.523). Decision: keep the 0.5 threshold.",
+      "reliability_curve": {
+        "mean_predicted": [
+          0.05813735295960387,
+          0.15424863243506448,
+          0.28409025150184486,
+          0.4576759747310331,
+          0.611265493688354,
+          0.7221789737182966,
+          0.8036072714153863,
+          0.8669521561979612,
+          0.9176489096554202,
+          0.9629723585021345
+        ],
+        "observed_rate": [
+          0.09917355371900827,
+          0.1487603305785124,
+          0.2396694214876033,
+          0.3884297520661157,
+          0.6859504132231405,
+          0.8264462809917356,
+          0.8181818181818182,
+          0.8181818181818182,
+          0.8347107438016529,
+          0.9669421487603306
+        ],
+        "n_predictions": 1210
+      }
+    },
+    "training": {
+      "n_development": 242,
+      "n_holdout": 61,
+      "development_class_counts": {
+        "positive": 141,
+        "negative": 101
+      },
+      "holdout_class_counts": {
+        "positive": 36,
+        "negative": 25
+      },
+      "cross_validation": {
+        "n_splits": 5,
+        "n_repeats": 5
+      }
+    },
+    "cross_validation": {
+      "accuracy": {
+        "mean": 0.7925850340136055,
+        "std": 0.05278828990948674
+      },
+      "balanced_accuracy": {
+        "mean": 0.7712019704433497,
+        "std": 0.0585509700845418
+      },
+      "precision": {
+        "mean": 0.7814695465344553,
+        "std": 0.05888448356652875
+      },
+      "recall": {
+        "mean": 0.9021182266009852,
+        "std": 0.06079982450101603
+      },
+      "specificity": {
+        "mean": 0.6402857142857142,
+        "std": 0.11774870753206769
+      },
+      "f1": {
+        "mean": 0.8353615182496129,
+        "std": 0.04123231160846825
+      },
+      "roc_auc": {
+        "mean": 0.8603645320197043,
+        "std": 0.05359861334010429
+      },
+      "brier": {
+        "mean": 0.16630631811548396,
+        "std": 0.015308685967478848
+      },
+      "log_loss": {
+        "mean": 0.5130537702168979,
+        "std": 0.03300902637807741
+      },
+      "train_roc_auc": {
+        "mean": 0.9931111969533798,
+        "std": 0.0014838521447653925
+      }
+    },
+    "nested_cross_validation": {
+      "accuracy": {
+        "mean": 0.8107823129251702,
+        "std": 0.05239886604890716
+      },
+      "balanced_accuracy": {
+        "mean": 0.7989441707717568,
+        "std": 0.058612503960946055
+      },
+      "precision": {
+        "mean": 0.8218557224940358,
+        "std": 0.07009836893618764
+      },
+      "recall": {
+        "mean": 0.8723645320197043,
+        "std": 0.06854168380783064
+      },
+      "specificity": {
+        "mean": 0.7255238095238095,
+        "std": 0.12463764562110148
+      },
+      "f1": {
+        "mean": 0.8431052230745414,
+        "std": 0.04220758055816523
+      },
+      "roc_auc": {
+        "mean": 0.8603645320197043,
+        "std": 0.05359861334010429
+      },
+      "brier": {
+        "mean": 0.14761798453442818,
+        "std": 0.028556265101671276
+      },
+      "log_loss": {
+        "mean": 0.46394049025569795,
+        "std": 0.07714639193583156
+      }
+    },
+    "holdout": {
+      "n": 61,
+      "class_counts": {
+        "positive": 36,
+        "negative": 25
+      },
+      "metrics": {
+        "accuracy": 0.7868852459016393,
+        "balanced_accuracy": 0.7644444444444445,
+        "precision": 0.7804878048780488,
+        "recall": 0.8888888888888888,
+        "specificity": 0.64,
+        "f1": 0.8311688311688312,
+        "roc_auc": 0.8344444444444444,
+        "brier": 0.16474640966729834,
+        "log_loss": 0.5095500913101604,
+        "confusion_matrix": {
+          "tn": 16,
+          "fp": 9,
+          "fn": 4,
+          "tp": 32
+        },
+        "threshold": 0.5,
+        "n": 61
+      },
+      "confidence_intervals_95": {
+        "accuracy": {
+          "lower": 0.6721311475409836,
+          "upper": 0.8852459016393442
+        },
+        "balanced_accuracy": {
+          "lower": 0.652082656926407,
+          "upper": 0.8672057411674347
+        },
+        "precision": {
+          "lower": 0.65,
+          "upper": 0.9
+        },
+        "recall": {
+          "lower": 0.7777777777777778,
+          "upper": 0.975
+        },
+        "specificity": {
+          "lower": 0.4444444444444444,
+          "upper": 0.8261244377811092
+        },
+        "f1": {
+          "lower": 0.7297297297297297,
+          "upper": 0.9117966751918156
+        },
+        "roc_auc": {
+          "lower": 0.7214448051948051,
+          "upper": 0.9301232369780755
+        },
+        "brier": {
+          "lower": 0.11123172992158194,
+          "upper": 0.22588295828093152
+        },
+        "log_loss": {
+          "lower": 0.36180818641639484,
+          "upper": 0.6818149943704085
+        }
+      },
+      "bootstrap_resamples": 2000,
+      "reference_baseline": {
+        "predicted_probability": 0.5826446280991735,
+        "accuracy": 0.5901639344262295,
+        "brier": 0.24192700489642271,
+        "roc_auc": 0.5
+      },
+      "roc_curve": {
+        "false_positive_rate": [
+          0.0,
+          0.0,
+          0.0,
+          0.04,
+          0.04,
+          0.12,
+          0.12,
+          0.16,
+          0.16,
+          0.2,
+          0.2,
+          0.24,
+          0.24,
+          0.28,
+          0.28,
+          0.52,
+          0.52,
+          0.56,
+          0.56,
+          0.92,
+          0.92,
+          1.0
+        ],
+        "true_positive_rate": [
+          0.0,
+          0.027777777777777776,
+          0.3055555555555556,
+          0.3055555555555556,
+          0.4444444444444444,
+          0.4444444444444444,
+          0.4722222222222222,
+          0.4722222222222222,
+          0.6388888888888888,
+          0.6388888888888888,
+          0.6944444444444444,
+          0.6944444444444444,
+          0.8333333333333334,
+          0.8333333333333334,
+          0.8888888888888888,
+          0.8888888888888888,
+          0.9444444444444444,
+          0.9444444444444444,
+          0.9722222222222222,
+          0.9722222222222222,
+          1.0,
+          1.0
+        ]
+      },
+      "reliability_curve": {
+        "mean_predicted": [
+          0.1528801802545898,
+          0.4808385047233608,
+          0.7008937103830851,
+          0.8645000621555413,
+          0.967802113145166
+        ],
+        "observed_rate": [
+          0.15384615384615385,
+          0.3333333333333333,
+          0.8333333333333334,
+          0.75,
+          0.9166666666666666
+        ],
+        "n_bins": 5
+      }
+    }
+  },
+  "LCX": {
+    "target": "LCX",
+    "target_label": "Left circumflex artery stenosis",
+    "model_version": "0.1.0",
+    "algorithm": "random_forest",
+    "candidate": "random_forest[min_samples_leaf=5|weights=none]",
+    "selection_reason": "best mean CV roc_auc is 0.742 (random_forest[min_samples_leaf=5|weights=none]); 7 of 22 candidates are within 0.01 of it and 4 of those are also within 0.005 of the best brier (0.206). The simplest of these is random_forest[min_samples_leaf=5|weights=none] (roc_auc 0.742, brier 0.207).",
+    "decision_threshold": 0.3796265197650647,
+    "calibration": {
+      "method": "none",
+      "reason": "Uncalibrated out-of-fold Brier 0.2069 ± 0.0102. sigmoid: Brier change -0.0035 (needs an improvement above 0.0079); isotonic: Brier change +0.0011 (needs an improvement above 0.0138). Decision: kept the model's own probabilities (no calibration).",
+      "threshold_reason": "Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0809 versus 0.5 (needs a gain above 0.0579; mean tuned threshold 0.395). Decision: use the tuned threshold.",
+      "reliability_curve": {
+        "mean_predicted": [
+          0.183664745321968,
+          0.24954940976023737,
+          0.302113929660427,
+          0.3428092679987171,
+          0.3764658816491104,
+          0.4088833025671806,
+          0.44237667794075763,
+          0.474020018367601,
+          0.515665821494918,
+          0.6020166442597619
+        ],
+        "observed_rate": [
+          0.08264462809917356,
+          0.08264462809917356,
+          0.2231404958677686,
+          0.3140495867768595,
+          0.33884297520661155,
+          0.49586776859504134,
+          0.5041322314049587,
+          0.5619834710743802,
+          0.6776859504132231,
+          0.6033057851239669
+        ],
+        "n_predictions": 1210
+      }
+    },
+    "training": {
+      "n_development": 242,
+      "n_holdout": 61,
+      "development_class_counts": {
+        "positive": 94,
+        "negative": 148
+      },
+      "holdout_class_counts": {
+        "positive": 25,
+        "negative": 36
+      },
+      "cross_validation": {
+        "n_splits": 5,
+        "n_repeats": 5
+      }
+    },
+    "cross_validation": {
+      "accuracy": {
+        "mean": 0.6578231292517006,
+        "std": 0.03963461584218088
+      },
+      "balanced_accuracy": {
+        "mean": 0.5909937487396653,
+        "std": 0.04759119066362826
+      },
+      "precision": {
+        "mean": 0.6431406501994738,
+        "std": 0.12872285896831834
+      },
+      "recall": {
+        "mean": 0.2899415204678363,
+        "std": 0.10701741070944754
+      },
+      "specificity": {
+        "mean": 0.8920459770114942,
+        "std": 0.05335954402838834
+      },
+      "f1": {
+        "mean": 0.38800679901671337,
+        "std": 0.1043469217272075
+      },
+      "roc_auc": {
+        "mean": 0.7422017879948914,
+        "std": 0.050998960978660315
+      },
+      "brier": {
+        "mean": 0.20690646147484354,
+        "std": 0.01018138132311146
+      },
+      "log_loss": {
+        "mean": 0.5999176053015236,
+        "std": 0.021464022899270033
+      },
+      "train_roc_auc": {
+        "mean": 0.9940635701916806,
+        "std": 0.0019076619745772212
+      }
+    },
+    "nested_cross_validation": {
+      "accuracy": {
+        "mean": 0.6652210884353741,
+        "std": 0.06167128110186046
+      },
+      "balanced_accuracy": {
+        "mean": 0.6719366807824159,
+        "std": 0.05443112106803948
+      },
+      "precision": {
+        "mean": 0.5657110838870485,
+        "std": 0.07585388406689536
+      },
+      "recall": {
+        "mean": 0.7019883040935673,
+        "std": 0.11244619565374411
+      },
+      "specificity": {
+        "mean": 0.6418850574712642,
+        "std": 0.12295004232579125
+      },
+      "f1": {
+        "mean": 0.618776736718274,
+        "std": 0.05944001354106093
+      },
+      "roc_auc": {
+        "mean": 0.7422017879948914,
+        "std": 0.050998960978660315
+      },
+      "brier": {
+        "mean": 0.20690646147484354,
+        "std": 0.01018138132311146
+      },
+      "log_loss": {
+        "mean": 0.5999176053015236,
+        "std": 0.021464022899270036
+      }
+    },
+    "holdout": {
+      "n": 61,
+      "class_counts": {
+        "positive": 25,
+        "negative": 36
+      },
+      "metrics": {
+        "accuracy": 0.6721311475409836,
+        "balanced_accuracy": 0.6977777777777778,
+        "precision": 0.5675675675675675,
+        "recall": 0.84,
+        "specificity": 0.5555555555555556,
+        "f1": 0.6774193548387096,
+        "roc_auc": 0.7644444444444445,
+        "brier": 0.2035716764186678,
+        "log_loss": 0.5919704060340103,
+        "confusion_matrix": {
+          "tn": 20,
+          "fp": 16,
+          "fn": 4,
+          "tp": 21
+        },
+        "threshold": 0.3796265197650647,
+        "n": 61
+      },
+      "confidence_intervals_95": {
+        "accuracy": {
+          "lower": 0.5573770491803278,
+          "upper": 0.7868852459016393
+        },
+        "balanced_accuracy": {
+          "lower": 0.5911858108108109,
+          "upper": 0.8020907738095236
+        },
+        "precision": {
+          "lower": 0.40540540540540543,
+          "upper": 0.7222222222222222
+        },
+        "recall": {
+          "lower": 0.6817727272727273,
+          "upper": 0.9642857142857143
+        },
+        "specificity": {
+          "lower": 0.39471690590111647,
+          "upper": 0.71875
+        },
+        "f1": {
+          "lower": 0.5283018867924528,
+          "upper": 0.7936507936507936
+        },
+        "roc_auc": {
+          "lower": 0.6383203055997174,
+          "upper": 0.8718582835068034
+        },
+        "brier": {
+          "lower": 0.17146129304455932,
+          "upper": 0.23573053356151877
+        },
+        "log_loss": {
+          "lower": 0.5236669183343553,
+          "upper": 0.660371566431904
+        }
+      },
+      "bootstrap_resamples": 2000,
+      "reference_baseline": {
+        "predicted_probability": 0.3884297520661157,
+        "accuracy": 0.5901639344262295,
+        "brier": 0.24232869518677058,
+        "roc_auc": 0.5
+      },
+      "roc_curve": {
+        "false_positive_rate": [
+          0.0,
+          0.027777777777777776,
+          0.027777777777777776,
+          0.05555555555555555,
+          0.05555555555555555,
+          0.1388888888888889,
+          0.1388888888888889,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.19444444444444445,
+          0.19444444444444445,
+          0.2777777777777778,
+          0.2777777777777778,
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3888888888888889,
+          0.3888888888888889,
+          0.5277777777777778,
+          0.5277777777777778,
+          0.6111111111111112,
+          0.6111111111111112,
+          0.6388888888888888,
+          0.6388888888888888,
+          1.0
+        ],
+        "true_positive_rate": [
+          0.0,
+          0.0,
+          0.28,
+          0.28,
+          0.32,
+          0.32,
+          0.4,
+          0.4,
+          0.44,
+          0.44,
+          0.52,
+          0.52,
+          0.76,
+          0.76,
+          0.8,
+          0.8,
+          0.84,
+          0.84,
+          0.88,
+          0.88,
+          0.92,
+          0.92,
+          1.0,
+          1.0
+        ]
+      },
+      "reliability_curve": {
+        "mean_predicted": [
+          0.2144636499199105,
+          0.3268133191567129,
+          0.4171449023428582,
+          0.47258903602126234,
+          0.5803771341163967
+        ],
+        "observed_rate": [
+          0.0,
+          0.3333333333333333,
+          0.5833333333333334,
+          0.5,
+          0.6666666666666666
+        ],
+        "n_bins": 5
+      },
+      "metrics_at_default_threshold": {
+        "accuracy": 0.639344262295082,
+        "balanced_accuracy": 0.5905555555555556,
+        "precision": 0.6153846153846154,
+        "recall": 0.32,
+        "specificity": 0.8611111111111112,
+        "f1": 0.42105263157894735,
+        "roc_auc": 0.7644444444444445,
+        "brier": 0.2035716764186678,
+        "log_loss": 0.5919704060340103,
+        "confusion_matrix": {
+          "tn": 31,
+          "fp": 5,
+          "fn": 17,
+          "tp": 8
+        },
+        "threshold": 0.5,
+        "n": 61
+      }
+    }
+  },
+  "RCA": {
+    "target": "RCA",
+    "target_label": "Right coronary artery stenosis",
+    "model_version": "0.1.0",
+    "algorithm": "logistic_regression",
+    "candidate": "logistic_regression[C=0.1|weights=none]",
+    "selection_reason": "best mean CV roc_auc is 0.743 (logistic_regression[C=0.1|weights=balanced]); 4 of 22 candidates are within 0.01 of it and 1 of those are also within 0.005 of the best brier (0.201). The simplest of these is logistic_regression[C=0.1|weights=none] (roc_auc 0.741, brier 0.201).",
+    "decision_threshold": 0.5,
+    "calibration": {
+      "method": "none",
+      "reason": "Uncalibrated out-of-fold Brier 0.2007 ± 0.0224. sigmoid: Brier change +0.0007 (needs an improvement above 0.0051); isotonic: Brier change +0.0054 (needs an improvement above 0.0109). Decision: kept the model's own probabilities (no calibration).",
+      "threshold_reason": "Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0275 versus 0.5 (needs a gain above 0.0690; mean tuned threshold 0.328). Decision: keep the 0.5 threshold.",
+      "reliability_curve": {
+        "mean_predicted": [
+          0.07636098481569153,
+          0.145363023360674,
+          0.19443547955560095,
+          0.2537136677133792,
+          0.3152867512830695,
+          0.380417423506058,
+          0.4493055151754459,
+          0.5279187721091952,
+          0.6203401053837085,
+          0.7826779277537356
+        ],
+        "observed_rate": [
+          0.06611570247933884,
+          0.09917355371900827,
+          0.21487603305785125,
+          0.2892561983471074,
+          0.35537190082644626,
+          0.4793388429752066,
+          0.4793388429752066,
+          0.5206611570247934,
+          0.6115702479338843,
+          0.6446280991735537
+        ],
+        "n_predictions": 1210
+      }
+    },
+    "training": {
+      "n_development": 242,
+      "n_holdout": 61,
+      "development_class_counts": {
+        "positive": 91,
+        "negative": 151
+      },
+      "holdout_class_counts": {
+        "positive": 23,
+        "negative": 38
+      },
+      "cross_validation": {
+        "n_splits": 5,
+        "n_repeats": 5
+      }
+    },
+    "cross_validation": {
+      "accuracy": {
+        "mean": 0.6750850340136054,
+        "std": 0.051782822722722666
+      },
+      "balanced_accuracy": {
+        "mean": 0.6294831163931334,
+        "std": 0.05867353336437544
+      },
+      "precision": {
+        "mean": 0.5954709208919735,
+        "std": 0.08713674778929799
+      },
+      "recall": {
+        "mean": 0.44584795321637427,
+        "std": 0.11823475828566479
+      },
+      "specificity": {
+        "mean": 0.8131182795698925,
+        "std": 0.0698600696873748
+      },
+      "f1": {
+        "mean": 0.502236991020133,
+        "std": 0.09189560094102488
+      },
+      "roc_auc": {
+        "mean": 0.7413636420801106,
+        "std": 0.058155774656671155
+      },
+      "brier": {
+        "mean": 0.20072617243641044,
+        "std": 0.022415100510414267
+      },
+      "log_loss": {
+        "mean": 0.5832023792659983,
+        "std": 0.05230335844693401
+      },
+      "train_roc_auc": {
+        "mean": 0.866395914311232,
+        "std": 0.01257841724648184
+      }
+    },
+    "nested_cross_validation": {
+      "accuracy": {
+        "mean": 0.6750850340136054,
+        "std": 0.051782822722722666
+      },
+      "balanced_accuracy": {
+        "mean": 0.6294831163931334,
+        "std": 0.05867353336437544
+      },
+      "precision": {
+        "mean": 0.5954709208919735,
+        "std": 0.08713674778929799
+      },
+      "recall": {
+        "mean": 0.44584795321637427,
+        "std": 0.11823475828566479
+      },
+      "specificity": {
+        "mean": 0.8131182795698925,
+        "std": 0.0698600696873748
+      },
+      "f1": {
+        "mean": 0.502236991020133,
+        "std": 0.09189560094102488
+      },
+      "roc_auc": {
+        "mean": 0.7413636420801106,
+        "std": 0.058155774656671155
+      },
+      "brier": {
+        "mean": 0.20072617243641044,
+        "std": 0.022415100510414267
+      },
+      "log_loss": {
+        "mean": 0.5832023792659983,
+        "std": 0.05230335844693401
+      }
+    },
+    "holdout": {
+      "n": 61,
+      "class_counts": {
+        "positive": 23,
+        "negative": 38
+      },
+      "metrics": {
+        "accuracy": 0.6557377049180327,
+        "balanced_accuracy": 0.6121281464530892,
+        "precision": 0.5555555555555556,
+        "recall": 0.43478260869565216,
+        "specificity": 0.7894736842105263,
+        "f1": 0.4878048780487805,
+        "roc_auc": 0.6704805491990847,
+        "brier": 0.21623704256186088,
+        "log_loss": 0.6205191397179746,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 8,
+          "fn": 13,
+          "tp": 10
+        },
+        "threshold": 0.5,
+        "n": 61
+      },
+      "confidence_intervals_95": {
+        "accuracy": {
+          "lower": 0.5409836065573771,
+          "upper": 0.7704918032786885
+        },
+        "balanced_accuracy": {
+          "lower": 0.48888471177944864,
+          "upper": 0.7347488695090438
+        },
+        "precision": {
+          "lower": 0.3125,
+          "upper": 0.7777777777777778
+        },
+        "recall": {
+          "lower": 0.22727272727272727,
+          "upper": 0.6363636363636364
+        },
+        "specificity": {
+          "lower": 0.65,
+          "upper": 0.9063210227272723
+        },
+        "f1": {
+          "lower": 0.2757222739981363,
+          "upper": 0.6666666666666666
+        },
+        "roc_auc": {
+          "lower": 0.5209728381374723,
+          "upper": 0.8073199571522741
+        },
+        "brier": {
+          "lower": 0.1672588789614806,
+          "upper": 0.27112925862166104
+        },
+        "log_loss": {
+          "lower": 0.5054193163154715,
+          "upper": 0.7502306435080058
+        }
+      },
+      "bootstrap_resamples": 2000,
+      "reference_baseline": {
+        "predicted_probability": 0.3760330578512397,
+        "accuracy": 0.6229508196721312,
+        "brier": 0.23488412844683867,
+        "roc_auc": 0.5
+      },
+      "roc_curve": {
+        "false_positive_rate": [
+          0.0,
+          0.0,
+          0.0,
+          0.10526315789473684,
+          0.10526315789473684,
+          0.18421052631578946,
+          0.18421052631578946,
+          0.21052631578947367,
+          0.21052631578947367,
+          0.23684210526315788,
+          0.23684210526315788,
+          0.34210526315789475,
+          0.34210526315789475,
+          0.39473684210526316,
+          0.39473684210526316,
+          0.6052631578947368,
+          0.6052631578947368,
+          0.6578947368421053,
+          0.6578947368421053,
+          0.7368421052631579,
+          0.7368421052631579,
+          0.8421052631578947,
+          0.8421052631578947,
+          1.0
+        ],
+        "true_positive_rate": [
+          0.0,
+          0.043478260869565216,
+          0.2608695652173913,
+          0.2608695652173913,
+          0.30434782608695654,
+          0.30434782608695654,
+          0.34782608695652173,
+          0.34782608695652173,
+          0.43478260869565216,
+          0.43478260869565216,
+          0.5652173913043478,
+          0.5652173913043478,
+          0.6521739130434783,
+          0.6521739130434783,
+          0.6956521739130435,
+          0.6956521739130435,
+          0.7391304347826086,
+          0.7391304347826086,
+          0.8260869565217391,
+          0.8260869565217391,
+          0.9130434782608695,
+          0.9130434782608695,
+          1.0,
+          1.0
+        ]
+      },
+      "reliability_curve": {
+        "mean_predicted": [
+          0.10890976174732866,
+          0.2640480634117333,
+          0.36492655091339127,
+          0.5004035105562883,
+          0.7112862026928916
+        ],
+        "observed_rate": [
+          0.23076923076923078,
+          0.3333333333333333,
+          0.25,
+          0.5,
+          0.5833333333333334
+        ],
+        "n_bins": 5
+      }
+    }
+  }
+}

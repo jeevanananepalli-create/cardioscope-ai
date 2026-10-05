@@ -101,3 +101,72 @@ def test_comparison_report_contains_only_computed_values(data, logistic):
     assert table.loc[0, "roc_auc_mean"] == result["summary"]["roc_auc"]["mean"]
     markdown = render_comparison_markdown(table, {"n_splits": 3, "n_repeats": 1}, len(data.X_dev))
     assert f"{result['summary']['roc_auc']['mean']:.3f}" in markdown
+
+
+def test_bootstrap_intervals_bracket_the_point_estimate_and_are_reproducible():
+    from ml.src.evaluation.evaluator import bootstrap_intervals
+
+    rng = np.random.default_rng(0)
+    y = rng.integers(0, 2, 80)
+    proba = np.clip(y * 0.3 + rng.uniform(0.1, 0.6, 80), 0, 1)
+    a = bootstrap_intervals(y, proba, 0.5, seed=1, n_resamples=300)
+    b = bootstrap_intervals(y, proba, 0.5, seed=1, n_resamples=300)
+    assert a == b
+    point = classification_metrics(y, proba)
+    for metric in SCALAR_METRICS:
+        assert a[metric]["lower"] <= point[metric] <= a[metric]["upper"], metric
+
+
+def test_reference_baseline_uses_development_prevalence():
+    from ml.src.evaluation.evaluator import reference_baseline
+
+    baseline = reference_baseline(y_dev=[1, 1, 1, 0], y_test=[1, 0, 1, 1])
+    assert baseline["predicted_probability"] == 0.75
+    assert baseline["accuracy"] == 0.75
+    assert baseline["brier"] == pytest.approx((3 * 0.25**2 + 0.75**2) / 4)
+
+
+@pytest.mark.requires_dataset
+def test_holdout_evaluation_matches_direct_metric_computation(data, logistic):
+    from ml.src.evaluation.evaluator import evaluate_holdout
+    from ml.src.training.finalize import fit_final_model
+
+    model = fit_final_model("CAD", logistic, data, use_tuned_threshold=True)
+    result = evaluate_holdout(
+        model, data.X_test, data.y_test["CAD"], data.y_dev["CAD"], seed=1, n_resamples=100
+    )
+    expected = classification_metrics(
+        data.y_test["CAD"], model.predict_proba(data.X_test), model.threshold
+    )
+    assert result["metrics"] == expected
+    assert result["n"] == len(data.X_test)
+    cm = result["metrics"]["confusion_matrix"]
+    assert sum(cm.values()) == len(data.X_test)
+    assert cm["tp"] + cm["fn"] == result["class_counts"]["positive"]
+    curve = result["roc_curve"]
+    assert curve["false_positive_rate"][0] == 0 and curve["true_positive_rate"][-1] == 1
+
+
+@pytest.mark.requires_dataset
+def test_published_metrics_file_matches_the_trained_artifacts(data):
+    """The metrics the UI will show must equal a fresh evaluation of the saved models."""
+    from ml.src.evaluation.reports import read_json
+    from ml.src.models.artifacts import ModelNotFoundError, load_artifact
+    from ml.src.paths import METRICS_DIR
+
+    path = METRICS_DIR / "model_metrics.json"
+    if not path.is_file():
+        pytest.skip("evaluate_all has not been run")
+    published = read_json(path)
+    for target in ("CAD", "LAD", "LCX", "RCA"):
+        try:
+            artifact = load_artifact(target)
+        except ModelNotFoundError:
+            pytest.skip("models have not been trained")
+        fresh = classification_metrics(
+            data.y_test[target], artifact.model.predict_proba(data.X_test), artifact.model.threshold
+        )
+        stored = published[target]["holdout"]["metrics"]
+        for metric in SCALAR_METRICS:
+            assert stored[metric] == pytest.approx(fresh[metric], abs=1e-9), (target, metric)
+        assert stored["confusion_matrix"] == fresh["confusion_matrix"]
