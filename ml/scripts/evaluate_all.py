@@ -19,10 +19,13 @@ from ml.src.evaluation.plots import (
     plot_calibration_curves,
     plot_class_distribution,
     plot_confusion_matrices,
+    plot_global_importance,
     plot_model_comparison,
     plot_roc_curves,
 )
 from ml.src.evaluation.reports import read_json, write_json
+from ml.src.explainability.feature_contributions import global_importance
+from ml.src.explainability.shap_explainer import build_explainer
 from ml.src.features.feature_schema import TARGET_NAMES
 from ml.src.models.artifacts import ModelNotFoundError, load_artifact, write_metadata
 from ml.src.paths import FIGURES_DIR, METRICS_DIR, MODEL_COMPARISON_DIR, REPO_ROOT
@@ -43,6 +46,22 @@ def evaluate_models(data, artifacts) -> dict:
             artifact.model, data.X_test, data.y_test[target], data.y_dev[target], seed=data.seed
         )
     return holdout
+
+
+def compute_global_importance(data, artifacts) -> dict:
+    """Mean |SHAP| per feature on the development set, for every model."""
+    limit = int(data.config["explainability"]["kernel_global_sample"])
+    importance = {}
+    for target, artifact in artifacts.items():
+        explainer = build_explainer(artifact, data.schema, data.config)
+        # Model-agnostic SHAP is slow, so it is summarised on a fixed-seed sample.
+        rows = (
+            data.X_dev.sample(n=min(limit, len(data.X_dev)), random_state=data.seed)
+            if explainer.kind == "kernel"
+            else data.X_dev
+        )
+        importance[target] = global_importance(explainer, rows)
+    return importance
 
 
 def build_model_metrics(artifacts, holdout) -> dict:
@@ -85,10 +104,20 @@ def main() -> int:
         return 2
 
     holdout = evaluate_models(data, artifacts)
+    importance = compute_global_importance(data, artifacts)
     for target, artifact in artifacts.items():
         artifact.metadata["validation"]["holdout"] = holdout[target]
+        artifact.metadata["global_importance"] = importance[target]
         write_metadata(target, artifact.metadata)
     metrics = build_model_metrics(artifacts, holdout)
+    for target in TARGET_NAMES:
+        metrics[target]["global_importance"] = importance[target]
+        plot_global_importance(
+            importance[target]["features"],
+            target,
+            importance[target]["output_space"],
+            FIGURES_DIR / f"shap_global_{target.lower()}.png",
+        )
     write_json(METRICS_DIR / "model_metrics.json", metrics)
 
     plot_roc_curves(holdout, FIGURES_DIR / "roc_curves.png")
@@ -113,6 +142,8 @@ def main() -> int:
             f"accuracy {m['accuracy']:.3f} precision {m['precision']:.3f} recall {m['recall']:.3f} "
             f"F1 {m['f1']:.3f} Brier {m['brier']:.3f}"
         )
+        top = ", ".join(f["label"] for f in importance[target]["features"][:5])
+        print(f"   top global SHAP features: {top}")
     print(f"wrote {METRICS_DIR.relative_to(REPO_ROOT).as_posix()}/model_metrics.json and figures")
     return 0
 
