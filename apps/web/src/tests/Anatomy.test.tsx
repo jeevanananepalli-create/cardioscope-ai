@@ -179,9 +179,13 @@ describe("AnatomyViewer", () => {
     expect(screen.getByText("Loading anatomy…")).toBeInTheDocument();
     await userEvent.click(screen.getByText("asset loaded"));
     expect(screen.queryByText("Loading anatomy…")).not.toBeInTheDocument();
-    const credit = screen.getByRole("link", { name: /BodyParts3D/ });
-    expect(credit).toHaveTextContent(asset.attribution);
+    const credit = screen.getByRole("link", { name: asset.attribution });
     expect(credit).toHaveAttribute("href", "https://creativecommons.org/licenses/by-sa/2.1/jp/");
+    const contextCredit = screen.getByRole("link", { name: /Z-Anatomy/ });
+    expect(contextCredit).toHaveTextContent("CC BY-SA 4.0");
+    expect(contextCredit).toHaveTextContent("University of Dundee");
+    expect(contextCredit).toHaveAttribute("href", "https://creativecommons.org/licenses/by-sa/4.0/");
+    expect(screen.getByText(/Nerves are drawn thicker than life/)).toBeInTheDocument();
     expect(screen.getByText(/not this patient’s heart or vessels/)).toBeInTheDocument();
     expect(screen.getByText(/Only LAD, LCX and RCA are coloured by the models/)).toBeInTheDocument();
     expect(screen.queryByText(new RegExp(PLACEHOLDER_NOTICE.slice(0, 40)))).not.toBeInTheDocument();
@@ -200,15 +204,39 @@ describe("AnatomyViewer", () => {
     expect(screen.getByTestId("mesh-LAD")).toHaveAttribute("data-color", RISK_COLORS.very_high);
   });
 
-  it("offers the nervous system layer only when the asset has nerve meshes", async () => {
+  it("offers nervous system, skeleton and organ layers, off by default", async () => {
     enableWebgl();
-    render(<Harness vessels={null} />);
+    render(<Harness vessels={predictionFixture().vessels} />);
+    const scene = await screen.findByTestId("scene");
+    for (const name of [/Nervous system/, /Skeleton/, /Organs/]) {
+      const box = screen.getByRole("checkbox", { name });
+      expect(box).toBeEnabled();
+      expect(box).not.toBeChecked();
+    }
+    await userEvent.click(screen.getByRole("checkbox", { name: /Nervous system/ }));
+    await userEvent.click(screen.getByRole("checkbox", { name: /Skeleton/ }));
+    expect(scene).toHaveAttribute("data-layers", "arteries,nerves,skeleton");
+    // Context layers never change what the modelled vessels show.
+    expect(screen.getByTestId("mesh-LAD")).toHaveAttribute("data-color", RISK_COLORS.very_high);
+    expect(availableLayers(BODYPARTS3D_SOURCE)).toEqual({
+      arteries: true,
+      veins: true,
+      nerves: true,
+      skeleton: true,
+      organs: true,
+    });
+  });
+
+  it("disables a layer the asset does not have", async () => {
+    enableWebgl();
+    const source: AnatomySource = { ...BODYPARTS3D_SOURCE, layerAssets: {} };
+    render(<Harness vessels={null} source={source} />);
     await screen.findByTestId("scene");
     const nerves = screen.getByRole("checkbox", { name: /Nervous system/ });
     expect(nerves).toBeDisabled();
     expect(nerves).not.toBeChecked();
-    expect(screen.getByText("(not available yet)")).toBeInTheDocument();
-    expect(availableLayers(BODYPARTS3D_SOURCE)).toEqual({ arteries: true, veins: true, nerves: false });
+    expect(screen.getAllByText("(not available yet)")).toHaveLength(3);
+    expect(screen.queryByRole("link", { name: /Z-Anatomy/ })).not.toBeInTheDocument();
   });
 
   it("stays usable without WebGL", async () => {
@@ -248,6 +276,18 @@ describe("anatomy asset configuration", () => {
     );
     expect(asset.total_faces).toBeLessThan(200_000);
     expect(asset.file_bytes).toBeLessThan(6_000_000);
+  });
+
+  it("has a separate, lazily loaded file for each optional layer", () => {
+    const layers = BODYPARTS3D_SOURCE.layerAssets;
+    expect(Object.keys(layers).sort()).toEqual(["nerves", "organs", "skeleton"]);
+    expect(layers.nerves!.url).toBe("/models/anatomy/layer-nervous-system.glb");
+    expect(new Set(Object.values(layers).map((layer) => layer!.url)).size).toBe(3);
+    expect(Object.keys(asset.layers.nerves.nodes).sort()).toEqual(["cns", "peripheral_nerves"]);
+    for (const layer of Object.values(asset.layers)) {
+      expect(layer.attribution).toMatch(/Z-Anatomy.*CC BY-SA 4\.0/);
+      expect(layer.file_bytes).toBeLessThan(8_000_000);
+    }
   });
 
   it("references only nodes that exist in the built file", () => {

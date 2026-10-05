@@ -298,5 +298,118 @@
         "FMA7163": "skin"
       }
     }
+  },
+  "layers": {
+    "nerves": {
+      "url": "/models/anatomy/layer-nervous-system.glb",
+      "file_bytes": 5074392,
+      "nodes": {
+        "cns": {
+          "faces": 119152,
+          "source_faces": 914260,
+          "bounds": {
+            "min": [
+              -0.8185,
+              -2.3532,
+              -1.1561
+            ],
+            "max": [
+              0.4797,
+              4.0458,
+              0.3185
+            ],
+            "center": [
+              -0.1694,
+              0.8463,
+              -0.4188
+            ]
+          }
+        },
+        "peripheral_nerves": {
+          "faces": 89998,
+          "source_faces": 371396,
+          "bounds": {
+            "min": [
+              -3.5056,
+              -12.837,
+              -1.3792
+            ],
+            "max": [
+              3.1669,
+              3.4989,
+              1.0529
+            ],
+            "center": [
+              -0.1694,
+              -4.669,
+              -0.1631
+            ]
+          }
+        }
+      },
+      "source_name": "Z-Anatomy",
+      "attribution": "Z-Anatomy, the libre 3D atlas of anatomy, CC BY-SA 4.0, derived from BodyParts3D (© The Database Center for Life Science, CC BY-SA 2.1 Japan); cranial nerves adapted from “Cranial Nerves and Foramina” by University of Dundee, CAHID, CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    "skeleton": {
+      "url": "/models/anatomy/layer-skeleton.glb",
+      "file_bytes": 1691396,
+      "nodes": {
+        "skeleton": {
+          "faces": 69999,
+          "source_faces": 702015,
+          "bounds": {
+            "min": [
+              -3.5154,
+              -12.8109,
+              -1.3795
+            ],
+            "max": [
+              3.1767,
+              4.1553,
+              1.1206
+            ],
+            "center": [
+              -0.1694,
+              -4.3278,
+              -0.1294
+            ]
+          }
+        }
+      },
+      "source_name": "Z-Anatomy",
+      "attribution": "Z-Anatomy, the libre 3D atlas of anatomy, CC BY-SA 4.0, derived from BodyParts3D (© The Database Center for Life Science, CC BY-SA 2.1 Japan); cranial nerves adapted from “Cranial Nerves and Foramina” by University of Dundee, CAHID, CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    "organs": {
+      "url": "/models/anatomy/layer-organs.glb",
+      "file_bytes": 873232,
+      "nodes": {
+        "organs": {
+          "faces": 36000,
+          "source_faces": 327971,
+          "bounds": {
+            "min": [
+              -1.4798,
+              -5.6348,
+              -1.0855
+            ],
+            "max": [
+              1.13,
+              3.2951,
+              0.8126
+            ],
+            "center": [
+              -0.1749,
+              -1.1698,
+              -0.1365
+            ]
+          }
+        }
+      },
+      "source_name": "Z-Anatomy",
+      "attribution": "Z-Anatomy, the libre 3D atlas of anatomy, CC BY-SA 4.0, derived from BodyParts3D (© The Database Center for Life Science, CC BY-SA 2.1 Japan); cranial nerves adapted from “Cranial Nerves and Foramina” by University of Dundee, CAHID, CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
   }
 }

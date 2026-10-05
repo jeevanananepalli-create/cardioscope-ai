@@ -20,7 +20,7 @@ interface GltfAnatomyProps {
   onLoaded: () => void;
 }
 
-type Role = "heart" | "body" | "arteries" | "pulmonary" | "veins" | "nerves" | "neutralCoronary" | "vessel" | "hit";
+type Role = "heart" | "body" | "arteries" | "pulmonary" | "veins" | "neutralCoronary" | "vessel" | "hit";
 
 function isMesh(object: Object3D): object is Mesh {
   return (object as Mesh).isMesh === true;
@@ -49,8 +49,6 @@ function contextMaterial(role: Role): Material {
       return new MeshStandardMaterial({ color: "#a9b8d0", roughness: 0.55 });
     case "veins":
       return new MeshStandardMaterial({ color: "#8697b6", roughness: 0.55 });
-    case "nerves":
-      return new MeshStandardMaterial({ color: "#d9cf9a", roughness: 0.6 });
     case "neutralCoronary":
       return new MeshStandardMaterial({ color: "#d3d8de", roughness: 0.45 });
     case "hit":
@@ -88,7 +86,6 @@ export function GltfAnatomy({
     for (const name of nodes.body) roles.set(name, "body");
     for (const name of nodes.arteries) roles.set(name, name.includes("pulmonary") ? "pulmonary" : "arteries");
     for (const name of nodes.veins) roles.set(name, "veins");
-    for (const name of nodes.nerves) roles.set(name, "nerves");
     for (const name of nodes.neutralCoronary) roles.set(name, "neutralCoronary");
     for (const vessel of VESSELS) {
       for (const name of nodes.vessels[vessel]) {
@@ -141,7 +138,6 @@ export function GltfAnatomy({
       if (role === "body") object.visible = showBody;
       else if (role === "arteries" || role === "pulmonary") object.visible = layers.arteries;
       else if (role === "veins") object.visible = layers.veins;
-      else if (role === "nerves") object.visible = layers.nerves;
       if (role !== "vessel" && role !== "hit") return;
       const vessel = object.userData.vessel as VesselName;
       const material = object.material as MeshStandardMaterial;

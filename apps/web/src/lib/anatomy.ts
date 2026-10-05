@@ -3,6 +3,7 @@ import asset from "@/lib/anatomyAsset.json";
 import type {
   AnatomySource,
   CameraView,
+  ContextLayerName,
   GltfAnatomySource,
   LayerVisibility,
   Point3,
@@ -10,6 +11,20 @@ import type {
   VesselVisualStates,
 } from "@/types/anatomy";
 import { type RiskCategory, type TargetPrediction, type VesselName, VESSELS } from "@/types/prediction";
+
+export const CONTEXT_LAYERS: ContextLayerName[] = ["nerves", "skeleton", "organs"];
+
+function contextLayerAssets(): GltfAnatomySource["layerAssets"] {
+  const built = asset.layers as Partial<
+    Record<ContextLayerName, { url: string; attribution: string; license_url: string }>
+  >;
+  const assets: GltfAnatomySource["layerAssets"] = {};
+  for (const name of CONTEXT_LAYERS) {
+    const entry = built[name];
+    if (entry) assets[name] = { url: entry.url, attribution: entry.attribution, licenseUrl: entry.license_url };
+  }
+  return assets;
+}
 
 /**
  * Real anatomy built from BodyParts3D by scripts/anatomy/build_anatomy.py. The node
@@ -28,8 +43,6 @@ export const BODYPARTS3D_SOURCE: GltfAnatomySource = {
     body: ["skin"],
     arteries: ["arteries", "pulmonary_artery"],
     veins: ["veins"],
-    // No nerve meshes yet: BodyParts3D has none. Filled in when a nerve asset is added.
-    nerves: [],
     neutralCoronary: ["coronary_left_main"],
     vessels: {
       LAD: [asset.vessels.LAD.node],
@@ -42,6 +55,8 @@ export const BODYPARTS3D_SOURCE: GltfAnatomySource = {
       RCA: [asset.vessels.RCA.hit_node],
     },
   },
+  // Nervous system, skeleton and organs come from Z-Anatomy, one file per layer.
+  layerAssets: contextLayerAssets(),
   labelAnchors: {
     LAD: asset.vessels.LAD.label_anchor as Point3,
     LCX: asset.vessels.LCX.label_anchor as Point3,
@@ -59,6 +74,8 @@ export const ANATOMY_SOURCE: AnatomySource = BODYPARTS3D_SOURCE;
 
 export const REFERENCE_ANATOMY_NOTICE =
   "Generic reference anatomy of one adult, not this patient’s heart or vessels.";
+
+export const NERVE_THICKNESS_NOTICE = "Nerves are drawn thicker than life so they can be seen.";
 
 export const PLACEHOLDER_NOTICE =
   "Schematic placeholder anatomy. Shapes and vessel paths are illustrative and not anatomically accurate.";
@@ -202,14 +219,24 @@ export function cameraFor(source: AnatomySource): Record<ViewMode, CameraView> {
   return source.kind === "gltf" ? source.camera : CAMERA_BY_MODE;
 }
 
-export const DEFAULT_LAYERS: LayerVisibility = { arteries: true, veins: false, nerves: false };
+export const DEFAULT_LAYERS: LayerVisibility = {
+  arteries: true,
+  veins: false,
+  nerves: false,
+  skeleton: false,
+  organs: false,
+};
 
 /** Layers the given source actually has meshes for. */
 export function availableLayers(source: AnatomySource): LayerVisibility {
-  if (source.kind !== "gltf") return { arteries: false, veins: false, nerves: false };
+  if (source.kind !== "gltf") {
+    return { arteries: false, veins: false, nerves: false, skeleton: false, organs: false };
+  }
   return {
     arteries: source.nodes.arteries.length > 0,
     veins: source.nodes.veins.length > 0,
-    nerves: source.nodes.nerves.length > 0,
+    nerves: Boolean(source.layerAssets.nerves),
+    skeleton: Boolean(source.layerAssets.skeleton),
+    organs: Boolean(source.layerAssets.organs),
   };
 }

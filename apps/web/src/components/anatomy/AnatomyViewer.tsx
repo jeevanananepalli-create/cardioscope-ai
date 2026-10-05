@@ -8,6 +8,8 @@ import type { AnatomyState } from "@/hooks/useAnatomy";
 import {
   ANATOMY_SOURCE,
   availableLayers,
+  CONTEXT_LAYERS,
+  NERVE_THICKNESS_NOTICE,
   PLACEHOLDER_NOTICE,
   REFERENCE_ANATOMY_NOTICE,
   vesselVisualStates,
@@ -38,6 +40,8 @@ const LAYERS: { key: AnatomyLayer; label: string }[] = [
   { key: "arteries", label: "Arteries" },
   { key: "veins", label: "Veins" },
   { key: "nerves", label: "Nervous system" },
+  { key: "skeleton", label: "Skeleton" },
+  { key: "organs", label: "Organs" },
 ];
 
 const PLACEHOLDER: AnatomySource = { kind: "placeholder" };
@@ -67,6 +71,10 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
   const layersAvailable = useMemo(() => availableLayers(active), [active]);
   const handleAssetError = useCallback(() => setAssetFailed(true), []);
   const handleAssetLoaded = useCallback(() => setAssetLoaded(true), []);
+  const contextCredit =
+    active.kind === "gltf"
+      ? (CONTEXT_LAYERS.map((name) => active.layerAssets[name]).find(Boolean) ?? null)
+      : null;
   const loadingAsset = canRender === true && active.kind === "gltf" && !assetLoaded;
 
   const unavailable = (
@@ -204,6 +212,20 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
               active.attribution
             )}
             .
+            {contextCredit ? (
+              <>
+                {" "}
+                Nervous system, skeleton and organs:{" "}
+                {contextCredit.licenseUrl ? (
+                  <a href={contextCredit.licenseUrl} target="_blank" rel="noreferrer">
+                    {contextCredit.attribution}
+                  </a>
+                ) : (
+                  contextCredit.attribution
+                )}
+                . {NERVE_THICKNESS_NOTICE} The two sources are aligned to within a few millimetres.
+              </>
+            ) : null}
           </>
         ) : null}
       </p>

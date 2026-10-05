@@ -44,3 +44,6 @@ Thumbs.db
 
 # Raw third-party anatomy meshes (downloaded by scripts/anatomy/, never committed)
 assets/anatomy/raw/
+
+# Local build tools (portable Blender for anatomy export)
+.tools/

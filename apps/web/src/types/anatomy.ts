@@ -5,7 +5,15 @@ export type ViewMode = "heart" | "torso";
 export type Point3 = [number, number, number];
 
 /** Optional anatomy layers the user can show or hide. None of them carries model output. */
-export type AnatomyLayer = "arteries" | "veins" | "nerves";
+export type AnatomyLayer = "arteries" | "veins" | "nerves" | "skeleton" | "organs";
+/** Layers that live in their own file and are downloaded only when switched on. */
+export type ContextLayerName = "nerves" | "skeleton" | "organs";
+
+export interface ContextLayerAsset {
+  url: string;
+  attribution: string;
+  licenseUrl?: string;
+}
 export type LayerVisibility = Record<AnatomyLayer, boolean>;
 
 export interface CameraView {
@@ -40,13 +48,14 @@ export interface GltfAnatomySource {
     body: string[];
     arteries: string[];
     veins: string[];
-    nerves: string[];
     /** Coronary segments that no model predicts (drawn neutral). */
     neutralCoronary: string[];
     vessels: Record<VesselName, string[]>;
     /** Invisible, enlarged copies of the vessels used only for pointing. */
     hit: Record<VesselName, string[]>;
   };
+  /** Optional layers stored in separate files. A missing entry means "not available". */
+  layerAssets: Partial<Record<ContextLayerName, ContextLayerAsset>>;
   /** A point on each vessel where its label is pinned, and the heart's centre. */
   labelAnchors: Record<VesselName, Point3>;
   heartCenter: Point3;

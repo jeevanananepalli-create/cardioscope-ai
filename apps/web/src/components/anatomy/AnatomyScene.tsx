@@ -14,12 +14,13 @@ import {
 } from "react";
 import { type Group, Vector3 } from "three";
 
+import { ContextLayer } from "@/components/anatomy/ContextLayer";
 import { CoronaryArteries } from "@/components/anatomy/CoronaryArteries";
 import { GltfAnatomy } from "@/components/anatomy/GltfAnatomy";
 import { HeartModel } from "@/components/anatomy/HeartModel";
 import { HumanBody } from "@/components/anatomy/HumanBody";
 import { VesselTooltip } from "@/components/anatomy/VesselTooltip";
-import { cameraFor, vesselLabelAnchor } from "@/lib/anatomy";
+import { cameraFor, CONTEXT_LAYERS, vesselLabelAnchor } from "@/lib/anatomy";
 import type { AnatomySceneProps, CameraView, Point3 } from "@/types/anatomy";
 import { type VesselName, VESSELS } from "@/types/prediction";
 
@@ -112,6 +113,19 @@ const PLACEHOLDER_ANCHORS: Record<VesselName, Point3> = {
 };
 const ORIGIN: Point3 = [0, 0, 0];
 
+/** A context layer that fails to load is simply not drawn; the rest of the scene carries on. */
+class LayerBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
 /** If a supplied asset fails to load or render, draw the placeholder and report it once. */
 class AssetBoundary extends Component<
   { fallback: ReactNode; onError: () => void; children: ReactNode },
@@ -198,7 +212,21 @@ export default function AnatomyScene({
               <LabelProjector labels={labels} anchors={source.labelAnchors} center={source.heartCenter} />
             </Suspense>
           </AssetBoundary>
-        ) : (
+        ) : null}
+        {source.kind === "gltf"
+          ? CONTEXT_LAYERS.map((name) => {
+              const layerAsset = source.layerAssets[name];
+              if (!layerAsset || !layers[name]) return null;
+              return (
+                <LayerBoundary key={name}>
+                  <Suspense fallback={null}>
+                    <ContextLayer layer={name} url={layerAsset.url} />
+                  </Suspense>
+                </LayerBoundary>
+              );
+            })
+          : null}
+        {source.kind === "gltf" ? null : (
           placeholder
         )}
       </Canvas>
