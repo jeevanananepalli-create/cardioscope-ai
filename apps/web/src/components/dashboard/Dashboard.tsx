@@ -1,25 +1,32 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AnatomyViewer } from "@/components/anatomy/AnatomyViewer";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { EmptyState, Notice } from "@/components/common/Notice";
 import { Panel } from "@/components/common/Panel";
+import { Tabs } from "@/components/common/Tabs";
 import { ClinicalMeasurements } from "@/components/dashboard/ClinicalMeasurements";
 import { PatientForm } from "@/components/dashboard/PatientForm";
 import { RiskLegend } from "@/components/dashboard/RiskLegend";
 import { RiskOverview } from "@/components/dashboard/RiskOverview";
 import { SafetyDisclaimer } from "@/components/dashboard/SafetyDisclaimer";
 import { VesselRiskCards } from "@/components/dashboard/VesselRiskCards";
+import { ExplanationPanel } from "@/components/explainability/ExplanationPanel";
+import { VesselExplanation } from "@/components/explainability/VesselExplanation";
 import { AppHeader, type ServiceStatus } from "@/components/layout/AppHeader";
 import { useAnatomy } from "@/hooks/useAnatomy";
+import { useExplanation } from "@/hooks/useExplanation";
 import { type PredictionFailure, usePrediction } from "@/hooks/usePrediction";
 import { useServiceData } from "@/hooks/useServiceData";
 import type { Api } from "@/lib/api";
 import { FALLBACK_RISK_CATEGORIES } from "@/lib/constants";
 import { emptyFormValues, typicalFormValues, validatePatient } from "@/lib/validation";
 import type { FeatureSchema, FieldErrors, FormValues } from "@/types/patient";
+import type { TargetName } from "@/types/prediction";
+
+type BottomTab = "why" | "measurements";
 
 interface DashboardProps {
   /** Injected in tests; defaults to the real API client. */
@@ -53,6 +60,16 @@ export function Dashboard({ api }: DashboardProps) {
   const [values, setValues] = useState<FormValues | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [edited, setEdited] = useState(false);
+  const [bottomTab, setBottomTab] = useState<BottomTab>("why");
+  const [explainTarget, setExplainTarget] = useState<TargetName>("CAD");
+  // One explanation request per prediction, covering all four models.
+  const explanation = useExplanation(prediction.features, true, api);
+
+  // Selecting a vessel in the 3D view points the explanation at that vessel's model.
+  const selectedVessel = anatomy.selected;
+  useEffect(() => {
+    if (selectedVessel) setExplainTarget(selectedVessel);
+  }, [selectedVessel]);
 
   const schema = data.state === "ready" ? data.schema : null;
   const modelInfo = data.state === "ready" ? data.modelInfo : null;
@@ -214,11 +231,31 @@ export function Dashboard({ api }: DashboardProps) {
           <Panel title="Vessel risk" subtitle="Predicted stenosis probability per vessel">
             <ErrorBoundary label="The vessel predictions">
               {result ? (
-                <VesselRiskCards vessels={result.vessels} categories={categories} metadata={modelInfo?.targets} />
+                <VesselRiskCards
+                  vessels={result.vessels}
+                  categories={categories}
+                  metadata={modelInfo?.targets}
+                  selected={anatomy.selected}
+                  onSelect={anatomy.toggle}
+                />
               ) : (
                 <EmptyState title="LAD · LCX · RCA">Vessel predictions appear after analysis.</EmptyState>
               )}
               <RiskLegend categories={categories} note={modelInfo?.risk_category_note} />
+            </ErrorBoundary>
+          </Panel>
+
+          <Panel title="Selected vessel" subtitle="Prediction and top contributors">
+            <ErrorBoundary label="The vessel details">
+              <VesselExplanation
+                vessel={anatomy.selected}
+                prediction={result}
+                explanation={explanation}
+                categories={categories}
+                metadata={anatomy.selected ? modelInfo?.targets[anatomy.selected] : undefined}
+                onShowFullExplanation={() => setBottomTab("why")}
+                schema={schema}
+              />
             </ErrorBoundary>
           </Panel>
 
@@ -235,17 +272,48 @@ export function Dashboard({ api }: DashboardProps) {
       </main>
 
       <div className="bottom">
-        <Panel title="Clinical measurements" subtitle="Inputs used for the current prediction">
-          <ErrorBoundary label="The measurements table">
-            {result && prediction.features && schema ? (
-              <ClinicalMeasurements schema={schema} features={prediction.features} derived={result.derived_features} />
-            ) : (
-              <EmptyState title="No measurements to show">
-                The values used for a prediction are listed here after analysis.
-              </EmptyState>
-            )}
-          </ErrorBoundary>
-        </Panel>
+        <section className="panel" aria-label="Analysis details">
+          <Tabs
+            label="Analysis details"
+            items={[
+              { key: "why", label: "Why this prediction?" },
+              { key: "measurements", label: "Clinical measurements" },
+            ]}
+            active={bottomTab}
+            onChange={setBottomTab}
+          >
+            {bottomTab === "why" ? (
+              <ErrorBoundary label="The explanation">
+                <ExplanationPanel
+                  state={explanation}
+                  prediction={result}
+                  target={explainTarget}
+                  onTargetChange={setExplainTarget}
+                  onRetry={explanation.retry}
+                  schema={schema}
+                />
+              </ErrorBoundary>
+            ) : null}
+            {bottomTab === "measurements" ? (
+              <ErrorBoundary label="The measurements table">
+                {result && prediction.features && schema ? (
+                  <ClinicalMeasurements
+                    schema={schema}
+                    features={prediction.features}
+                    derived={result.derived_features}
+                    highlight={explanation.explanation?.explanations[explainTarget]?.contributions
+                      .slice(0, 5)
+                      .map((contribution) => contribution.feature)}
+                  />
+                ) : (
+                  <EmptyState title="No measurements to show">
+                    The values used for a prediction are listed here after analysis.
+                  </EmptyState>
+                )}
+              </ErrorBoundary>
+            ) : null}
+          </Tabs>
+        </section>
       </div>
 
       <footer className="app-footer">

@@ -67,7 +67,9 @@ describe("Dashboard", () => {
 
   it("lists the measurements used and the API-derived BMI after analysis", async () => {
     await loadAndAnalyze();
-    const table = within(await screen.findByRole("region", { name: "Clinical measurements" }));
+    await screen.findByTestId("cad-probability");
+    await userEvent.click(screen.getByRole("tab", { name: "Clinical measurements" }));
+    const table = within(screen.getByRole("tabpanel", { name: "Clinical measurements" }));
     expect(table.getByRole("rowheader", { name: "Age" })).toBeInTheDocument();
     expect(table.getByRole("rowheader", { name: /Body mass index/ })).toBeInTheDocument();
     expect(table.getByText("27.2")).toBeInTheDocument();
