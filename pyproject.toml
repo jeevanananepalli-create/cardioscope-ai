@@ -24,3 +24,12 @@ testpaths = ["ml/tests", "apps/api/tests"]
 markers = [
     "requires_dataset: test needs the real Z-Alizadeh Sani dataset in ml/data/raw/",
 ]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# The repository is run from its root (`python -m ml.scripts...`, `uvicorn apps.api.app.main:app`),
+# not installed as a package. `pip install -e .` is used only to install the dependencies above.
+[tool.setuptools]
+packages = []

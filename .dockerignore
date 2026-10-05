@@ -1,0 +1,14 @@
+.git
+.venv
+.tools
+**/__pycache__
+**/node_modules
+apps/web
+assets
+docs
+ml/data
+ml/models
+ml/reports/figures
+ml/reports/model_comparison
+ml/tests
+tests

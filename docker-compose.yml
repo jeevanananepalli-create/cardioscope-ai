@@ -1,0 +1,28 @@
+# CardioScope AI — API and dashboard.
+#
+# Before `docker compose up --build`, train the models on the host so that ml/models/
+# exists (see README): they are mounted into the API container read-only.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      CARDIOSCOPE_CORS_ORIGINS: "http://localhost:3000,http://127.0.0.1:3000"
+      CARDIOSCOPE_RISK_THRESHOLDS: "0.25,0.50,0.75"
+      CARDIOSCOPE_LOG_LEVEL: "INFO"
+    volumes:
+      - ./ml/models:/app/ml/models:ro
+
+  frontend:
+    build:
+      context: apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: "http://localhost:8000/api/v1"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
