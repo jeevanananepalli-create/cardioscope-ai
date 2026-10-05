@@ -20,8 +20,10 @@ selection:
   primary_metric: roc_auc
   # Candidates within this ROC-AUC of the best are treated as equivalent ...
   tolerance: 0.01
-  # ... and the tie is broken by this metric (lower is better), then by simplicity.
-  tie_breaker: brier
+  # ... of those, keep the ones within this Brier score of the best (lower is better) ...
+  secondary_metric: brier
+  secondary_tolerance: 0.005
+  # ... and choose the simplest algorithm (see `simplicity` in models.yaml).
 
 calibration:
   methods: [sigmoid, isotonic]

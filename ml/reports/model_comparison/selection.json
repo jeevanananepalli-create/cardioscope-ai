@@ -1,0 +1,242 @@
+{
+  "CAD": {
+    "selected": "xgboost[max_depth=2|weights=none]",
+    "algorithm": "xgboost",
+    "reason": "best mean CV roc_auc is 0.930 (xgboost[max_depth=2|weights=none]); 9 of 22 candidates are within 0.01 of it and 2 of those are also within 0.005 of the best brier (0.089). The simplest of these is xgboost[max_depth=2|weights=none] (roc_auc 0.930, brier 0.089).",
+    "best_primary_candidate": "xgboost[max_depth=2|weights=none]",
+    "n_candidates": 22,
+    "eligible": [
+      "xgboost[max_depth=2|weights=none]",
+      "xgboost[max_depth=3|weights=none]"
+    ],
+    "cv_summary": {
+      "accuracy": {
+        "mean": 0.8916836734693878,
+        "std": 0.0339296370009815
+      },
+      "balanced_accuracy": {
+        "mean": 0.849310924369748,
+        "std": 0.04548483154746795
+      },
+      "precision": {
+        "mean": 0.9034036602581494,
+        "std": 0.03010936439886493
+      },
+      "recall": {
+        "mean": 0.9500504201680673,
+        "std": 0.030824494668255757
+      },
+      "specificity": {
+        "mean": 0.7485714285714284,
+        "std": 0.08278732690816049
+      },
+      "f1": {
+        "mean": 0.9257482201814372,
+        "std": 0.023397368665166115
+      },
+      "roc_auc": {
+        "mean": 0.9301296518607443,
+        "std": 0.03724912374507976
+      },
+      "brier": {
+        "mean": 0.08933822974784199,
+        "std": 0.021396258035468282
+      },
+      "log_loss": {
+        "mean": 0.3017044587421575,
+        "std": 0.06393362619731907
+      },
+      "train_roc_auc": {
+        "mean": 0.9994185519336264,
+        "std": 0.0003891290472357439
+      }
+    },
+    "rule": {
+      "primary_metric": "roc_auc",
+      "tolerance": 0.01,
+      "secondary_metric": "brier",
+      "secondary_tolerance": 0.005
+    }
+  },
+  "LAD": {
+    "selected": "random_forest[min_samples_leaf=5|weights=none]",
+    "algorithm": "random_forest",
+    "reason": "best mean CV roc_auc is 0.860 (random_forest[min_samples_leaf=5|weights=none]); 6 of 22 candidates are within 0.01 of it and 5 of those are also within 0.005 of the best brier (0.162). The simplest of these is random_forest[min_samples_leaf=5|weights=none] (roc_auc 0.860, brier 0.166).",
+    "best_primary_candidate": "random_forest[min_samples_leaf=5|weights=none]",
+    "n_candidates": 22,
+    "eligible": [
+      "random_forest[min_samples_leaf=1|weights=balanced]",
+      "random_forest[min_samples_leaf=1|weights=none]",
+      "random_forest[min_samples_leaf=3|weights=balanced]",
+      "random_forest[min_samples_leaf=3|weights=none]",
+      "random_forest[min_samples_leaf=5|weights=none]"
+    ],
+    "cv_summary": {
+      "accuracy": {
+        "mean": 0.7925850340136055,
+        "std": 0.05278828990948674
+      },
+      "balanced_accuracy": {
+        "mean": 0.7712019704433497,
+        "std": 0.0585509700845418
+      },
+      "precision": {
+        "mean": 0.7814695465344553,
+        "std": 0.05888448356652875
+      },
+      "recall": {
+        "mean": 0.9021182266009852,
+        "std": 0.06079982450101603
+      },
+      "specificity": {
+        "mean": 0.6402857142857142,
+        "std": 0.11774870753206769
+      },
+      "f1": {
+        "mean": 0.8353615182496129,
+        "std": 0.04123231160846825
+      },
+      "roc_auc": {
+        "mean": 0.8603645320197043,
+        "std": 0.05359861334010429
+      },
+      "brier": {
+        "mean": 0.16630631811548396,
+        "std": 0.015308685967478848
+      },
+      "log_loss": {
+        "mean": 0.5130537702168979,
+        "std": 0.03300902637807741
+      },
+      "train_roc_auc": {
+        "mean": 0.9931111969533798,
+        "std": 0.0014838521447653925
+      }
+    },
+    "rule": {
+      "primary_metric": "roc_auc",
+      "tolerance": 0.01,
+      "secondary_metric": "brier",
+      "secondary_tolerance": 0.005
+    }
+  },
+  "LCX": {
+    "selected": "random_forest[min_samples_leaf=5|weights=none]",
+    "algorithm": "random_forest",
+    "reason": "best mean CV roc_auc is 0.742 (random_forest[min_samples_leaf=5|weights=none]); 7 of 22 candidates are within 0.01 of it and 4 of those are also within 0.005 of the best brier (0.206). The simplest of these is random_forest[min_samples_leaf=5|weights=none] (roc_auc 0.742, brier 0.207).",
+    "best_primary_candidate": "random_forest[min_samples_leaf=5|weights=none]",
+    "n_candidates": 22,
+    "eligible": [
+      "random_forest[min_samples_leaf=3|weights=none]",
+      "random_forest[min_samples_leaf=5|weights=none]",
+      "xgboost[max_depth=2|weights=balanced]",
+      "xgboost[max_depth=2|weights=none]"
+    ],
+    "cv_summary": {
+      "accuracy": {
+        "mean": 0.6578231292517006,
+        "std": 0.03963461584218088
+      },
+      "balanced_accuracy": {
+        "mean": 0.5909937487396653,
+        "std": 0.04759119066362826
+      },
+      "precision": {
+        "mean": 0.6431406501994738,
+        "std": 0.12872285896831834
+      },
+      "recall": {
+        "mean": 0.2899415204678363,
+        "std": 0.10701741070944754
+      },
+      "specificity": {
+        "mean": 0.8920459770114942,
+        "std": 0.05335954402838834
+      },
+      "f1": {
+        "mean": 0.38800679901671337,
+        "std": 0.1043469217272075
+      },
+      "roc_auc": {
+        "mean": 0.7422017879948914,
+        "std": 0.050998960978660315
+      },
+      "brier": {
+        "mean": 0.20690646147484354,
+        "std": 0.01018138132311146
+      },
+      "log_loss": {
+        "mean": 0.5999176053015236,
+        "std": 0.021464022899270033
+      },
+      "train_roc_auc": {
+        "mean": 0.9940635701916806,
+        "std": 0.0019076619745772212
+      }
+    },
+    "rule": {
+      "primary_metric": "roc_auc",
+      "tolerance": 0.01,
+      "secondary_metric": "brier",
+      "secondary_tolerance": 0.005
+    }
+  },
+  "RCA": {
+    "selected": "logistic_regression[C=0.1|weights=none]",
+    "algorithm": "logistic_regression",
+    "reason": "best mean CV roc_auc is 0.743 (logistic_regression[C=0.1|weights=balanced]); 4 of 22 candidates are within 0.01 of it and 1 of those are also within 0.005 of the best brier (0.201). The simplest of these is logistic_regression[C=0.1|weights=none] (roc_auc 0.741, brier 0.201).",
+    "best_primary_candidate": "logistic_regression[C=0.1|weights=balanced]",
+    "n_candidates": 22,
+    "eligible": [
+      "logistic_regression[C=0.1|weights=none]"
+    ],
+    "cv_summary": {
+      "accuracy": {
+        "mean": 0.6750850340136054,
+        "std": 0.051782822722722666
+      },
+      "balanced_accuracy": {
+        "mean": 0.6294831163931334,
+        "std": 0.05867353336437544
+      },
+      "precision": {
+        "mean": 0.5954709208919735,
+        "std": 0.08713674778929799
+      },
+      "recall": {
+        "mean": 0.44584795321637427,
+        "std": 0.11823475828566479
+      },
+      "specificity": {
+        "mean": 0.8131182795698925,
+        "std": 0.0698600696873748
+      },
+      "f1": {
+        "mean": 0.502236991020133,
+        "std": 0.09189560094102488
+      },
+      "roc_auc": {
+        "mean": 0.7413636420801106,
+        "std": 0.058155774656671155
+      },
+      "brier": {
+        "mean": 0.20072617243641044,
+        "std": 0.022415100510414267
+      },
+      "log_loss": {
+        "mean": 0.5832023792659983,
+        "std": 0.05230335844693401
+      },
+      "train_roc_auc": {
+        "mean": 0.866395914311232,
+        "std": 0.01257841724648184
+      }
+    },
+    "rule": {
+      "primary_metric": "roc_auc",
+      "tolerance": 0.01,
+      "secondary_metric": "brier",
+      "secondary_tolerance": 0.005
+    }
+  }
+}

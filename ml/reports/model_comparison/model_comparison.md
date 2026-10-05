@@ -8,7 +8,7 @@ Repeated stratified 5-fold cross-validation, 5 repeats (25 folds), on the 242-re
 
 | Candidate | roc_auc | brier | accuracy | balanced_accuracy | precision | recall | f1 | train AUC |
 |---|---|---|---|---|---|---|---|---|
-| xgboost[max_depth=2|weights=none] | 0.930 ± 0.037 | 0.089 ± 0.021 | 0.892 ± 0.034 | 0.849 ± 0.045 | 0.903 ± 0.030 | 0.950 ± 0.031 | 0.926 ± 0.023 | 0.999 |
+| **xgboost[max_depth=2|weights=none]** (selected) | 0.930 ± 0.037 | 0.089 ± 0.021 | 0.892 ± 0.034 | 0.849 ± 0.045 | 0.903 ± 0.030 | 0.950 ± 0.031 | 0.926 ± 0.023 | 0.999 |
 | random_forest[min_samples_leaf=5|weights=none] | 0.927 ± 0.027 | 0.119 ± 0.009 | 0.849 ± 0.042 | 0.767 ± 0.066 | 0.849 ± 0.041 | 0.960 ± 0.032 | 0.901 ± 0.026 | 0.996 |
 | random_forest[min_samples_leaf=3|weights=balanced] | 0.926 ± 0.030 | 0.119 ± 0.013 | 0.883 ± 0.033 | 0.860 ± 0.044 | 0.922 ± 0.033 | 0.915 ± 0.045 | 0.918 ± 0.024 | 1.000 |
 | xgboost[max_depth=2|weights=balanced] | 0.926 ± 0.035 | 0.095 ± 0.023 | 0.882 ± 0.040 | 0.864 ± 0.044 | 0.927 ± 0.029 | 0.906 ± 0.047 | 0.915 ± 0.030 | 0.999 |
@@ -31,11 +31,13 @@ Repeated stratified 5-fold cross-validation, 5 repeats (25 folds), on the 242-re
 | svm[C=0.3|weights=none] | 0.898 ± 0.046 | 0.115 ± 0.029 | 0.846 ± 0.056 | 0.816 ± 0.074 | 0.898 ± 0.050 | 0.886 ± 0.056 | 0.891 ± 0.039 | 0.984 |
 | svm[C=0.3|weights=balanced] | 0.878 ± 0.059 | 0.125 ± 0.029 | 0.833 ± 0.061 | 0.779 ± 0.076 | 0.866 ± 0.047 | 0.907 ± 0.060 | 0.885 ± 0.043 | 0.966 |
 
+Selection: best mean CV roc_auc is 0.930 (xgboost[max_depth=2|weights=none]); 9 of 22 candidates are within 0.01 of it and 2 of those are also within 0.005 of the best brier (0.089). The simplest of these is xgboost[max_depth=2|weights=none] (roc_auc 0.930, brier 0.089).
+
 ## LAD
 
 | Candidate | roc_auc | brier | accuracy | balanced_accuracy | precision | recall | f1 | train AUC |
 |---|---|---|---|---|---|---|---|---|
-| random_forest[min_samples_leaf=5|weights=none] | 0.860 ± 0.054 | 0.166 ± 0.015 | 0.793 ± 0.053 | 0.771 ± 0.059 | 0.781 ± 0.059 | 0.902 ± 0.061 | 0.835 ± 0.041 | 0.993 |
+| **random_forest[min_samples_leaf=5|weights=none]** (selected) | 0.860 ± 0.054 | 0.166 ± 0.015 | 0.793 ± 0.053 | 0.771 ± 0.059 | 0.781 ± 0.059 | 0.902 ± 0.061 | 0.835 ± 0.041 | 0.993 |
 | random_forest[min_samples_leaf=3|weights=none] | 0.860 ± 0.054 | 0.163 ± 0.016 | 0.792 ± 0.054 | 0.771 ± 0.059 | 0.782 ± 0.060 | 0.901 ± 0.067 | 0.834 ± 0.043 | 1.000 |
 | random_forest[min_samples_leaf=1|weights=balanced] | 0.860 ± 0.049 | 0.162 ± 0.016 | 0.802 ± 0.042 | 0.792 ± 0.049 | 0.819 ± 0.066 | 0.858 ± 0.058 | 0.835 ± 0.034 | 1.000 |
 | random_forest[min_samples_leaf=5|weights=balanced] | 0.860 ± 0.050 | 0.168 ± 0.015 | 0.793 ± 0.050 | 0.784 ± 0.052 | 0.817 ± 0.062 | 0.837 ± 0.080 | 0.824 ± 0.045 | 0.994 |
@@ -58,11 +60,13 @@ Repeated stratified 5-fold cross-validation, 5 repeats (25 folds), on the 242-re
 | svm[C=3.0|weights=balanced] | 0.791 ± 0.052 | 0.182 ± 0.019 | 0.731 ± 0.047 | 0.710 ± 0.051 | 0.740 ± 0.047 | 0.836 ± 0.075 | 0.783 ± 0.040 | 1.000 |
 | svm[C=3.0|weights=none] | 0.789 ± 0.053 | 0.182 ± 0.019 | 0.729 ± 0.044 | 0.708 ± 0.049 | 0.738 ± 0.050 | 0.839 ± 0.074 | 0.782 ± 0.037 | 1.000 |
 
+Selection: best mean CV roc_auc is 0.860 (random_forest[min_samples_leaf=5|weights=none]); 6 of 22 candidates are within 0.01 of it and 5 of those are also within 0.005 of the best brier (0.162). The simplest of these is random_forest[min_samples_leaf=5|weights=none] (roc_auc 0.860, brier 0.166).
+
 ## LCX
 
 | Candidate | roc_auc | brier | accuracy | balanced_accuracy | precision | recall | f1 | train AUC |
 |---|---|---|---|---|---|---|---|---|
-| random_forest[min_samples_leaf=5|weights=none] | 0.742 ± 0.051 | 0.207 ± 0.010 | 0.658 ± 0.040 | 0.591 ± 0.048 | 0.643 ± 0.129 | 0.290 ± 0.107 | 0.388 ± 0.104 | 0.994 |
+| **random_forest[min_samples_leaf=5|weights=none]** (selected) | 0.742 ± 0.051 | 0.207 ± 0.010 | 0.658 ± 0.040 | 0.591 ± 0.048 | 0.643 ± 0.129 | 0.290 ± 0.107 | 0.388 ± 0.104 | 0.994 |
 | random_forest[min_samples_leaf=3|weights=none] | 0.740 ± 0.053 | 0.206 ± 0.012 | 0.668 ± 0.041 | 0.609 ± 0.040 | 0.651 ± 0.107 | 0.343 ± 0.080 | 0.441 ± 0.077 | 1.000 |
 | xgboost[max_depth=2|weights=none] | 0.737 ± 0.051 | 0.207 ± 0.022 | 0.675 ± 0.047 | 0.642 ± 0.047 | 0.609 ± 0.085 | 0.492 ± 0.090 | 0.538 ± 0.071 | 0.996 |
 | random_forest[min_samples_leaf=5|weights=balanced] | 0.737 ± 0.057 | 0.213 ± 0.011 | 0.683 ± 0.069 | 0.674 ± 0.070 | 0.589 ± 0.087 | 0.634 ± 0.095 | 0.608 ± 0.081 | 0.995 |
@@ -85,12 +89,14 @@ Repeated stratified 5-fold cross-validation, 5 repeats (25 folds), on the 242-re
 | svm[C=3.0|weights=balanced] | 0.656 ± 0.051 | 0.224 ± 0.011 | 0.630 ± 0.052 | 0.570 ± 0.052 | 0.560 ± 0.131 | 0.304 ± 0.100 | 0.384 ± 0.094 | 0.999 |
 | svm[C=3.0|weights=none] | 0.652 ± 0.054 | 0.224 ± 0.011 | 0.636 ± 0.045 | 0.570 ± 0.046 | 0.589 ± 0.143 | 0.279 ± 0.111 | 0.363 ± 0.101 | 0.999 |
 
+Selection: best mean CV roc_auc is 0.742 (random_forest[min_samples_leaf=5|weights=none]); 7 of 22 candidates are within 0.01 of it and 4 of those are also within 0.005 of the best brier (0.206). The simplest of these is random_forest[min_samples_leaf=5|weights=none] (roc_auc 0.742, brier 0.207).
+
 ## RCA
 
 | Candidate | roc_auc | brier | accuracy | balanced_accuracy | precision | recall | f1 | train AUC |
 |---|---|---|---|---|---|---|---|---|
 | logistic_regression[C=0.1|weights=balanced] | 0.743 ± 0.059 | 0.207 ± 0.025 | 0.675 ± 0.063 | 0.669 ± 0.066 | 0.564 ± 0.074 | 0.646 ± 0.119 | 0.597 ± 0.079 | 0.867 |
-| logistic_regression[C=0.1|weights=none] | 0.741 ± 0.058 | 0.201 ± 0.022 | 0.675 ± 0.052 | 0.629 ± 0.059 | 0.595 ± 0.087 | 0.446 ± 0.118 | 0.502 ± 0.092 | 0.866 |
+| **logistic_regression[C=0.1|weights=none]** (selected) | 0.741 ± 0.058 | 0.201 ± 0.022 | 0.675 ± 0.052 | 0.629 ± 0.059 | 0.595 ± 0.087 | 0.446 ± 0.118 | 0.502 ± 0.092 | 0.866 |
 | logistic_regression[C=1.0|weights=balanced] | 0.740 ± 0.062 | 0.217 ± 0.035 | 0.679 ± 0.064 | 0.675 ± 0.065 | 0.567 ± 0.072 | 0.661 ± 0.111 | 0.606 ± 0.077 | 0.903 |
 | logistic_regression[C=1.0|weights=none] | 0.740 ± 0.062 | 0.213 ± 0.033 | 0.671 ± 0.060 | 0.640 ± 0.065 | 0.573 ± 0.089 | 0.516 ± 0.119 | 0.537 ± 0.094 | 0.903 |
 | random_forest[min_samples_leaf=5|weights=none] | 0.728 ± 0.059 | 0.205 ± 0.012 | 0.670 ± 0.050 | 0.596 ± 0.059 | 0.644 ± 0.141 | 0.297 ± 0.113 | 0.395 ± 0.114 | 0.994 |
@@ -111,3 +117,5 @@ Repeated stratified 5-fold cross-validation, 5 repeats (25 folds), on the 242-re
 | svm[C=0.3|weights=none] | 0.681 ± 0.071 | 0.217 ± 0.019 | 0.655 ± 0.055 | 0.590 ± 0.066 | 0.588 ± 0.146 | 0.327 ± 0.155 | 0.398 ± 0.145 | 0.966 |
 | svm[C=3.0|weights=balanced] | 0.676 ± 0.067 | 0.219 ± 0.019 | 0.635 ± 0.045 | 0.563 ± 0.047 | 0.544 ± 0.139 | 0.272 ± 0.093 | 0.354 ± 0.095 | 0.997 |
 | svm[C=3.0|weights=none] | 0.673 ± 0.069 | 0.220 ± 0.019 | 0.627 ± 0.052 | 0.551 ± 0.055 | 0.522 ± 0.155 | 0.245 ± 0.108 | 0.322 ± 0.116 | 0.991 |
+
+Selection: best mean CV roc_auc is 0.743 (logistic_regression[C=0.1|weights=balanced]); 4 of 22 candidates are within 0.01 of it and 1 of those are also within 0.005 of the best brier (0.201). The simplest of these is logistic_regression[C=0.1|weights=none] (roc_auc 0.741, brier 0.201).

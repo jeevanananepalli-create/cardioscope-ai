@@ -5,7 +5,7 @@ Every number produced here is computed from the supplied dataset.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Iterable
 
 import pandas as pd
 
@@ -26,10 +26,12 @@ def _canonical_series(series: pd.Series, spec: FeatureSpec) -> pd.Series:
     return series.map(spec.canonical)
 
 
-def feature_statistics(frame: pd.DataFrame, schema: FeatureSchema) -> dict[str, dict[str, Any]]:
-    """Observed statistics per schema feature (canonical values)."""
+def feature_statistics(
+    frame: pd.DataFrame, schema: FeatureSchema, features: Iterable[FeatureSpec] | None = None
+) -> dict[str, dict[str, Any]]:
+    """Observed statistics per feature (canonical values); all schema features by default."""
     stats: dict[str, dict[str, Any]] = {}
-    for spec in schema.features:
+    for spec in schema.features if features is None else features:
         values = _canonical_series(frame[spec.name], spec)
         present = values.dropna()
         entry: dict[str, Any] = {
