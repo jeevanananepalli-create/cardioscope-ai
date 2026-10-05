@@ -42,7 +42,7 @@ Holdout set (61 records, evaluated once). Brackets are 95% bootstrap intervals.
 
 | Target | Model | Accuracy | Precision | Recall | F1 | ROC-AUC | No-information accuracy |
 |---|---|---|---|---|---|---|---|
-| CAD | xgboost | 0.869 | 0.875 | 0.955 | 0.913 | 0.901 (0.81–0.97) | 0.721 |
+| CAD | xgboost | 0.869 | 0.875 | 0.955 | 0.913 | 0.904 (0.81–0.98) | 0.721 |
 | LAD | random forest | 0.787 | 0.780 | 0.889 | 0.831 | 0.834 (0.72–0.93) | 0.590 |
 | LCX | random forest | 0.672 | 0.568 | 0.840 | 0.677 | 0.764 (0.64–0.87) | 0.590 |
 | RCA | logistic regression | 0.656 | 0.556 | 0.435 | 0.488 | 0.670 (0.52–0.81) | 0.623 |

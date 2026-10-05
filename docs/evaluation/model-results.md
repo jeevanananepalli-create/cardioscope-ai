@@ -38,7 +38,7 @@ adopted calibration and threshold, both fitted inside each training fold).
 
 | Target | Accuracy | Precision | Recall | F1 | ROC-AUC | Brier |
 |---|---|---|---|---|---|---|
-| CAD | 0.892 ± 0.034 | 0.903 ± 0.030 | 0.950 ± 0.031 | 0.926 ± 0.023 | 0.930 ± 0.037 | 0.089 ± 0.021 |
+| CAD | 0.891 ± 0.032 | 0.903 ± 0.027 | 0.949 ± 0.033 | 0.925 ± 0.022 | 0.928 ± 0.034 | 0.091 ± 0.020 |
 | LAD | 0.811 ± 0.052 | 0.822 ± 0.070 | 0.872 ± 0.069 | 0.843 ± 0.042 | 0.860 ± 0.054 | 0.148 ± 0.029 |
 | LCX | 0.665 ± 0.062 | 0.566 ± 0.076 | 0.702 ± 0.112 | 0.619 ± 0.059 | 0.742 ± 0.051 | 0.207 ± 0.010 |
 | RCA | 0.675 ± 0.052 | 0.595 ± 0.087 | 0.446 ± 0.118 | 0.502 ± 0.092 | 0.741 ± 0.058 | 0.201 ± 0.022 |
@@ -49,7 +49,7 @@ Point estimate with a 95% bootstrap interval (2000 resamples). With 61 records t
 
 | Target | n | Accuracy | Precision | Recall | F1 | ROC-AUC | Brier |
 |---|---|---|---|---|---|---|---|
-| CAD | 61 | 0.869 (0.787–0.951) | 0.875 (0.776–0.960) | 0.955 (0.886–1.000) | 0.913 (0.850–0.966) | 0.901 (0.810–0.974) | 0.117 (0.063–0.178) |
+| CAD | 61 | 0.869 (0.787–0.951) | 0.875 (0.776–0.960) | 0.955 (0.886–1.000) | 0.913 (0.850–0.966) | 0.904 (0.815–0.976) | 0.115 (0.062–0.175) |
 | LAD | 61 | 0.787 (0.672–0.885) | 0.780 (0.650–0.900) | 0.889 (0.778–0.975) | 0.831 (0.730–0.912) | 0.834 (0.721–0.930) | 0.165 (0.111–0.226) |
 | LCX | 61 | 0.672 (0.557–0.787) | 0.568 (0.405–0.722) | 0.840 (0.682–0.964) | 0.677 (0.528–0.794) | 0.764 (0.638–0.872) | 0.204 (0.171–0.236) |
 | RCA | 61 | 0.656 (0.541–0.770) | 0.556 (0.312–0.778) | 0.435 (0.227–0.636) | 0.488 (0.276–0.667) | 0.670 (0.521–0.807) | 0.216 (0.167–0.271) |
@@ -79,10 +79,10 @@ is only useful to the extent it beats them.
 
 ### CAD
 
-- **Selection:** best mean CV roc_auc is 0.930 (xgboost[max_depth=2|weights=none]); 9 of 22 candidates are within 0.01 of it and 2 of those are also within 0.005 of the best brier (0.089). The simplest of these is xgboost[max_depth=2|weights=none] (roc_auc 0.930, brier 0.089).
-- **Calibration:** Uncalibrated out-of-fold Brier 0.0893 ± 0.0214. sigmoid: Brier change +0.0000 (needs an improvement above 0.0019); isotonic: Brier change +0.0019 (needs an improvement above 0.0066). Decision: kept the model's own probabilities (no calibration).
-- **Threshold:** Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0087 versus 0.5 (needs a gain above 0.0411; mean tuned threshold 0.692). Decision: keep the 0.5 threshold.
-- **Most influential features (mean |SHAP| on the development set):** Typical chest pain, Ejection fraction (TTE), Age, T inversion, Regions with wall motion abnormality, Triglycerides, Erythrocyte sedimentation rate, Body mass index. These describe what the model relies on; they are not causal findings.
+- **Selection:** best mean CV roc_auc is 0.928 (xgboost[max_depth=2|weights=none]); 11 of 22 candidates are within 0.01 of it and 3 of those are also within 0.005 of the best brier (0.091). The simplest of these is xgboost[max_depth=2|weights=none] (roc_auc 0.928, brier 0.091).
+- **Calibration:** Uncalibrated out-of-fold Brier 0.0906 ± 0.0204. sigmoid: Brier change +0.0001 (needs an improvement above 0.0018); isotonic: Brier change +0.0030 (needs an improvement above 0.0077). Decision: kept the model's own probabilities (no calibration).
+- **Threshold:** Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0113 versus 0.5 (needs a gain above 0.0456; mean tuned threshold 0.687). Decision: keep the 0.5 threshold.
+- **Most influential features (mean |SHAP| on the development set):** Typical chest pain, Ejection fraction (TTE), Age, T inversion, Regions with wall motion abnormality, Triglycerides, Hypertension, Erythrocyte sedimentation rate. These describe what the model relies on; they are not causal findings.
 
 ### LAD
 

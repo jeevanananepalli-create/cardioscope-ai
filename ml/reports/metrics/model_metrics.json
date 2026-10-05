@@ -5,36 +5,36 @@
     "model_version": "0.1.0",
     "algorithm": "xgboost",
     "candidate": "xgboost[max_depth=2|weights=none]",
-    "selection_reason": "best mean CV roc_auc is 0.930 (xgboost[max_depth=2|weights=none]); 9 of 22 candidates are within 0.01 of it and 2 of those are also within 0.005 of the best brier (0.089). The simplest of these is xgboost[max_depth=2|weights=none] (roc_auc 0.930, brier 0.089).",
+    "selection_reason": "best mean CV roc_auc is 0.928 (xgboost[max_depth=2|weights=none]); 11 of 22 candidates are within 0.01 of it and 3 of those are also within 0.005 of the best brier (0.091). The simplest of these is xgboost[max_depth=2|weights=none] (roc_auc 0.928, brier 0.091).",
     "decision_threshold": 0.5,
     "calibration": {
       "method": "none",
-      "reason": "Uncalibrated out-of-fold Brier 0.0893 ± 0.0214. sigmoid: Brier change +0.0000 (needs an improvement above 0.0019); isotonic: Brier change +0.0019 (needs an improvement above 0.0066). Decision: kept the model's own probabilities (no calibration).",
-      "threshold_reason": "Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0087 versus 0.5 (needs a gain above 0.0411; mean tuned threshold 0.692). Decision: keep the 0.5 threshold.",
+      "reason": "Uncalibrated out-of-fold Brier 0.0906 ± 0.0204. sigmoid: Brier change +0.0001 (needs an improvement above 0.0018); isotonic: Brier change +0.0030 (needs an improvement above 0.0077). Decision: kept the model's own probabilities (no calibration).",
+      "threshold_reason": "Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0113 versus 0.5 (needs a gain above 0.0456; mean tuned threshold 0.687). Decision: keep the 0.5 threshold.",
       "reliability_curve": {
         "mean_predicted": [
-          0.0764414189029331,
-          0.20850051508462134,
-          0.47706607846189136,
-          0.7197914916621752,
-          0.8522605708807953,
-          0.9209961817284261,
-          0.9564612227037919,
-          0.977197983048179,
-          0.9876827952290369,
-          0.9947312897887112
+          0.07685462613243702,
+          0.2112067101661824,
+          0.47647304968400434,
+          0.7164188229348049,
+          0.852462247383496,
+          0.9198626767505299,
+          0.9576261013992562,
+          0.9772077148610895,
+          0.9878566245402186,
+          0.9947434235210261
         ],
         "observed_rate": [
-          0.09917355371900827,
-          0.17355371900826447,
-          0.35537190082644626,
-          0.8016528925619835,
-          0.8181818181818182,
+          0.09090909090909091,
+          0.19008264462809918,
+          0.36363636363636365,
+          0.7768595041322314,
+          0.8264462809917356,
           0.9421487603305785,
-          0.9834710743801653,
           0.9752066115702479,
           0.9834710743801653,
-          0.9752066115702479
+          0.9917355371900827,
+          0.9669421487603306
         ],
         "n_predictions": 1210
       }
@@ -57,82 +57,82 @@
     },
     "cross_validation": {
       "accuracy": {
-        "mean": 0.8916836734693878,
-        "std": 0.0339296370009815
+        "mean": 0.8908333333333333,
+        "std": 0.03204239713484127
       },
       "balanced_accuracy": {
-        "mean": 0.849310924369748,
-        "std": 0.04548483154746795
+        "mean": 0.8487226890756303,
+        "std": 0.040948872216692744
       },
       "precision": {
-        "mean": 0.9034036602581494,
-        "std": 0.03010936439886493
+        "mean": 0.9031405063479367,
+        "std": 0.026786110726023455
       },
       "recall": {
-        "mean": 0.9500504201680673,
-        "std": 0.030824494668255757
+        "mean": 0.948873949579832,
+        "std": 0.03284188001153254
       },
       "specificity": {
         "mean": 0.7485714285714284,
-        "std": 0.08278732690816049
+        "std": 0.07468755781599103
       },
       "f1": {
-        "mean": 0.9257482201814372,
-        "std": 0.023397368665166115
+        "mean": 0.9250363719393847,
+        "std": 0.022404737517519827
       },
       "roc_auc": {
-        "mean": 0.9301296518607443,
-        "std": 0.03724912374507976
+        "mean": 0.928374549819928,
+        "std": 0.03447558873760457
       },
       "brier": {
-        "mean": 0.08933822974784199,
-        "std": 0.021396258035468282
+        "mean": 0.09057220123958676,
+        "std": 0.020387371752383674
       },
       "log_loss": {
-        "mean": 0.3017044587421575,
-        "std": 0.06393362619731907
+        "mean": 0.30452469743757243,
+        "std": 0.061270363496634644
       },
       "train_roc_auc": {
-        "mean": 0.9994185519336264,
-        "std": 0.0003891290472357439
+        "mean": 0.9994499478623566,
+        "std": 0.00039269812568079295
       }
     },
     "nested_cross_validation": {
       "accuracy": {
-        "mean": 0.8916836734693878,
-        "std": 0.0339296370009815
+        "mean": 0.8908333333333333,
+        "std": 0.03204239713484127
       },
       "balanced_accuracy": {
-        "mean": 0.849310924369748,
-        "std": 0.04548483154746795
+        "mean": 0.8487226890756303,
+        "std": 0.040948872216692744
       },
       "precision": {
-        "mean": 0.9034036602581494,
-        "std": 0.03010936439886493
+        "mean": 0.9031405063479367,
+        "std": 0.026786110726023455
       },
       "recall": {
-        "mean": 0.9500504201680673,
-        "std": 0.030824494668255757
+        "mean": 0.948873949579832,
+        "std": 0.03284188001153254
       },
       "specificity": {
         "mean": 0.7485714285714284,
-        "std": 0.08278732690816049
+        "std": 0.07468755781599103
       },
       "f1": {
-        "mean": 0.9257482201814372,
-        "std": 0.023397368665166115
+        "mean": 0.9250363719393847,
+        "std": 0.022404737517519827
       },
       "roc_auc": {
-        "mean": 0.9301296518607443,
-        "std": 0.03724912374507976
+        "mean": 0.928374549819928,
+        "std": 0.03447558873760457
       },
       "brier": {
-        "mean": 0.08933822974784199,
-        "std": 0.021396258035468282
+        "mean": 0.09057220123958676,
+        "std": 0.020387371752383674
       },
       "log_loss": {
-        "mean": 0.3017044587421575,
-        "std": 0.06393362619731907
+        "mean": 0.30452469743757243,
+        "std": 0.061270363496634644
       }
     },
     "holdout": {
@@ -148,9 +148,9 @@
         "recall": 0.9545454545454546,
         "specificity": 0.6470588235294118,
         "f1": 0.9130434782608695,
-        "roc_auc": 0.9010695187165776,
-        "brier": 0.11700278879901463,
-        "log_loss": 0.37732293425507535,
+        "roc_auc": 0.9037433155080214,
+        "brier": 0.11478728379030628,
+        "log_loss": 0.3696248408975479,
         "confusion_matrix": {
           "tn": 11,
           "fp": 6,
@@ -186,16 +186,16 @@
           "upper": 0.9662921348314607
         },
         "roc_auc": {
-          "lower": 0.8095238095238095,
-          "upper": 0.974105595980596
+          "lower": 0.8145340434419382,
+          "upper": 0.9759672619047618
         },
         "brier": {
-          "lower": 0.06309487646923304,
-          "upper": 0.17820298786128483
+          "lower": 0.06171557457341485,
+          "upper": 0.17483045324845067
         },
         "log_loss": {
-          "lower": 0.2185267732905856,
-          "upper": 0.5609001355561345
+          "lower": 0.21283664558050164,
+          "upper": 0.5505471389283284
         }
       },
       "bootstrap_resamples": 2000,
@@ -216,12 +216,10 @@
           0.11764705882352941,
           0.17647058823529413,
           0.17647058823529413,
-          0.23529411764705882,
-          0.23529411764705882,
           0.35294117647058826,
           0.35294117647058826,
-          0.4117647058823529,
-          0.4117647058823529,
+          0.5294117647058824,
+          0.5294117647058824,
           0.8823529411764706,
           0.8823529411764706,
           1.0
@@ -231,12 +229,10 @@
           0.022727272727272728,
           0.5,
           0.5,
-          0.5454545454545454,
-          0.5454545454545454,
-          0.7954545454545454,
-          0.7954545454545454,
-          0.8863636363636364,
-          0.8863636363636364,
+          0.5681818181818182,
+          0.5681818181818182,
+          0.8409090909090909,
+          0.8409090909090909,
           0.9090909090909091,
           0.9090909090909091,
           0.9545454545454546,
@@ -249,11 +245,11 @@
       },
       "reliability_curve": {
         "mean_predicted": [
-          0.28612769896594376,
-          0.7834211935599645,
-          0.9149854083855947,
-          0.9752938449382782,
-          0.9948092500368754
+          0.2775046984450175,
+          0.790732353925705,
+          0.9143165498971939,
+          0.9748926907777786,
+          0.9943688412507375
         ],
         "observed_rate": [
           0.15384615384615385,
@@ -275,246 +271,232 @@
           "feature": "Typical Chest Pain",
           "label": "Typical chest pain",
           "group": "symptoms",
-          "mean_abs_shap": 1.1938940552640553,
-          "mean_shap": 0.26703592962469935
+          "mean_abs_shap": 1.1968247092459812,
+          "mean_shap": 0.2628502372867805
         },
         {
           "feature": "EF-TTE",
           "label": "Ejection fraction (TTE)",
           "group": "echo",
-          "mean_abs_shap": 0.6561433233259139,
-          "mean_shap": 0.07301119130012418
+          "mean_abs_shap": 0.6484797431910334,
+          "mean_shap": 0.07085600790898662
         },
         {
           "feature": "Age",
           "label": "Age",
           "group": "demographic",
-          "mean_abs_shap": 0.5296812184262744,
-          "mean_shap": 0.09509051782810245
+          "mean_abs_shap": 0.5563895447378832,
+          "mean_shap": 0.10061029549389847
         },
         {
           "feature": "Tinversion",
           "label": "T inversion",
           "group": "ecg",
-          "mean_abs_shap": 0.43032066733383934,
-          "mean_shap": 0.06273756194705805
+          "mean_abs_shap": 0.41796604389986713,
+          "mean_shap": 0.060305250577690185
         },
         {
           "feature": "Region RWMA",
           "label": "Regions with wall motion abnormality",
           "group": "echo",
-          "mean_abs_shap": 0.41950521328725104,
-          "mean_shap": 0.10743604132459184
+          "mean_abs_shap": 0.4140317591507573,
+          "mean_shap": 0.11023128710009834
         },
         {
           "feature": "TG",
           "label": "Triglycerides",
           "group": "laboratory",
-          "mean_abs_shap": 0.3421142098632418,
-          "mean_shap": 0.046067096951055875
-        },
-        {
-          "feature": "ESR",
-          "label": "Erythrocyte sedimentation rate",
-          "group": "laboratory",
-          "mean_abs_shap": 0.2338922014671632,
-          "mean_shap": 0.06284874031697361
-        },
-        {
-          "feature": "BMI",
-          "label": "Body mass index",
-          "group": "demographic",
-          "mean_abs_shap": 0.23074249670386685,
-          "mean_shap": 0.017252789398516752
+          "mean_abs_shap": 0.3554320335234246,
+          "mean_shap": 0.05437832207164981
         },
         {
           "feature": "HTN",
           "label": "Hypertension",
           "group": "history",
-          "mean_abs_shap": 0.21681177055786463,
-          "mean_shap": 0.027851193773845012
+          "mean_abs_shap": 0.21508522488730997,
+          "mean_shap": 0.02965396941323911
+        },
+        {
+          "feature": "ESR",
+          "label": "Erythrocyte sedimentation rate",
+          "group": "laboratory",
+          "mean_abs_shap": 0.21291296734293721,
+          "mean_shap": 0.06018171960984411
+        },
+        {
+          "feature": "BMI",
+          "label": "Body mass index",
+          "group": "demographic",
+          "mean_abs_shap": 0.20351306182786452,
+          "mean_shap": 0.021518142385916275
         },
         {
           "feature": "FBS",
           "label": "Fasting blood sugar",
           "group": "laboratory",
-          "mean_abs_shap": 0.2063601439095233,
-          "mean_shap": 0.022817656674907226
+          "mean_abs_shap": 0.2009519085996161,
+          "mean_shap": 0.015691859124243753
         },
         {
           "feature": "BP",
           "label": "Blood pressure",
           "group": "examination",
-          "mean_abs_shap": 0.18782958623853105,
-          "mean_shap": 0.027360334638352236
+          "mean_abs_shap": 0.1905095835239434,
+          "mean_shap": 0.026112121429817736
         },
         {
           "feature": "CR",
           "label": "Creatinine",
           "group": "laboratory",
-          "mean_abs_shap": 0.14087612033352132,
-          "mean_shap": 0.019238400950350544
+          "mean_abs_shap": 0.16637235997660346,
+          "mean_shap": 0.02297384994612499
         },
         {
           "feature": "Dyspnea",
           "label": "Dyspnea",
           "group": "symptoms",
-          "mean_abs_shap": 0.1286286426600346,
-          "mean_shap": 0.009120252168129298
+          "mean_abs_shap": 0.13307014871234737,
+          "mean_shap": 0.00967138673155761
         },
         {
           "feature": "Na",
           "label": "Sodium",
           "group": "laboratory",
-          "mean_abs_shap": 0.11217264978220871,
-          "mean_shap": 0.01655187685964321
+          "mean_abs_shap": 0.12003034690379603,
+          "mean_shap": 0.01619357952832683
         },
         {
           "feature": "DM",
           "label": "Diabetes mellitus",
           "group": "history",
-          "mean_abs_shap": 0.10823219041686413,
-          "mean_shap": 0.01694034643409666
+          "mean_abs_shap": 0.1098894148079817,
+          "mean_shap": 0.019490818839427854
         },
         {
           "feature": "K",
           "label": "Potassium",
           "group": "laboratory",
-          "mean_abs_shap": 0.09506514726191266,
-          "mean_shap": 0.017700246458272798
+          "mean_abs_shap": 0.09104774544431159,
+          "mean_shap": 0.01757103509523652
         },
         {
           "feature": "VHD",
           "label": "Valvular heart disease",
           "group": "echo",
-          "mean_abs_shap": 0.06734155156949828,
-          "mean_shap": 0.001965082827801547
+          "mean_abs_shap": 0.06891904300278869,
+          "mean_shap": 0.0012567396437333635
         },
         {
           "feature": "FH",
           "label": "Family history",
           "group": "history",
-          "mean_abs_shap": 0.06085206959242663,
-          "mean_shap": -0.004509473542782886
-        },
-        {
-          "feature": "Neut",
-          "label": "Neutrophils",
-          "group": "laboratory",
-          "mean_abs_shap": 0.05837507937141994,
-          "mean_shap": 0.010734646521462513
-        },
-        {
-          "feature": "LDL",
-          "label": "LDL cholesterol",
-          "group": "laboratory",
-          "mean_abs_shap": 0.05075342142723562,
-          "mean_shap": 0.0026496258171752464
-        },
-        {
-          "feature": "HB",
-          "label": "Hemoglobin",
-          "group": "laboratory",
-          "mean_abs_shap": 0.04728725242903764,
-          "mean_shap": 0.011709626766464342
-        },
-        {
-          "feature": "WBC",
-          "label": "White blood cell count",
-          "group": "laboratory",
-          "mean_abs_shap": 0.04677628058062728,
-          "mean_shap": -0.0012992615118807506
+          "mean_abs_shap": 0.05807307287896714,
+          "mean_shap": -0.0052277035626374984
         },
         {
           "feature": "Weight",
           "label": "Weight",
           "group": "demographic",
-          "mean_abs_shap": 0.04495676461807337,
-          "mean_shap": -0.002435480463818824
+          "mean_abs_shap": 0.05484809661870976,
+          "mean_shap": 0.0013661837875881533
+        },
+        {
+          "feature": "HB",
+          "label": "Hemoglobin",
+          "group": "laboratory",
+          "mean_abs_shap": 0.054205664152602764,
+          "mean_shap": 0.011739341849999979
         },
         {
           "feature": "Length",
           "label": "Height",
           "group": "demographic",
-          "mean_abs_shap": 0.043398736368514566,
-          "mean_shap": 0.004163291936928853
+          "mean_abs_shap": 0.04986359037012478,
+          "mean_shap": 0.003373896056586061
         },
         {
           "feature": "Atypical",
           "label": "Atypical chest pain",
           "group": "symptoms",
-          "mean_abs_shap": 0.03831272701586574,
-          "mean_shap": 0.010503263728431434
+          "mean_abs_shap": 0.04878324777472857,
+          "mean_shap": 0.01448918967546264
         },
         {
           "feature": "PLT",
           "label": "Platelets",
           "group": "laboratory",
-          "mean_abs_shap": 0.034134436132240084,
-          "mean_shap": 0.003745701470920308
+          "mean_abs_shap": 0.04648683371776638,
+          "mean_shap": 0.0017396751329425938
+        },
+        {
+          "feature": "Neut",
+          "label": "Neutrophils",
+          "group": "laboratory",
+          "mean_abs_shap": 0.0458789509596026,
+          "mean_shap": 0.008780083518036571
+        },
+        {
+          "feature": "LDL",
+          "label": "LDL cholesterol",
+          "group": "laboratory",
+          "mean_abs_shap": 0.04053039412583755,
+          "mean_shap": 0.0006101840687530839
+        },
+        {
+          "feature": "WBC",
+          "label": "White blood cell count",
+          "group": "laboratory",
+          "mean_abs_shap": 0.03656526508044513,
+          "mean_shap": 0.0019229678927789912
         },
         {
           "feature": "PR",
           "label": "Pulse rate",
           "group": "examination",
-          "mean_abs_shap": 0.02858316926054718,
-          "mean_shap": 0.0015124355881544183
-        },
-        {
-          "feature": "BUN",
-          "label": "Blood urea nitrogen",
-          "group": "laboratory",
-          "mean_abs_shap": 0.022706294761324103,
-          "mean_shap": -0.004889732569240588
-        },
-        {
-          "feature": "Sex",
-          "label": "Sex",
-          "group": "demographic",
-          "mean_abs_shap": 0.01949687457589571,
-          "mean_shap": 0.0025983242979965918
+          "mean_abs_shap": 0.030241172463433,
+          "mean_shap": 0.0017573348956552049
         },
         {
           "feature": "HDL",
           "label": "HDL cholesterol",
           "group": "laboratory",
-          "mean_abs_shap": 0.016184642082580542,
-          "mean_shap": 0.0009496287483152403
+          "mean_abs_shap": 0.02540915982205082,
+          "mean_shap": 0.005097498947923834
         },
         {
-          "feature": "Lymph",
-          "label": "Lymphocytes",
+          "feature": "BUN",
+          "label": "Blood urea nitrogen",
           "group": "laboratory",
-          "mean_abs_shap": 0.016108415906379108,
-          "mean_shap": 0.0032011119500649247
+          "mean_abs_shap": 0.025111489244236434,
+          "mean_shap": -0.00011346209409438874
         },
         {
-          "feature": "Function Class",
-          "label": "Function class",
-          "group": "symptoms",
-          "mean_abs_shap": 0.01131284699875338,
-          "mean_shap": -0.00048229989233957837
+          "feature": "Sex",
+          "label": "Sex",
+          "group": "demographic",
+          "mean_abs_shap": 0.025017776237877685,
+          "mean_shap": 0.002821034694105879
         },
         {
           "feature": "Current Smoker",
           "label": "Current smoker",
           "group": "history",
-          "mean_abs_shap": 0.009409456117432718,
-          "mean_shap": 0.0007987447614081143
+          "mean_abs_shap": 0.023803908175842697,
+          "mean_shap": 0.0010664489077912135
+        },
+        {
+          "feature": "Lymph",
+          "label": "Lymphocytes",
+          "group": "laboratory",
+          "mean_abs_shap": 0.017304448716819656,
+          "mean_shap": 0.0033353630834343758
         },
         {
           "feature": "St Depression",
           "label": "ST depression",
           "group": "ecg",
-          "mean_abs_shap": 0.006222990623382805,
-          "mean_shap": 0.0003574056548936185
-        },
-        {
-          "feature": "DLP",
-          "label": "Dyslipidemia",
-          "group": "history",
-          "mean_abs_shap": 0.0039578075405241045,
-          "mean_shap": 0.0009417671687162119
+          "mean_abs_shap": 0.006328451346167294,
+          "mean_shap": 0.0002844004270289678
         },
         {
           "feature": "EX-Smoker",
@@ -566,6 +548,13 @@
           "mean_shap": 0.0
         },
         {
+          "feature": "DLP",
+          "label": "Dyslipidemia",
+          "group": "history",
+          "mean_abs_shap": 0.0,
+          "mean_shap": 0.0
+        },
+        {
           "feature": "Edema",
           "label": "Edema",
           "group": "examination",
@@ -597,6 +586,13 @@
           "feature": "Diastolic Murmur",
           "label": "Diastolic murmur",
           "group": "examination",
+          "mean_abs_shap": 0.0,
+          "mean_shap": 0.0
+        },
+        {
+          "feature": "Function Class",
+          "label": "Function class",
+          "group": "symptoms",
           "mean_abs_shap": 0.0,
           "mean_shap": 0.0
         },
@@ -743,7 +739,7 @@
       },
       "log_loss": {
         "mean": 0.5130537702168979,
-        "std": 0.03300902637807741
+        "std": 0.03300902637807743
       },
       "train_roc_auc": {
         "mean": 0.9931111969533798,
@@ -781,10 +777,10 @@
       },
       "brier": {
         "mean": 0.14761798453442818,
-        "std": 0.028556265101671276
+        "std": 0.02855626510167128
       },
       "log_loss": {
-        "mean": 0.46394049025569795,
+        "mean": 0.46394049025569783,
         "std": 0.07714639193583157
       }
     },
@@ -803,7 +799,7 @@
         "f1": 0.8311688311688312,
         "roc_auc": 0.8344444444444444,
         "brier": 0.1647464096672983,
-        "log_loss": 0.5095500913101603,
+        "log_loss": 0.5095500913101604,
         "confusion_matrix": {
           "tn": 16,
           "fp": 9,
@@ -911,9 +907,9 @@
       "reliability_curve": {
         "mean_predicted": [
           0.15288018025458985,
-          0.48083850472336076,
+          0.4808385047233609,
           0.7008937103830851,
-          0.8645000621555413,
+          0.8645000621555412,
           0.967802113145166
         ],
         "observed_rate": [
@@ -1327,13 +1323,13 @@
       "threshold_reason": "Tuning the threshold for balanced_accuracy changed out-of-fold balanced_accuracy by +0.0809 versus 0.5 (needs a gain above 0.0579; mean tuned threshold 0.395). Decision: use the tuned threshold.",
       "reliability_curve": {
         "mean_predicted": [
-          0.183664745321968,
+          0.18366474532196803,
           0.24954940976023737,
           0.302113929660427,
           0.34280926799871714,
           0.3764658816491104,
           0.40888330256718053,
-          0.4423766779407576,
+          0.4423766779407575,
           0.474020018367601,
           0.515665821494918,
           0.6020166442597619
@@ -1399,12 +1395,12 @@
         "std": 0.050998960978660315
       },
       "brier": {
-        "mean": 0.20690646147484354,
-        "std": 0.01018138132311146
+        "mean": 0.2069064614748436,
+        "std": 0.010181381323111464
       },
       "log_loss": {
         "mean": 0.5999176053015236,
-        "std": 0.021464022899270033
+        "std": 0.021464022899270015
       },
       "train_roc_auc": {
         "mean": 0.9940635701916806,
@@ -1442,11 +1438,11 @@
       },
       "brier": {
         "mean": 0.2069064614748436,
-        "std": 0.010181381323111463
+        "std": 0.010181381323111466
       },
       "log_loss": {
         "mean": 0.5999176053015236,
-        "std": 0.021464022899270026
+        "std": 0.021464022899270033
       }
     },
     "holdout": {
@@ -1463,7 +1459,7 @@
         "specificity": 0.5555555555555556,
         "f1": 0.6774193548387096,
         "roc_auc": 0.7644444444444445,
-        "brier": 0.20357167641866777,
+        "brier": 0.2035716764186678,
         "log_loss": 0.5919704060340103,
         "confusion_matrix": {
           "tn": 20,
@@ -1576,7 +1572,7 @@
       "reliability_curve": {
         "mean_predicted": [
           0.2144636499199105,
-          0.326813319156713,
+          0.3268133191567129,
           0.41714490234285834,
           0.4725890360212624,
           0.5803771341163967
@@ -1598,7 +1594,7 @@
         "specificity": 0.8611111111111112,
         "f1": 0.42105263157894735,
         "roc_auc": 0.7644444444444445,
-        "brier": 0.20357167641866777,
+        "brier": 0.2035716764186678,
         "log_loss": 0.5919704060340103,
         "confusion_matrix": {
           "tn": 31,

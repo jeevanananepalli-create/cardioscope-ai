@@ -170,3 +170,14 @@ def test_published_metrics_file_matches_the_trained_artifacts(data):
         for metric in SCALAR_METRICS:
             assert stored[metric] == pytest.approx(fresh[metric], abs=1e-9), (target, metric)
         assert stored["confusion_matrix"] == fresh["confusion_matrix"]
+
+
+@pytest.mark.requires_dataset
+@pytest.mark.parametrize("algorithm", ["xgboost", "random_forest"])
+def test_results_do_not_depend_on_how_much_parallelism_is_used(data, algorithm):
+    """Cross-validation must give the same numbers whether folds run serially or in parallel."""
+    spec = next(c for c in load_candidates() if c.algorithm == algorithm and c.is_baseline)
+    kwargs = dict(seed=data.seed, n_splits=3, n_repeats=1)
+    serial = cross_validate_candidate(spec, data.schema, data.X_dev, data.y_dev["CAD"], n_jobs=1, **kwargs)
+    parallel = cross_validate_candidate(spec, data.schema, data.X_dev, data.y_dev["CAD"], n_jobs=3, **kwargs)
+    assert serial["summary"] == parallel["summary"]

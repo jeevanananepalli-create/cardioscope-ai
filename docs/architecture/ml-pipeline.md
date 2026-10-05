@@ -105,8 +105,14 @@ of the model's raw score before calibration.
 ## Reproducibility
 
 Seeds are fixed, the split and folds are deterministic, and package versions are pinned in
-`requirements-lock.txt`. Retraining reproduces the metrics to about 15 decimal places; exact
-bit-for-bit equality is not guaranteed because random-forest prediction sums in parallel.
+`requirements-lock.txt`. With those versions, retraining reproduces every cross-validation metric
+to about 15 decimal places regardless of how many folds run in parallel (checked by training twice
+with different `--n-jobs`, and by a test). Exact bit-for-bit equality is not guaranteed because
+random-forest prediction sums in parallel.
+
+XGBoost runs single-threaded on purpose. With several threads its results depended on the number
+of threads it was given, and cross-validated ROC-AUC moved by up to 0.008 between otherwise
+identical runs. Different package versions or hardware may still give slightly different numbers.
 
 ## Known limitations
 
