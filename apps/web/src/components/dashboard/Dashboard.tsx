@@ -65,8 +65,11 @@ export function Dashboard({ api }: DashboardProps) {
   const [edited, setEdited] = useState(false);
   const [bottomTab, setBottomTab] = useState<BottomTab>("why");
   const [explainTarget, setExplainTarget] = useState<TargetName>("CAD");
-  // One explanation request per prediction, covering all four models.
-  const explanation = useExplanation(prediction.features, true, api);
+  // One explanation request per prediction, covering all four models, and only while a
+  // panel that shows it is on screen (the explanation tab, the measurements highlight, or
+  // the selected-vessel details).
+  const explanationVisible = bottomTab === "why" || bottomTab === "measurements" || anatomy.selected !== null;
+  const explanation = useExplanation(prediction.features, explanationVisible, api);
   const whatIf = useWhatIf(prediction.features, api);
 
   // Selecting a vessel in the 3D view points the explanation at that vessel's model.

@@ -53,6 +53,27 @@ describe("explanations in the dashboard", () => {
     expect(screen.getByText("No explanation yet")).toBeInTheDocument();
   });
 
+  it("does not compute an explanation while nothing on screen shows one", async () => {
+    const api = createApiMock();
+    render(<Dashboard api={api} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Fill typical values" }));
+    await userEvent.click(screen.getByRole("tab", { name: "Model performance" }));
+    await userEvent.click(screen.getByRole("button", { name: "Analyze Patient" }));
+    await screen.findByTestId("cad-probability");
+    expect(api.predict).toHaveBeenCalledTimes(1);
+    expect(api.explain).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole("tab", { name: "Why this prediction?" }));
+    await screen.findByRole("list", { name: /contributions to the CAD model/ });
+    expect(api.explain).toHaveBeenCalledTimes(1);
+
+    // Leaving and coming back reuses the result.
+    await userEvent.click(screen.getByRole("tab", { name: "Model performance" }));
+    await userEvent.click(screen.getByRole("tab", { name: "Why this prediction?" }));
+    await screen.findByRole("list", { name: /contributions to the CAD model/ });
+    expect(api.explain).toHaveBeenCalledTimes(1);
+  });
+
   it("switches the explanation between models without another request", async () => {
     const api = await analyzed();
     await screen.findByRole("list", { name: /contributions to the CAD model/ });

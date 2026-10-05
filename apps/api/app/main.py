@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from apps.api.app.api.v1.router import api_router
 from apps.api.app.core.config import API_PREFIX, DISCLAIMER, Settings, get_settings
@@ -40,6 +41,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.settings = settings
     app.add_middleware(RequestLogMiddleware)
+    # /model-info carries curves and tables; compressing it cuts the payload several-fold.
+    app.add_middleware(GZipMiddleware, minimum_size=2048)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(settings.cors_origins),

@@ -323,3 +323,29 @@ def test_risk_thresholds_are_configurable(trained_models, patient):
         assert all(o["risk_category"] == "very_high" for o in _outputs(body).values())
         bands = custom.get(f"{API}/model-info").json()["risk_categories"]
         assert [b["max"] for b in bands] == [0.001, 0.002, 0.003, 1.0]
+
+
+# --- performance ------------------------------------------------------------------------
+
+
+def test_prediction_and_explanation_are_fast_enough_for_interactive_use(client, patient):
+    """Generous ceilings (several times the measured medians) to catch regressions, not noise."""
+    import statistics
+    import time
+
+    def median_ms(path):
+        timings = []
+        for _ in range(12):
+            started = time.perf_counter()
+            assert client.post(f"{API}/{path}", json={"features": patient}).status_code == 200
+            timings.append((time.perf_counter() - started) * 1000)
+        return statistics.median(timings[2:])
+
+    assert median_ms("predict") < 600
+    assert median_ms("explain") < 1200
+
+
+def test_large_responses_are_compressed(client):
+    response = client.get(f"{API}/model-info", headers={"Accept-Encoding": "gzip"})
+    assert response.headers.get("content-encoding") == "gzip"
+    assert response.json()["targets"]

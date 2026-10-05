@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { ClassDistribution, ConfusionMatrix } from "@/components/charts/ConfusionMatrix";
 import { ReliabilityChart, RocChart, TARGET_COLORS } from "@/components/charts/RocChart";
@@ -143,7 +143,7 @@ function TargetDetail({ metadata }: { metadata: ModelMetadata }) {
 }
 
 /** Evaluation results for the four models. Every number comes from the evaluation pipeline. */
-export function ModelPerformance({ modelInfo }: ModelPerformanceProps) {
+export const ModelPerformance = memo(function ModelPerformance({ modelInfo }: ModelPerformanceProps) {
   const [detail, setDetail] = useState<TargetName>("CAD");
   const available = TARGETS.filter((target) => modelInfo?.targets[target]);
 
@@ -283,4 +283,4 @@ export function ModelPerformance({ modelInfo }: ModelPerformanceProps) {
       </section>
     </div>
   );
-}
+});

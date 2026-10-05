@@ -100,7 +100,7 @@ export function VesselExplanation({
         <Notice tone="error" title="The explanation could not be loaded.">
           The prediction above is unaffected.
         </Notice>
-      ) : !contributions ? (
+      ) : !contributions || explanation.status === "loading" ? (
         <div className="skeleton" style={{ height: 96 }} aria-label="Computing the explanation" />
       ) : (
         <>
