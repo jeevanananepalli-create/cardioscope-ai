@@ -8,6 +8,7 @@ import { EmptyState, Notice } from "@/components/common/Notice";
 import { Panel } from "@/components/common/Panel";
 import { Tabs } from "@/components/common/Tabs";
 import { ClinicalMeasurements } from "@/components/dashboard/ClinicalMeasurements";
+import { ModelPerformance } from "@/components/dashboard/ModelPerformance";
 import { PatientForm } from "@/components/dashboard/PatientForm";
 import { RiskLegend } from "@/components/dashboard/RiskLegend";
 import { RiskOverview } from "@/components/dashboard/RiskOverview";
@@ -28,7 +29,7 @@ import { emptyFormValues, typicalFormValues, validatePatient } from "@/lib/valid
 import type { FeatureSchema, FieldErrors, FormValues } from "@/types/patient";
 import type { TargetName } from "@/types/prediction";
 
-type BottomTab = "why" | "measurements" | "whatif";
+type BottomTab = "why" | "measurements" | "whatif" | "performance";
 
 interface DashboardProps {
   /** Injected in tests; defaults to the real API client. */
@@ -290,6 +291,7 @@ export function Dashboard({ api }: DashboardProps) {
               { key: "why", label: "Why this prediction?" },
               { key: "measurements", label: "Clinical measurements" },
               { key: "whatif", label: "What-if simulation", badge: whatIf.active ? "on" : null },
+              { key: "performance", label: "Model performance" },
             ]}
             active={bottomTab}
             onChange={setBottomTab}
@@ -334,6 +336,11 @@ export function Dashboard({ api }: DashboardProps) {
                   categories={categories}
                   modelInfo={modelInfo}
                 />
+              </ErrorBoundary>
+            ) : null}
+            {bottomTab === "performance" ? (
+              <ErrorBoundary label="The model performance view">
+                <ModelPerformance modelInfo={modelInfo} />
               </ErrorBoundary>
             ) : null}
           </Tabs>
