@@ -1,0 +1,52 @@
+# Candidate models benchmarked for every target (CAD, LAD, LCX, RCA).
+#
+# Each algorithm has fixed `params`, a `default` variant (the phase-3 baseline) and a
+# small `grid` of variants. Every variant is evaluated with each `class_weighting`
+# option, so imbalance handling is compared by cross-validation rather than assumed.
+# Grids are deliberately small: with ~240 development rows a large search would
+# mostly fit noise.
+#
+# `scale: true` standardises numeric/ordinal inputs inside the pipeline.
+# `simplicity` orders algorithms for tie-breaking (lower = simpler).
+
+class_weighting: [none, balanced]
+
+algorithms:
+  logistic_regression:
+    simplicity: 0
+    scale: true
+    params: {max_iter: 5000}
+    default: {C: 1.0}
+    grid:
+      - {C: 0.01}
+      - {C: 0.1}
+      - {C: 1.0}
+
+  svm:
+    simplicity: 1
+    scale: true
+    params: {kernel: rbf, gamma: scale}
+    default: {C: 1.0}
+    grid:
+      - {C: 0.3}
+      - {C: 1.0}
+      - {C: 3.0}
+
+  random_forest:
+    simplicity: 2
+    scale: false
+    params: {n_estimators: 300, max_features: sqrt, n_jobs: -1}
+    default: {min_samples_leaf: 1}
+    grid:
+      - {min_samples_leaf: 1}
+      - {min_samples_leaf: 3}
+      - {min_samples_leaf: 5}
+
+  xgboost:
+    simplicity: 3
+    scale: false
+    params: {n_estimators: 200, learning_rate: 0.05, subsample: 0.8, colsample_bytree: 0.8, n_jobs: 4}
+    default: {max_depth: 3}
+    grid:
+      - {max_depth: 2}
+      - {max_depth: 3}

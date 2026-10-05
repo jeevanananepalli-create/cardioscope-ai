@@ -1,0 +1,42 @@
+# Training and validation settings. All randomness derives from `seed`.
+model_version: "0.1.0"
+seed: 42
+
+# Final holdout, split once and stratified on the joint LAD/LCX/RCA pattern so
+# all four targets keep their class balance. Never used for any modelling decision.
+holdout:
+  test_size: 0.2
+
+# Repeated stratified k-fold on the development set (model comparison and selection).
+cross_validation:
+  n_splits: 5
+  n_repeats: 5
+
+# Inner folds used to produce out-of-fold scores for calibration and threshold tuning.
+inner_cv:
+  n_splits: 5
+
+selection:
+  primary_metric: roc_auc
+  # Candidates within this ROC-AUC of the best are treated as equivalent ...
+  tolerance: 0.01
+  # ... and the tie is broken by this metric (lower is better), then by simplicity.
+  tie_breaker: brier
+
+calibration:
+  methods: [sigmoid, isotonic]
+  # Adopt a calibration method only if its mean out-of-fold Brier improvement over
+  # the uncalibrated model exceeds this many standard errors of the paired differences.
+  min_improvement_se: 2.0
+
+threshold:
+  # Decision threshold tuned on inner out-of-fold scores to maximise this metric,
+  # adopted only if it beats 0.5 by the same standard-error rule on outer folds.
+  objective: balanced_accuracy
+  min_improvement_se: 2.0
+
+explainability:
+  # Background rows summarised to this many k-means centroids for model-agnostic SHAP.
+  kernel_background_size: 25
+  kernel_nsamples: 300
+  kernel_global_sample: 60
