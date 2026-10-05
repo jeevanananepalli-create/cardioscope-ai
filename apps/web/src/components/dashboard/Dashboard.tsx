@@ -150,7 +150,7 @@ export function Dashboard({ api }: DashboardProps) {
 
         <div className="workspace__center">
           <Panel title="Coronary anatomy" subtitle="Interactive 3D view · visualization of model output">
-            <AnatomyViewer vessels={null} categories={categories} anatomy={anatomy} />
+            <AnatomyViewer vessels={result?.vessels ?? null} categories={categories} anatomy={anatomy} />
           </Panel>
         </div>
 
