@@ -47,3 +47,7 @@ assets/anatomy/raw/
 
 # Local build tools (portable Blender for anatomy export)
 .tools/
+
+# Playwright output
+apps/web/test-results/
+apps/web/playwright-report/

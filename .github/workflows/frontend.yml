@@ -1,0 +1,31 @@
+name: Web (dashboard)
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/web/**", ".github/workflows/frontend.yml"]
+  pull_request:
+    paths: ["apps/web/**", ".github/workflows/frontend.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - name: Type-check
+        run: npm run typecheck
+      - name: Unit and component tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+      # End-to-end tests (`npm run test:e2e`) need the API with trained models, which need
+      # the dataset. They are run locally; see README, "Testing".
