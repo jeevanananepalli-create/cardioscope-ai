@@ -1327,3 +1327,131 @@ code {
   padding-left: 18px;
   color: var(--ink-2);
 }
+
+/* ---------- What-if simulation ---------- */
+
+.whatif {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.whatif__intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.whatif__intro > div:first-child {
+  flex: 1 1 380px;
+  max-width: 760px;
+}
+
+.whatif__caveat {
+  margin-top: 6px;
+  color: var(--ink-2);
+}
+
+.whatif__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .whatif__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.whatif__controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.whatif-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.whatif-control[data-changed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.whatif-control__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.whatif-control__label {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.whatif-control__value {
+  font-weight: 650;
+}
+
+.whatif-control__value[data-changed="true"] {
+  color: var(--accent);
+}
+
+.whatif-control input[type="range"] {
+  width: 100%;
+  margin: 4px 0 0;
+  accent-color: var(--accent);
+}
+
+.whatif-control__range,
+.whatif-control__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 22px;
+}
+
+.whatif__add {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+}
+
+.whatif__results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comparison[data-pending="true"] .comparison__after {
+  opacity: 0.45;
+}
+
+.comparison td[data-direction="up"] {
+  color: #b23a34;
+  font-weight: 650;
+}
+
+.comparison td[data-direction="down"] {
+  color: #2d63a8;
+  font-weight: 650;
+}
+
+.comparison .chip__dot {
+  display: inline-block;
+}

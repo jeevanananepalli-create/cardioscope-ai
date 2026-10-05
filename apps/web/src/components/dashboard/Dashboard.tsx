@@ -16,17 +16,19 @@ import { VesselRiskCards } from "@/components/dashboard/VesselRiskCards";
 import { ExplanationPanel } from "@/components/explainability/ExplanationPanel";
 import { VesselExplanation } from "@/components/explainability/VesselExplanation";
 import { AppHeader, type ServiceStatus } from "@/components/layout/AppHeader";
+import { WHAT_IF_LABEL, WhatIfSimulator } from "@/components/what-if/WhatIfSimulator";
 import { useAnatomy } from "@/hooks/useAnatomy";
 import { useExplanation } from "@/hooks/useExplanation";
 import { type PredictionFailure, usePrediction } from "@/hooks/usePrediction";
 import { useServiceData } from "@/hooks/useServiceData";
+import { useWhatIf } from "@/hooks/useWhatIf";
 import type { Api } from "@/lib/api";
 import { FALLBACK_RISK_CATEGORIES } from "@/lib/constants";
 import { emptyFormValues, typicalFormValues, validatePatient } from "@/lib/validation";
 import type { FeatureSchema, FieldErrors, FormValues } from "@/types/patient";
 import type { TargetName } from "@/types/prediction";
 
-type BottomTab = "why" | "measurements";
+type BottomTab = "why" | "measurements" | "whatif";
 
 interface DashboardProps {
   /** Injected in tests; defaults to the real API client. */
@@ -64,6 +66,7 @@ export function Dashboard({ api }: DashboardProps) {
   const [explainTarget, setExplainTarget] = useState<TargetName>("CAD");
   // One explanation request per prediction, covering all four models.
   const explanation = useExplanation(prediction.features, true, api);
+  const whatIf = useWhatIf(prediction.features, api);
 
   // Selecting a vessel in the 3D view points the explanation at that vessel's model.
   const selectedVessel = anatomy.selected;
@@ -115,6 +118,9 @@ export function Dashboard({ api }: DashboardProps) {
   const shownErrors = { ...serverFieldErrors, ...errors };
   const result = prediction.prediction;
   const stale = edited && result !== null;
+  // While a simulation has output, the 3D view shows it (and says so); otherwise the analyzed patient.
+  const simulated = whatIf.active && whatIf.result ? whatIf.result : null;
+  const shownVessels = simulated?.vessels ?? result?.vessels ?? null;
 
   return (
     <div className="app">
@@ -167,7 +173,12 @@ export function Dashboard({ api }: DashboardProps) {
 
         <div className="workspace__center">
           <Panel title="Coronary anatomy" subtitle="Interactive 3D view · visualization of model output">
-            <AnatomyViewer vessels={result?.vessels ?? null} categories={categories} anatomy={anatomy} />
+            <AnatomyViewer
+              vessels={shownVessels}
+              categories={categories}
+              anatomy={anatomy}
+              banner={simulated ? WHAT_IF_LABEL : null}
+            />
           </Panel>
         </div>
 
@@ -278,6 +289,7 @@ export function Dashboard({ api }: DashboardProps) {
             items={[
               { key: "why", label: "Why this prediction?" },
               { key: "measurements", label: "Clinical measurements" },
+              { key: "whatif", label: "What-if simulation", badge: whatIf.active ? "on" : null },
             ]}
             active={bottomTab}
             onChange={setBottomTab}
@@ -310,6 +322,18 @@ export function Dashboard({ api }: DashboardProps) {
                     The values used for a prediction are listed here after analysis.
                   </EmptyState>
                 )}
+              </ErrorBoundary>
+            ) : null}
+            {bottomTab === "whatif" ? (
+              <ErrorBoundary label="The what-if simulator">
+                <WhatIfSimulator
+                  schema={schema}
+                  baseline={prediction.features}
+                  prediction={result}
+                  whatIf={whatIf}
+                  categories={categories}
+                  modelInfo={modelInfo}
+                />
               </ErrorBoundary>
             ) : null}
           </Tabs>
