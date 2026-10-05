@@ -3,7 +3,7 @@
  * The numbers are arbitrary test values, not model results or patient data.
  */
 import type { Api } from "@/lib/api";
-import type { FeatureDescription, FeatureSchema, PatientFeatures } from "@/types/patient";
+import type { DemoProfiles, FeatureDescription, FeatureSchema, PatientFeatures } from "@/types/patient";
 import type {
   ExplanationResponse,
   ModelInfo,
@@ -118,6 +118,26 @@ export const validFeatures: PatientFeatures = {
   HTN: 1,
   "St Elevation": 0,
   BBB: "N",
+};
+
+export const demoProfilesFixture: DemoProfiles = {
+  note: "Synthetic demonstration inputs. They are not real patients and not records from the dataset.",
+  profiles: [
+    {
+      id: "demo-a",
+      name: "Demo Profile A — Elevated model risk",
+      summary: "Older man with typical chest pain.",
+      synthetic: true,
+      features: { ...validFeatures, Age: 68, DM: 1, "St Elevation": 1 },
+    },
+    {
+      id: "demo-b",
+      name: "Demo Profile B — Lower model risk",
+      summary: "Younger woman with no recorded risk factors.",
+      synthetic: true,
+      features: { ...validFeatures, Age: 41, Sex: "Female", HTN: 0 },
+    },
+  ],
 };
 
 const LABELS: Record<TargetName, string> = {
@@ -332,6 +352,7 @@ export function createApiMock(overrides: Partial<Api> = {}): Api {
     })),
     featureSchema: vi.fn(async () => schemaFixture),
     modelInfo: vi.fn(async () => modelInfoFixture),
+    demoProfiles: vi.fn(async () => demoProfilesFixture),
     predict: vi.fn(async () => predictionFixture()),
     explain: vi.fn(async () => explanationFixture),
     ...overrides,

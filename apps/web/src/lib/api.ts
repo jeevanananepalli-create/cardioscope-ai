@@ -1,5 +1,5 @@
 import { API_BASE_URL, API_TIMEOUT_MS } from "@/lib/constants";
-import type { FeatureSchema, PatientFeatures } from "@/types/patient";
+import type { DemoProfiles, FeatureSchema, PatientFeatures } from "@/types/patient";
 import type {
   ExplanationResponse,
   HealthResponse,
@@ -101,6 +101,17 @@ export function isFeatureSchema(value: unknown): value is FeatureSchema {
   );
 }
 
+export function isDemoProfiles(value: unknown): value is DemoProfiles {
+  return (
+    isRecord(value) &&
+    typeof value.note === "string" &&
+    Array.isArray(value.profiles) &&
+    value.profiles.every(
+      (p) => isRecord(p) && typeof p.id === "string" && typeof p.name === "string" && p.synthetic === true && isRecord(p.features),
+    )
+  );
+}
+
 export function isModelInfo(value: unknown): value is ModelInfo {
   return isRecord(value) && isRecord(value.targets) && Array.isArray(value.risk_categories);
 }
@@ -168,6 +179,7 @@ export const api = {
   health: () => request("/health", isHealth),
   featureSchema: () => request("/feature-schema", isFeatureSchema),
   modelInfo: () => request("/model-info", isModelInfo),
+  demoProfiles: () => request("/demo-profiles", isDemoProfiles),
   predict: (features: PatientFeatures) => request("/predict", isPredictionResponse, post({ features })),
   explain: (features: PatientFeatures, targets?: TargetName[]) =>
     request("/explain", isExplanationResponse, post(targets ? { features, targets } : { features })),

@@ -110,6 +110,21 @@ class FeatureSchemaResponse(BaseModel):
     observed_on: str
 
 
+class DemoProfile(BaseModel):
+    """A synthetic input combination for demonstration. Never a real patient."""
+
+    id: str
+    name: str
+    summary: str
+    synthetic: Literal[True]
+    features: dict[str, float | int | str]
+
+
+class DemoProfilesResponse(BaseModel):
+    note: str
+    profiles: list[DemoProfile]
+
+
 class HealthResponse(BaseModel):
     status: Literal["ok", "degraded"]
     models: dict[TargetName, bool]

@@ -4,7 +4,14 @@ import { type FormEvent, useId, useMemo } from "react";
 
 import { Panel } from "@/components/common/Panel";
 import { inputFeatures, outsideTrainingRange, previewBmi } from "@/lib/validation";
-import type { FeatureDescription, FeatureSchema, FieldErrors, FormValues } from "@/types/patient";
+import type {
+  DemoProfile,
+  DemoProfiles,
+  FeatureDescription,
+  FeatureSchema,
+  FieldErrors,
+  FormValues,
+} from "@/types/patient";
 
 interface PatientFormProps {
   schema: FeatureSchema;
@@ -16,6 +23,11 @@ interface PatientFormProps {
   onSubmit: () => void;
   onFillTypical: () => void;
   onClear: () => void;
+  /** Synthetic demo profiles; omitted when they are not available. */
+  demo?: DemoProfiles | null;
+  /** Id of the demo profile currently loaded and unedited, if any. */
+  activeDemoId?: string | null;
+  onLoadDemo?: (profile: DemoProfile) => void;
 }
 
 /** How a category level is shown. Stored values are never changed. */
@@ -147,6 +159,9 @@ export function PatientForm({
   onSubmit,
   onFillTypical,
   onClear,
+  demo = null,
+  activeDemoId = null,
+  onLoadDemo,
 }: PatientFormProps) {
   const baseId = useId();
   const features = useMemo(() => inputFeatures(schema), [schema]);
@@ -174,6 +189,35 @@ export function PatientForm({
       }
     >
       <form className="form" onSubmit={handleSubmit} noValidate aria-label="Patient clinical information">
+        {demo && demo.profiles.length > 0 && onLoadDemo ? (
+          <section className="demo" aria-label="Demo mode">
+            <div className="demo__head">
+              <span className="eyebrow">Demo mode</span>
+              <span className="badge badge--research">Synthetic · not real patients</span>
+            </div>
+            <div className="demo__profiles">
+              {demo.profiles.map((profile) => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  className="demo__profile"
+                  aria-pressed={activeDemoId === profile.id}
+                  disabled={busy || disabled}
+                  title={profile.summary}
+                  onClick={() => onLoadDemo(profile)}
+                >
+                  {profile.name}
+                </button>
+              ))}
+            </div>
+            <p className="field__note">
+              {activeDemoId
+                ? `${demo.profiles.find((profile) => profile.id === activeDemoId)?.summary ?? ""} `
+                : ""}
+              {demo.note}
+            </p>
+          </section>
+        ) : null}
         <div className="form__scroll">
           {schema.groups.map((group, index) => {
             const groupFeatures = features.filter((feature) => feature.group === group.key);

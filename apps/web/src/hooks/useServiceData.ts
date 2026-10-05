@@ -3,13 +3,20 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { type Api, ApiError, api as defaultApi, describeError } from "@/lib/api";
-import type { FeatureSchema } from "@/types/patient";
+import type { DemoProfiles, FeatureSchema } from "@/types/patient";
 import type { ModelInfo } from "@/types/prediction";
 
 export type ServiceData =
   | { state: "loading" }
   | { state: "error"; kind: ApiError["kind"] | "unknown"; message: string }
-  | { state: "ready"; schema: FeatureSchema; modelInfo: ModelInfo; modelsReady: boolean };
+  | {
+      state: "ready";
+      schema: FeatureSchema;
+      modelInfo: ModelInfo;
+      modelsReady: boolean;
+      /** Null if the demo profiles could not be loaded; the dashboard works without them. */
+      demo: DemoProfiles | null;
+    };
 
 /** Loads what the dashboard needs before any prediction: feature schema and model info. */
 export function useServiceData(api: Api = defaultApi): { data: ServiceData; reload: () => void } {
@@ -19,11 +26,13 @@ export function useServiceData(api: Api = defaultApi): { data: ServiceData; relo
   useEffect(() => {
     let cancelled = false;
     setData({ state: "loading" });
-    Promise.all([api.featureSchema(), api.modelInfo()])
-      .then(([schema, modelInfo]) => {
+    // Demo profiles are a convenience: if they fail to load, carry on without them.
+    const demoProfiles = api.demoProfiles().catch(() => null);
+    Promise.all([api.featureSchema(), api.modelInfo(), demoProfiles])
+      .then(([schema, modelInfo, demo]) => {
         if (cancelled) return;
         const modelsReady = Object.values(modelInfo.models_available ?? {}).every(Boolean);
-        setData({ state: "ready", schema, modelInfo, modelsReady });
+        setData({ state: "ready", schema, modelInfo, modelsReady, demo });
       })
       .catch((error: unknown) => {
         if (cancelled) return;

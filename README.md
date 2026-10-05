@@ -40,6 +40,12 @@ coronary arteries — with an explanation of each, mapped onto an interactive 3D
 | Dashboard | Patient form, risk summary, 3D anatomy, explanations, what-if simulation, model performance | `apps/web/` |
 | Anatomy assets | Builds the 3D models from openly licensed anatomy | `scripts/anatomy/`, `assets/anatomy/` |
 
+**Demo mode.** The form offers three synthetic profiles ("Demo Profile A — Elevated model risk",
+"B — Lower model risk", "C — Mixed inputs"). They are hand-chosen inputs within the training
+ranges, not real patients and not dataset records; their predictions are computed by the models
+like any other input. A five-minute walkthrough is in [docs/presentation/demo-script.md](docs/presentation/demo-script.md),
+with a [pitch](docs/presentation/pitch.md) and a [six-page summary](docs/presentation/project-summary.md).
+
 Typical use: enter (or load) a patient's measurements, choose **Analyze Patient**, read the four
 predicted probabilities, rotate the heart, select a vessel to see what drove its prediction, and
 optionally explore how the models respond when an input is changed.
@@ -211,6 +217,7 @@ Base path `/api/v1`. Interactive documentation is served at `/api/v1/docs`.
 | POST | `/explain` | SHAP contributions for each model |
 | GET | `/model-info` | Model descriptions and evaluation results |
 | GET | `/feature-schema` | The inputs, their types, limits and training ranges |
+| GET | `/demo-profiles` | Synthetic demo inputs (never real patients) |
 
 `/predict` takes `{"features": {...}}` keyed by dataset column name. Every input is required and
 strictly typed; unknown fields (including the four outcome columns) are rejected with a per-field

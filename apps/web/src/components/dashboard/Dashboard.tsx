@@ -25,8 +25,8 @@ import { useServiceData } from "@/hooks/useServiceData";
 import { useWhatIf } from "@/hooks/useWhatIf";
 import type { Api } from "@/lib/api";
 import { FALLBACK_RISK_CATEGORIES } from "@/lib/constants";
-import { emptyFormValues, typicalFormValues, validatePatient } from "@/lib/validation";
-import type { FeatureSchema, FieldErrors, FormValues } from "@/types/patient";
+import { emptyFormValues, toFormValues, typicalFormValues, validatePatient } from "@/lib/validation";
+import type { DemoProfile, FeatureSchema, FieldErrors, FormValues } from "@/types/patient";
 import type { TargetName } from "@/types/prediction";
 
 type BottomTab = "why" | "measurements" | "whatif" | "performance";
@@ -63,6 +63,7 @@ export function Dashboard({ api }: DashboardProps) {
   const [values, setValues] = useState<FormValues | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [edited, setEdited] = useState(false);
+  const [activeDemoId, setActiveDemoId] = useState<string | null>(null);
   const [bottomTab, setBottomTab] = useState<BottomTab>("why");
   const [explainTarget, setExplainTarget] = useState<TargetName>("CAD");
   // One explanation request per prediction, covering all four models, and only while a
@@ -88,6 +89,8 @@ export function Dashboard({ api }: DashboardProps) {
     (name: string, value: string) => {
       setValues((current) => ({ ...(current ?? formValues), [name]: value }));
       setEdited(true);
+      // Once edited, the inputs are no longer the demo profile.
+      setActiveDemoId(null);
       setErrors((current) => {
         if (!current[name]) return current;
         const { [name]: _removed, ...rest } = current;
@@ -105,6 +108,18 @@ export function Dashboard({ api }: DashboardProps) {
     setEdited(false);
     await analyze(result.features);
   }, [schema, formValues, analyze]);
+
+  /** Load a synthetic demo profile into the form and run the models on it. */
+  const handleLoadDemo = useCallback(
+    async (profile: DemoProfile) => {
+      setValues(toFormValues(profile.features));
+      setErrors({});
+      setEdited(false);
+      setActiveDemoId(profile.id);
+      await analyze(profile.features);
+    },
+    [analyze],
+  );
 
   const status: ServiceStatus =
     data.state === "loading"
@@ -162,15 +177,20 @@ export function Dashboard({ api }: DashboardProps) {
                 busy={prediction.status === "loading"}
                 onChange={handleChange}
                 onSubmit={handleSubmit}
+                demo={data.demo}
+                activeDemoId={activeDemoId}
+                onLoadDemo={handleLoadDemo}
                 onFillTypical={() => {
                   setValues(typicalFormValues(data.schema));
                   setErrors({});
                   setEdited(true);
+                  setActiveDemoId(null);
                 }}
                 onClear={() => {
                   setValues(emptyFormValues(data.schema));
                   setErrors({});
                   setEdited(false);
+                  setActiveDemoId(null);
                   reset();
                 }}
               />
@@ -227,6 +247,11 @@ export function Dashboard({ api }: DashboardProps) {
                   {stale ? (
                     <Notice tone="warning" title="Inputs have changed since this prediction.">
                       Choose “Analyze Patient” to update the results.
+                    </Notice>
+                  ) : null}
+                  {activeDemoId ? (
+                    <Notice tone="info" title="Synthetic demo profile">
+                      These inputs are not a real patient. The prediction is the models’ actual output for them.
                     </Notice>
                   ) : null}
                   <RiskOverview

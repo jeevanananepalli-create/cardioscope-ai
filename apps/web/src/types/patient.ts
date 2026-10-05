@@ -45,6 +45,20 @@ export interface FeatureSchema {
   observed_on: string;
 }
 
+/** A synthetic input combination for demonstration. Never a real patient. */
+export interface DemoProfile {
+  id: string;
+  name: string;
+  summary: string;
+  synthetic: true;
+  features: PatientFeatures;
+}
+
+export interface DemoProfiles {
+  note: string;
+  profiles: DemoProfile[];
+}
+
 /** What the form holds: raw text for numbers, a chosen level otherwise, "" when empty. */
 export type FormValues = Record<string, string>;
 

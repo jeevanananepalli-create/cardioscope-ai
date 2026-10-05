@@ -349,3 +349,53 @@ def test_large_responses_are_compressed(client):
     response = client.get(f"{API}/model-info", headers={"Accept-Encoding": "gzip"})
     assert response.headers.get("content-encoding") == "gzip"
     assert response.json()["targets"]
+
+
+# --- demo mode --------------------------------------------------------------------------
+
+
+def test_demo_profiles_are_labelled_synthetic_and_valid(client, feature_schema):
+    body = client.get(f"{API}/demo-profiles").json()
+    assert "not real patients" in body["note"]
+    assert 2 <= len(body["profiles"]) <= 3
+    inputs = {f["name"]: f for f in feature_schema["features"] if not f["derived"]}
+    for profile in body["profiles"]:
+        assert profile["synthetic"] is True
+        assert profile["name"].startswith("Demo Profile")
+        assert set(profile["features"]) == set(inputs)
+        for name, value in profile["features"].items():
+            observed = inputs[name]["observed"]
+            if inputs[name]["kind"] == "numeric":
+                assert observed["min"] <= value <= observed["max"], (profile["id"], name)
+
+
+def test_demo_predictions_come_from_the_models_and_match_their_labels(client):
+    """The profile names describe model output, so the real models must agree with them."""
+    profiles = {p["id"]: p for p in client.get(f"{API}/demo-profiles").json()["profiles"]}
+    results = {}
+    for profile_id, profile in profiles.items():
+        response = _predict(client, profile["features"])
+        assert response.status_code == 200
+        assert response.json()["warnings"] == []
+        results[profile_id] = response.json()["cad"]
+    assert "Elevated model risk" in profiles["demo-a"]["name"]
+    assert results["demo-a"]["probability"] > 0.5 and results["demo-a"]["predicted_class"] == 1
+    assert "Lower model risk" in profiles["demo-b"]["name"]
+    assert results["demo-b"]["probability"] < 0.5 and results["demo-b"]["predicted_class"] == 0
+    assert results["demo-a"]["probability"] > results["demo-c"]["probability"] > results["demo-b"]["probability"]
+
+
+def test_demo_profiles_are_not_dataset_records(client, trained_models):
+    """No demo profile reproduces a row of the real dataset."""
+    from ml.src.data.loader import DatasetNotFoundError, load_raw_dataset
+
+    try:
+        frame = load_raw_dataset()
+    except DatasetNotFoundError:
+        pytest.skip("dataset not available")
+    numeric = ["Age", "Weight", "Length", "BP", "PR", "FBS", "TG", "LDL", "HDL", "EF-TTE"]
+    for profile in client.get(f"{API}/demo-profiles").json()["profiles"]:
+        matches = frame
+        for name in numeric:
+            matches = matches[matches[name] == profile["features"][name]]
+        assert len(matches) == 0, profile["id"]

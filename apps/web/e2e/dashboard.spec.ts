@@ -190,3 +190,24 @@ test("an unreachable backend produces a clear message, not a blank screen", asyn
   await page.getByRole("button", { name: "Try again" }).click();
   await expect(page.getByTestId("cad-probability")).toBeVisible();
 });
+
+test("demo mode loads a labelled synthetic profile and shows the models' real output for it", async ({ page, request }) => {
+  const demo = await (await request.get(`${API}/demo-profiles`)).json();
+  const profile = demo.profiles.find((p: { id: string }) => p.id === "demo-b");
+  const expected = (await (await request.post(`${API}/predict`, { data: { features: profile.features } })).json()) as Prediction;
+
+  await open(page);
+  const section = page.getByRole("region", { name: "Demo mode" });
+  await expect(section.getByText("Synthetic · not real patients")).toBeVisible();
+  await section.getByRole("button", { name: profile.name }).click();
+
+  await expect(page.getByTestId("cad-probability")).toHaveText(percent(expected.cad.probability));
+  await expect(page.getByText("Synthetic demo profile")).toBeVisible();
+  await expect(page.getByText(expected.cad.predicted_label, { exact: true }).first()).toBeVisible();
+  for (const vessel of ["LAD", "LCX", "RCA"] as const) {
+    await expect(page.locator(".vessel-chip", { hasText: vessel })).toHaveAttribute(
+      "data-category",
+      expected.vessels[vessel].risk_category,
+    );
+  }
+});
