@@ -128,6 +128,9 @@ export function Dashboard({ api }: DashboardProps) {
 
   return (
     <div className="app">
+      <a className="skip-link" href="#results">
+        Skip to results
+      </a>
       <AppHeader status={status} modelVersion={modelInfo?.model_version ?? null} />
       <SafetyDisclaimer />
       <main className="workspace">
@@ -186,7 +189,7 @@ export function Dashboard({ api }: DashboardProps) {
           </Panel>
         </div>
 
-        <div className="workspace__right">
+        <div className="workspace__right" id="results" tabIndex={-1}>
           {data.state === "ready" && !data.modelsReady ? (
             <Notice tone="warning" title="The prediction models are not available.">
               The service is running but has no trained models. Train them with{" "}
@@ -286,7 +289,7 @@ export function Dashboard({ api }: DashboardProps) {
         </div>
       </main>
 
-      <div className="bottom">
+      <div className="bottom" role="region" aria-label="Analysis details and model performance">
         <section className="panel" aria-label="Analysis details">
           <Tabs
             label="Analysis details"

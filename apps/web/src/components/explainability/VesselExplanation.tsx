@@ -60,7 +60,7 @@ export function VesselExplanation({
           <div className="vessel-detail__name">{vessel}</div>
           <div className="small muted">{TARGET_NAMES[vessel]}</div>
         </div>
-        <div className="vessel-detail__value num" style={{ color }}>
+        <div className="vessel-detail__value num" style={{ borderBottomColor: color }}>
           {formatPercent(result.probability)}
         </div>
       </div>
@@ -76,7 +76,7 @@ export function VesselExplanation({
         <div>
           <dt>Visualization category</dt>
           <dd>
-            <span className="chip chip--small" style={{ borderColor: color, color }}>
+            <span className="chip chip--small" style={{ borderColor: color }}>
               <span className="chip__dot" style={{ background: color }} aria-hidden="true" />
               {category.label}
             </span>

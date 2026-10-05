@@ -181,7 +181,10 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
         ) : (
           <div className="viewer__loading">Loading 3D view…</div>
         )}
-        <div className="viewer__hint">Drag to rotate · scroll to zoom · right-drag to pan · click a vessel</div>
+        <div className="viewer__hint">
+          <span className="viewer__hint-long">Drag to rotate · scroll to zoom · right-drag to pan · click a vessel</span>
+          <span className="viewer__hint-short">Drag to rotate · pinch to zoom · tap a vessel</span>
+        </div>
       </div>
 
       {assetFailed ? (

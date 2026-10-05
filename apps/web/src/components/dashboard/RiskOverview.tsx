@@ -29,7 +29,7 @@ export function RiskOverview({ prediction, categories, metadata, stale = false }
       </div>
       <div className="overview__caption">Predicted probability of coronary artery disease</div>
       <div className="overview__row">
-        <span className="chip" style={{ borderColor: RISK_COLORS[category.key], color: RISK_COLORS[category.key] }}>
+        <span className="chip" style={{ borderColor: RISK_COLORS[category.key] }}>
           <span className="chip__dot" style={{ background: RISK_COLORS[category.key] }} aria-hidden="true" />
           {category.label} visualization category
         </span>

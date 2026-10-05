@@ -52,7 +52,7 @@ export function FeatureContribution({ contribution, scale, schema }: FeatureCont
           }}
         />
       </span>
-      <span className="contribution__number num" style={{ color: positive ? INCREASE_COLOR : DECREASE_COLOR }}>
+      <span className="contribution__number num">
         {formatShap(contribution.shap_value)}
       </span>
       <span className="visually-hidden">{contribution.description}</span>

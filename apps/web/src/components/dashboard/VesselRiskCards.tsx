@@ -46,7 +46,7 @@ export function VesselRiskCards({ vessels, categories, metadata, selected = null
               />
             </div>
             <div className="vessel-card__foot">
-              <span className="chip chip--small" style={{ borderColor: color, color }}>
+              <span className="chip chip--small" style={{ borderColor: color }}>
                 <span className="chip__dot" style={{ background: color }} aria-hidden="true" />
                 {category.label}
               </span>
