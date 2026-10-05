@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 
+import { AnatomyViewer } from "@/components/anatomy/AnatomyViewer";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { EmptyState, Notice } from "@/components/common/Notice";
 import { Panel } from "@/components/common/Panel";
@@ -12,6 +13,7 @@ import { RiskOverview } from "@/components/dashboard/RiskOverview";
 import { SafetyDisclaimer } from "@/components/dashboard/SafetyDisclaimer";
 import { VesselRiskCards } from "@/components/dashboard/VesselRiskCards";
 import { AppHeader, type ServiceStatus } from "@/components/layout/AppHeader";
+import { useAnatomy } from "@/hooks/useAnatomy";
 import { type PredictionFailure, usePrediction } from "@/hooks/usePrediction";
 import { useServiceData } from "@/hooks/useServiceData";
 import type { Api } from "@/lib/api";
@@ -47,6 +49,7 @@ function fieldErrorsFrom(failure: PredictionFailure, schema: FeatureSchema): Fie
 export function Dashboard({ api }: DashboardProps) {
   const { data, reload } = useServiceData(api);
   const prediction = usePrediction(api);
+  const anatomy = useAnatomy();
   const [values, setValues] = useState<FormValues | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [edited, setEdited] = useState(false);
@@ -146,8 +149,8 @@ export function Dashboard({ api }: DashboardProps) {
         </div>
 
         <div className="workspace__center">
-          <Panel title="Coronary anatomy" subtitle="Interactive 3D view">
-            <EmptyState title="3D anatomy view">Added in a later build phase.</EmptyState>
+          <Panel title="Coronary anatomy" subtitle="Interactive 3D view · visualization of model output">
+            <AnatomyViewer vessels={null} categories={categories} anatomy={anatomy} />
           </Panel>
         </div>
 

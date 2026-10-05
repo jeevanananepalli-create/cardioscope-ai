@@ -928,3 +928,189 @@ code {
   padding: 1px 4px;
   border-radius: 4px;
 }
+
+/* ---------- 3D anatomy viewer ---------- */
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.viewer__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toggle {
+  display: inline-flex;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.toggle__option {
+  padding: 6px 12px;
+  border: 0;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  color: var(--ink-2);
+}
+
+.toggle__option + .toggle__option {
+  border-left: 1px solid var(--border-strong);
+}
+
+.toggle__option[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.viewer__vessels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vessel-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.vessel-chip:hover,
+.vessel-chip[data-hovered="true"] {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.vessel-chip[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  background: var(--accent-soft);
+}
+
+.vessel-chip__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.vessel-chip__name {
+  font-weight: 700;
+}
+
+.vessel-chip__value {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.viewer__stage {
+  position: relative;
+  height: clamp(340px, 52vh, 560px);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--scene);
+  touch-action: none;
+}
+
+.viewer__stage canvas {
+  display: block;
+}
+
+.viewer__loading,
+.viewer__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--scene-ink);
+  font-size: 13px;
+}
+
+.viewer__hint {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  color: rgba(214, 222, 232, 0.72);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.viewer__banner {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fff5db;
+  color: #5a3d00;
+  border: 1px solid #ecd9a0;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.vessel-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(15, 23, 34, 0.78);
+  border: 1px solid rgba(214, 222, 232, 0.3);
+  color: #f2f5f8;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.viewer__labels {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.viewer__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  will-change: transform;
+}
+
+.vessel-label[data-expanded="true"] {
+  background: rgba(15, 23, 34, 0.94);
+  border-color: rgba(214, 222, 232, 0.65);
+}
+
+.vessel-label__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.vessel-label__detail {
+  font-weight: 500;
+  color: #cfd8e3;
+}
