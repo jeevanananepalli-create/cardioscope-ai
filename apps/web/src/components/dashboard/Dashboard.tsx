@@ -392,6 +392,7 @@ export function Dashboard({ api }: DashboardProps) {
       <footer className="app-footer">
         CardioScope AI is a research and education prototype. Model outputs are predictions from clinical
         features, not diagnoses. Vessel highlighting visualizes model output; it is not medical imaging.
+        <span className="app-footer__credit"> Developed by Jeevana Nanepalli.</span>
       </footer>
     </div>
   );

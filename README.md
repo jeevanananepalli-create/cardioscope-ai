@@ -10,6 +10,23 @@ CardioScope AI takes routine clinical, laboratory, ECG and echocardiography meas
 shows four model predictions — coronary artery disease (CAD) and stenosis of the LAD, LCX and RCA
 coronary arteries — with an explanation of each, mapped onto an interactive 3D view of the heart.
 
+Developed by **Jeevana Nanepalli**. Source code under the [MIT License](LICENSE).
+
+## Quick start
+
+You need Python 3.11 or 3.12, Node.js 20 or newer, and the dataset file (not included; see
+[Installation](#13-installation)).
+
+| Step | Windows (PowerShell) | macOS / Linux |
+|---|---|---|
+| 1. Put the dataset in `ml/data/raw/` | see [Installation](#13-installation) | same |
+| 2. Install | `.\scripts\setup.ps1` | `./scripts/setup.sh` |
+| 3. Train the models (about 10 minutes) | `.\scripts\train.ps1` | `make train && make evaluate` |
+| 4. Start | `.\scripts\dev.ps1` | `./scripts/dev.sh` |
+| 5. Open | <http://localhost:3000> | same |
+
+Then follow [Using the dashboard](#15-using-the-dashboard).
+
 ## Contents
 
 1. [Project overview](#1-project-overview)
@@ -26,10 +43,12 @@ coronary arteries — with an explanation of each, mapped onto an interactive 3D
 12. [API](#12-api)
 13. [Installation](#13-installation)
 14. [Running locally](#14-running-locally)
-15. [Testing](#15-testing)
-16. [Safety limitations](#16-safety-limitations)
-17. [Dataset attribution](#17-dataset-attribution)
-18. [Anatomy asset attribution](#18-anatomy-asset-attribution)
+15. [Using the dashboard](#15-using-the-dashboard)
+16. [Testing](#16-testing)
+17. [Safety limitations](#17-safety-limitations)
+18. [Dataset attribution](#18-dataset-attribution)
+19. [Anatomy asset attribution](#19-anatomy-asset-attribution)
+20. [Licence and author](#20-licence-and-author)
 
 ## 1. Project overview
 
@@ -264,6 +283,23 @@ Node 24). Exact Python package versions used are in `requirements-lock.txt`.
 
    This writes `ml/models/`, the metrics and figures under `ml/reports/`, and the results documents.
 
+**Manual installation.** The scripts above run exactly these commands, from the repository root:
+
+```
+python -m venv .venv
+.venv\Scripts\activate                 # Windows; on macOS / Linux: source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]" -r apps/api/requirements.txt
+cd apps/web
+npm install
+cd ../..
+
+python -m ml.scripts.prepare_data      # validate and profile the dataset
+python -m ml.scripts.train_all         # compare candidates, select and save the four models
+python -m ml.scripts.evaluate_all      # holdout evaluation, figures, explanations
+python -m ml.scripts.generate_report   # fill the results tables in the documents
+```
+
 The 3D anatomy files are already in the repository. Rebuilding them is optional; see
 [assets/anatomy/ATTRIBUTION.md](assets/anatomy/ATTRIBUTION.md).
 
@@ -288,7 +324,52 @@ Configuration is by environment variable; copy `.env.example` to see the options
 API container, so train the models first. The Docker files have not been run on the development
 machine (the Docker daemon was unavailable), so treat them as untested.
 
-## 15. Testing
+## 15. Using the dashboard
+
+Open <http://localhost:3000> with the API running. The header shows **Models ready** when the four
+models are loaded; if it does not, see [Troubleshooting](#troubleshooting).
+
+1. **Enter a patient.** The left panel lists every model input, grouped (demographics, history,
+   symptoms, examination, ECG, laboratory, echocardiography). Either:
+   - click a **Demo Profile** (A, B or C) to load a synthetic example. These are not real patients;
+   - click **Fill typical values** to start from typical values and edit them; or
+   - type the values yourself. **Clear** empties the form.
+
+   Body mass index and the obesity flag are computed from weight and height. Values outside the
+   plausibility limits are flagged next to the field.
+2. **Click Analyze Patient.** The right panel shows the CAD probability and the LAD, LCX and RCA
+   probabilities, each with a band (low, moderate, high, very high). The three vessels in the 3D
+   view take the colour of their band.
+3. **Explore the 3D view.**
+   - Drag to rotate, scroll to zoom, right-drag to pan. **Reset view** returns to the start.
+   - **Heart focus** shows the heart and coronary arteries; **Torso context** shows it in the body.
+   - Switch layers on and off: **Arteries**, **Veins**, **Nervous system**, **Skeleton**, **Organs**.
+   - **Realistic colours** switches between anatomical and muted colouring. **Blood flow** shows an
+     illustrative animation of flow direction; it does not depend on the prediction.
+   - Click a vessel, or the **LAD**, **LCX** or **RCA** button under the view, to select it.
+4. **Read the tabs under the view.**
+   - **Why this prediction?** The inputs that pushed the selected model's output up or down (SHAP
+     values). These describe the model, not causes of disease.
+   - **Clinical measurements.** The entered values next to the range seen in the training data.
+   - **What-if simulation.** Change a few inputs and see how the model output moves. This shows
+     model sensitivity only; it does not predict the effect of treating a patient.
+   - **Model performance.** Cross-validated and holdout results, ROC curves and confusion matrices
+     for the four models. Read this before relying on any output; the LCX and RCA models are weak.
+5. **Theme.** The button at the top right switches between the light and dark themes.
+
+Do not enter real patient data: there is no authentication and the tool is not a medical device.
+
+### Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| Header does not show "Models ready", or predictions fail | The API is not running, or the models have not been trained. Start the API and run the training step. |
+| "Dataset not found" during setup or training | Place the file at `ml/data/raw/extention of Z-Alizadeh sani dataset.xlsx` (exact name). |
+| The page cannot reach the API | The API must be on port 8000, or set `NEXT_PUBLIC_API_BASE_URL` (see `.env.example`). |
+| The 3D view stays on "Loading anatomy…" | The browser needs WebGL. Keep the tab in the foreground while it loads the model files. |
+| `make` is not recognised (Windows) | Use the `.ps1` scripts or the manual commands instead. |
+
+## 16. Testing
 
 | Suite | Command | Needs |
 |---|---|---|
@@ -301,7 +382,7 @@ machine (the Docker daemon was unavailable), so treat them as untested.
 tests that need it are skipped and say so. The end-to-end tests drive the real API and models:
 patient input, prediction, dashboard, rendered 3D view, vessel selection, what-if and error states.
 
-## 16. Safety limitations
+## 17. Safety limitations
 
 - **Not a medical device.** Outputs are model predictions from clinical features, not diagnoses.
 - **Small, single-source data.** 303 patients from one centre; no external validation. Performance
@@ -316,7 +397,7 @@ patient input, prediction, dashboard, rendered 3D view, vessel selection, what-i
 
 More: [docs/clinical/safety.md](docs/clinical/safety.md).
 
-## 17. Dataset attribution
+## 18. Dataset attribution
 
 Z-Alizadeh Sani dataset and its extension, UCI Machine Learning Repository (Creative Commons
 Attribution 4.0). Please confirm the current citation and licence on the UCI page before publishing.
@@ -327,7 +408,7 @@ Attribution 4.0). Please confirm the current citation and licence on the UCI pag
 
 The dataset is not redistributed here.
 
-## 18. Anatomy asset attribution
+## 19. Anatomy asset attribution
 
 - **Heart, coronary arteries, arteries, veins and body outline:** BodyParts3D, © The Database Center
   for Life Science, licensed under CC Attribution-Share Alike 2.1 Japan.
@@ -339,8 +420,13 @@ The model files under `apps/web/public/models/anatomy/` are derivatives and are 
 those share-alike licences; this does not apply to the source code. What was selected, changed and
 deliberately left out is documented in [assets/anatomy/ATTRIBUTION.md](assets/anatomy/ATTRIBUTION.md).
 
-## Licence
+## 20. Licence and author
 
-No licence has been chosen for the source code yet, so by default all rights are reserved by the
-author. Third-party components keep their own licences; see
+Copyright (c) 2026 **Jeevana Nanepalli**. The source code is released under the
+[MIT License](LICENSE).
+
+The MIT License covers the source code only. The 3D model files under
+`apps/web/public/models/anatomy/` are derivatives of BodyParts3D and Z-Anatomy and remain under
+their Creative Commons share-alike licences (section 19). The dataset is not included and keeps its
+own licence (section 18). Other third-party components keep their own licences; see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

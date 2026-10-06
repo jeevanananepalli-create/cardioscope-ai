@@ -2,6 +2,8 @@
   "name": "cardioscope-web",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Jeevana Nanepalli",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

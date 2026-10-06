@@ -36,7 +36,7 @@ Run through this before a demonstration or before sharing the repository.
 
 - [ ] Anatomy credits appear under the 3D view and in `assets/anatomy/ATTRIBUTION.md`.
 - [ ] `THIRD_PARTY_NOTICES.md` is current.
-- [ ] A licence for the source code has been chosen (none has been yet).
+- [x] A licence for the source code has been chosen: MIT (`LICENSE`), copyright Jeevana Nanepalli.
 - [ ] Dataset citation and licence re-checked on the UCI page.
 
 ## Security and privacy
