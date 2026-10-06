@@ -42,7 +42,7 @@ export const BODYPARTS3D_SOURCE: GltfAnatomySource = {
     heart: ["heart"],
     body: ["skin"],
     arteries: ["arteries", "pulmonary_artery"],
-    veins: ["veins"],
+    veins: ["veins", "pulmonary_veins"],
     neutralCoronary: ["coronary_left_main"],
     vessels: {
       LAD: [asset.vessels.LAD.node],
@@ -63,6 +63,10 @@ export const BODYPARTS3D_SOURCE: GltfAnatomySource = {
     RCA: asset.vessels.RCA.label_anchor as Point3,
   },
   heartCenter: asset.nodes.heart.bounds.center as Point3,
+  flow: {
+    aorticRoot: asset.flow.aortic_root.point as Point3,
+    rightAtriumInflow: asset.flow.right_atrium_inflow.point as Point3,
+  },
   camera: {
     heart: { position: [0.9, 0.35, 3.5], target: [0.05, 0, 0], minDistance: 1.1, maxDistance: 14 },
     torso: { position: [0.9, 0.4, 9], target: [0, -0.5, 0], minDistance: 3, maxDistance: 48 },
@@ -74,6 +78,11 @@ export const ANATOMY_SOURCE: AnatomySource = BODYPARTS3D_SOURCE;
 
 export const REFERENCE_ANATOMY_NOTICE =
   "Generic reference anatomy of one adult, not this patient’s heart or vessels.";
+
+export const FLOW_NOTICE =
+  "The blood-flow animation is illustrative: it shows the normal direction of circulation, is the same for every input, and is not affected by any prediction.";
+
+export const MODEL_OUTPUT_NOTICE = "A glowing outline marks the three vessels that carry model output.";
 
 export const NERVE_THICKNESS_NOTICE = "Nerves are drawn thicker than life so they can be seen.";
 

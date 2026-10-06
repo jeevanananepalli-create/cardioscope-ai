@@ -3,13 +3,16 @@
 import { useGLTF } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
-import { type Material, type Mesh, MeshStandardMaterial, type Object3D } from "three";
+import type { Mesh, Object3D } from "three";
 
-import type { ContextLayerName } from "@/types/anatomy";
+import { tissueMaterial } from "@/components/anatomy/GltfAnatomy";
+import { tissueStyle } from "@/lib/anatomyColors";
+import type { ColorScheme, ContextLayerName } from "@/types/anatomy";
 
 interface ContextLayerProps {
   layer: ContextLayerName;
   url: string;
+  colorScheme: ColorScheme;
 }
 
 const NO_RAYCAST = () => null;
@@ -19,38 +22,11 @@ function isMesh(object: Object3D): object is Mesh {
 }
 
 /**
- * Neutral colours chosen to stay clear of the green / amber / orange / red risk palette,
- * so a context layer can never be read as model output.
+ * One optional anatomy layer (nervous system, skeleton or organs), downloaded only when it
+ * is switched on. Each node in the file is one tissue group and gets that tissue's colour.
+ * Purely context: it ignores the pointer and is never coloured by a model.
  */
-function materialFor(layer: ContextLayerName, node: string): Material {
-  if (layer === "nerves") {
-    return node === "cns"
-      ? new MeshStandardMaterial({ color: "#cfc4ea", roughness: 0.75 })
-      : new MeshStandardMaterial({ color: "#b3a0e6", roughness: 0.6, emissive: "#3b2f66", emissiveIntensity: 0.35 });
-  }
-  if (layer === "skeleton") {
-    return new MeshStandardMaterial({
-      color: "#dcd8cb",
-      roughness: 0.85,
-      transparent: true,
-      opacity: 0.42,
-      depthWrite: false,
-    });
-  }
-  return new MeshStandardMaterial({
-    color: "#8ea6ad",
-    roughness: 0.8,
-    transparent: true,
-    opacity: 0.4,
-    depthWrite: false,
-  });
-}
-
-/**
- * One optional anatomy layer (nervous system, skeleton or organs), downloaded only when
- * it is switched on. Purely context: it ignores the pointer and is never coloured by a model.
- */
-export function ContextLayer({ layer, url }: ContextLayerProps) {
+export function ContextLayer({ layer, url, colorScheme }: ContextLayerProps) {
   const { scene } = useGLTF(url);
   const invalidate = useThree((state) => state.invalidate);
 
@@ -58,12 +34,15 @@ export function ContextLayer({ layer, url }: ContextLayerProps) {
     const clone = scene.clone(true);
     clone.traverse((object) => {
       if (!isMesh(object)) return;
-      object.material = materialFor(layer, object.name || object.parent?.name || "");
+      const node = object.name || object.parent?.name || "";
+      const material = tissueMaterial(tissueStyle(node, colorScheme));
+      object.material = material;
       object.raycast = NO_RAYCAST;
-      if (layer !== "nerves") object.renderOrder = 1;
+      // Translucent structures are drawn after opaque ones so they do not hide them.
+      if (material.transparent) object.renderOrder = layer === "skeleton" ? 1 : 1.5;
     });
     return clone;
-  }, [scene, layer]);
+  }, [scene, layer, colorScheme]);
 
   useEffect(() => {
     invalidate();

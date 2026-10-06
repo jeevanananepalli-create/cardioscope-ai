@@ -40,8 +40,12 @@ Point out, in order:
 - Drag to rotate; scroll to zoom.
 - Switch to **Torso context**, then tick **Nervous system** and **Skeleton**.
 
-> "This is real reference anatomy from open datasets — one generic adult, not this patient. These
-> extra layers are context. They are drawn in neutral colours and never carry model output."
+> "This is real reference anatomy from open datasets — one generic adult, not this patient. The
+> colours follow anatomical convention: red for oxygenated blood, blue for deoxygenated, yellow
+> nerves. The moving bands show the normal direction of blood flow. None of that is model output;
+> only the three glowing coronary vessels are."
+
+If you want model output to be the only colour on screen, untick **Realistic colours**.
 
 Switch back to **Heart focus** and untick the layers.
 

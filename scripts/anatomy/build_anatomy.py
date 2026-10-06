@@ -57,10 +57,30 @@ Z_ANATOMY_LICENSE_URL = "https://creativecommons.org/licenses/by-sa/4.0/"
 # and five reference bones; they agree to within a few millimetres, not exactly.
 Z_ANATOMY_OFFSET_MM = np.array([1.0, 97.5, 54.3])
 # layer -> (file stem, {node name: (export group, target faces)})
+# Each node is one tissue group from the export, so the viewer can colour it separately.
 Z_ANATOMY_LAYERS = {
-    "nerves": ("layer-nervous-system", {"cns": ("cns", 45000), "peripheral_nerves": ("peripheral_nerves", 90000)}),
-    "skeleton": ("layer-skeleton", {"skeleton": ("skeleton", 70000)}),
-    "organs": ("layer-organs", {"organs": ("organs", 36000)}),
+    "nerves": (
+        "layer-nervous-system",
+        {"cns_brain": 80000, "cns_spinal": 10000, "peripheral_nerves": 90000},
+    ),
+    "skeleton": (
+        "layer-skeleton",
+        {"skeleton_bone": 62000, "skeleton_cartilage": 8000, "skeleton_teeth": 3000},
+    ),
+    "organs": (
+        "layer-organs",
+        {
+            "organs_lungs": 9000,
+            "organs_airways": 5000,
+            "organs_liver": 6000,
+            "organs_biliary": 1500,
+            "organs_digestive": 9000,
+            "organs_pancreas": 1500,
+            "organs_glands": 3000,
+            "organs_urogenital": 3000,
+            "organs_other": 2000,
+        },
+    ),
 }
 
 
@@ -126,7 +146,10 @@ def build_context_layers(origin_mm: np.ndarray) -> dict[str, dict]:
     for layer, (stem, nodes) in Z_ANATOMY_LAYERS.items():
         scene = trimesh.Scene()
         described = {}
-        for node_name, (group, target_faces) in nodes.items():
+        for node_name, target_faces in nodes.items():
+            group = node_name
+            if f"{group}_vertices" not in export.files:
+                continue
             vertices_mm = export[f"{group}_vertices"].astype(np.float64) * 1000.0 - Z_ANATOMY_OFFSET_MM
             mesh = trimesh.Trimesh(
                 vertices=to_viewer_space(vertices_mm, origin_mm), faces=export[f"{group}_faces"], process=True
@@ -192,6 +215,14 @@ def main() -> int:
             scene.add_geometry(hit, node_name=hit_name, geom_name=hit_name)
             vessels[vessel] = {"node": name, "hit_node": hit_name, "label_anchor": label_anchor(vessel, mesh)}
 
+    # Reference points for the illustrative blood-flow animation, in viewer coordinates.
+    flow = {}
+    for name, reference in manifest.get("flow_references", {}).items():
+        part = trimesh.load(RAW_DIR / f"{reference['part']}.stl", force="mesh", process=True)
+        points = to_viewer_space(np.asarray(part.vertices), origin_mm)
+        lowest = points[points[:, 1] <= np.percentile(points[:, 1], 5)]
+        flow[name] = {"point": [round(float(v), 4) for v in lowest.mean(axis=0)], "note": reference["note"]}
+
     GLB_PATH.parent.mkdir(parents=True, exist_ok=True)
     GLB_PATH.write_bytes(scene.export(file_type="glb"))
     layers = build_context_layers(origin_mm)
@@ -207,6 +238,7 @@ def main() -> int:
         "total_faces": int(total_faces),
         "file_bytes": GLB_PATH.stat().st_size,
         "vessels": vessels,
+        "flow": flow,
         "nodes": meta_nodes,
         "layers": layers,
     }

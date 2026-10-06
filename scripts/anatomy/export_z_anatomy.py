@@ -2,7 +2,7 @@
 
 Writes, next to the .blend file:
   z_anatomy_export.npz    world-space triangle meshes (metres, z up) for the groups
-                          cns, peripheral_nerves, skeleton, organs
+                          cns_brain, cns_spinal, peripheral_nerves, skeleton_bone, ...
   z_anatomy_export.json   which objects went into each group, which were left out and
                           why, and bounds of reference bones used to align Z-Anatomy
                           with BodyParts3D
@@ -48,6 +48,43 @@ PERIPHERAL = re.compile(r"nerve|plexus|gangli|sympathetic|trunk|ramus|rami|\broo
 MENINGES = re.compile(r"dura|arachnoid|pia mater|mening|falx|tentorium|diaphragma sellae", re.I)
 NON_COMMERCIAL = re.compile(r"kidney|renal (pelvis|calyx|pyramid|cortex|medulla)", re.I)
 ORGAN_COVERS = re.compile(r"pleura|periton|mesentery|omentum|meso|cavity", re.I)
+# Tissue groups within each layer, so the viewer can give each its own colour.
+# First matching pattern wins.
+CNS_GROUPS = (
+    ("cns_spinal", re.compile(r"spinal|spino|\btract\b|fasciculus|funiculus|horn of", re.I)),
+    ("cns_brain", re.compile(r".")),
+)
+SKELETON_GROUPS = (
+    ("skeleton_teeth", re.compile(r"tooth|teeth|incisor|canine|premolar|molar", re.I)),
+    ("skeleton_cartilage", re.compile(r"cartilage", re.I)),
+    ("skeleton_bone", re.compile(r".")),
+)
+ORGAN_GROUPS = (
+    ("organs_liver", re.compile(r"liver", re.I)),
+    ("organs_biliary", re.compile(r"gallbladder|bile|cystic duct|hepatic duct", re.I)),
+    ("organs_lungs", re.compile(r"lung", re.I)),
+    ("organs_airways", re.compile(r"bronch|trachea|laryn|epiglott|nasopharynx|nasal|\bnose\b", re.I)),
+    ("organs_pancreas", re.compile(r"pancrea", re.I)),
+    ("organs_glands", re.compile(r"gland|thyroid|hypophys|suprarenal|pineal|thymus", re.I)),
+    (
+        "organs_urogenital",
+        re.compile(r"bladder|ureter|urethra|prostate|testis|epididym|deferens|seminal|penis|ejaculat|scrot|uter|ovar|vagin|cavernos|spongios", re.I),
+    ),
+    (
+        "organs_digestive",
+        re.compile(
+            r"stomach|intestin|colon|caecum|cecum|rectum|duoden|jejun|ileum|oesophag|esophag|pharynx|appendix|anal|taenia|tongue|gingiva|palate|sigmoid",
+            re.I,
+        ),
+    ),
+    ("organs_other", re.compile(r".")),
+)
+
+
+def tissue_group(name, table):
+    return next(group for group, pattern in table if pattern.search(name))
+
+
 REFERENCE_BONES = ("Body of sternum", "Manubrium of sternum", "Vertebra T6", "Vertebra L3", "Sacrum")
 
 OUTPUT_DIR = os.path.dirname(bpy.data.filepath)
@@ -88,7 +125,7 @@ def helper_reason(obj):
 
 
 # --- choose objects -----------------------------------------------------------------------
-groups = {"cns": {}, "peripheral_nerves": {}, "skeleton": {}, "organs": {}}
+groups = {}
 skipped = {}
 sense_organs = {o.name for o in geometry("Sense organs")}
 
@@ -101,16 +138,16 @@ for obj in geometry("7: Nervous system & Sense organs"):
     if reason:
         skipped[obj.name] = reason
     elif obj.type == "CURVE" or PERIPHERAL.search(obj.name):
-        groups["peripheral_nerves"][obj.name] = obj
+        groups.setdefault("peripheral_nerves", {})[obj.name] = obj
     else:
-        groups["cns"][obj.name] = obj
+        groups.setdefault(tissue_group(obj.name, CNS_GROUPS), {})[obj.name] = obj
 
 for obj in geometry("1: Skeletal system"):
     reason = helper_reason(obj)
     if reason:
         skipped[obj.name] = reason
     else:
-        groups["skeleton"][obj.name] = obj
+        groups.setdefault(tissue_group(obj.name, SKELETON_GROUPS), {})[obj.name] = obj
 
 for obj in geometry("8: Visceral systems"):
     reason = helper_reason(obj)
@@ -121,7 +158,7 @@ for obj in geometry("8: Visceral systems"):
     if reason:
         skipped[obj.name] = reason
     else:
-        groups["organs"][obj.name] = obj
+        groups.setdefault(tissue_group(obj.name, ORGAN_GROUPS), {})[obj.name] = obj
 
 # --- make them evaluable ------------------------------------------------------------------
 staging = bpy.data.collections.new("cardioscope_export")

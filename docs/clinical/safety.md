@@ -23,6 +23,8 @@
 | "Model predicts CAD / stenosis" | Probability at or above the model's decision threshold | A diagnosis or a finding |
 | Risk category (low … very high) | A display band for the prototype | A clinical risk class |
 | Vessel colour in 3D | The band of that vessel's model output | Imaging, or the location of a lesion |
+| Other colours in 3D | Anatomical illustration convention | Anything measured or predicted |
+| Blood-flow animation | The normal direction of circulation, the same for everyone | This person's blood flow, or the effect of any narrowing |
 | Feature contribution | How the model used that input for this prediction | A cause, or evidence about anatomy |
 | What-if result | How the model output changes when an input changes | The effect of changing anything in a patient |
 
@@ -32,7 +34,8 @@
 - "Contributes toward a higher/lower predicted risk", never "causes", "proves" or "shows a blockage".
 - Risk bands are always accompanied by the statement that they are not clinically validated.
 - The what-if tool is always labelled "Exploratory model simulation".
-- The 3D view always states that the anatomy is generic and that colour is model output.
+- The 3D view always states that the anatomy is generic, which colours are convention and which
+  are model output, and that the blood-flow animation is illustrative and unaffected by predictions.
 
 Automated tests check for the disclaimer and for banned phrases in the rendered interface and in
 the explanation text.

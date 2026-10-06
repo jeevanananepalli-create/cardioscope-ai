@@ -16,6 +16,9 @@ export interface ContextLayerAsset {
 }
 export type LayerVisibility = Record<AnatomyLayer, boolean>;
 
+/** "realistic": conventional anatomical colours. "muted": only model output is coloured. */
+export type ColorScheme = "realistic" | "muted";
+
 export interface CameraView {
   position: Point3;
   target: Point3;
@@ -59,6 +62,8 @@ export interface GltfAnatomySource {
   /** A point on each vessel where its label is pinned, and the heart's centre. */
   labelAnchors: Record<VesselName, Point3>;
   heartCenter: Point3;
+  /** Where blood leaves and returns to the heart, for the illustrative flow animation. */
+  flow: { aorticRoot: Point3; rightAtriumInflow: Point3 };
   camera: Record<ViewMode, CameraView>;
 }
 
@@ -72,6 +77,9 @@ export interface AnatomySceneProps {
   source: AnatomySource;
   mode: ViewMode;
   layers: LayerVisibility;
+  colorScheme: ColorScheme;
+  /** Animate the illustrative blood flow. */
+  flow: boolean;
   vessels: VesselVisualStates;
   selected: VesselName | null;
   hovered: VesselName | null;

@@ -211,3 +211,45 @@ test("demo mode loads a labelled synthetic profile and shows the models' real ou
     );
   }
 });
+
+test("blood flow animates when on, is still when off, and is labelled illustrative", async ({ page }) => {
+  await open(page);
+  const stage = page.getByTestId("anatomy-stage");
+  await expect(stage.getByText("Loading anatomy…")).toBeHidden({ timeout: 30_000 });
+  const canvas = stage.locator("canvas");
+  const flow = page.getByRole("checkbox", { name: "Blood flow" });
+  await expect(flow).toBeChecked();
+  await expect(page.getByText(/blood-flow animation is illustrative/)).toBeVisible();
+  await expect(page.getByText(/is not affected by any prediction/)).toBeVisible();
+
+  // Two frames a moment apart differ while the animation runs...
+  const first = await canvas.screenshot();
+  await page.waitForTimeout(450);
+  const second = await canvas.screenshot();
+  expect(first.equals(second), "the canvas should change between frames while blood flow is on").toBe(false);
+
+  // ...and are identical once it is switched off.
+  await flow.uncheck();
+  await page.waitForTimeout(400);
+  const third = await canvas.screenshot();
+  await page.waitForTimeout(450);
+  const fourth = await canvas.screenshot();
+  expect(third.equals(fourth), "the canvas should be still while blood flow is off").toBe(true);
+});
+
+test("realistic colours can be switched to muted context colours", async ({ page }) => {
+  await open(page);
+  const stage = page.getByTestId("anatomy-stage");
+  await expect(stage.getByText("Loading anatomy…")).toBeHidden({ timeout: 30_000 });
+  await page.getByRole("checkbox", { name: "Blood flow" }).uncheck();
+  const realistic = page.getByRole("checkbox", { name: "Realistic colours" });
+  await expect(realistic).toBeChecked();
+  await expect(page.getByText(/red for vessels carrying oxygenated blood/)).toBeVisible();
+  await page.waitForTimeout(400);
+  const before = await stage.locator("canvas").screenshot();
+  await realistic.uncheck();
+  await expect(page.getByText(/only model output is coloured/)).toBeVisible();
+  await page.waitForTimeout(600);
+  const after = await stage.locator("canvas").screenshot();
+  expect(before.equals(after)).toBe(false);
+});

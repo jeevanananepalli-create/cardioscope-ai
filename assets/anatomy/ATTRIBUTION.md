@@ -97,6 +97,12 @@ Deliberately **not** exported:
   BodyParts3D meshes, so the two sets do not share exact coordinates. They are aligned with one
   translation that matches the heart and five reference bones to within a few millimetres.
 
+- Structures are grouped by tissue (for example liver, lungs, bone, cartilage, brain, spinal cord)
+  so the viewer can colour each group. **Colours are applied by the application**, following
+  common anatomical-illustration conventions; they are not part of the source data.
+- The **blood-flow animation** is added by the application. It is a visual effect showing the
+  normal direction of circulation, not data from either source and not a simulation.
+
 These layers are anatomical context only. No model in this project predicts anything about
 nerves, bones or organs, and none of these layers is ever coloured by model output.
 

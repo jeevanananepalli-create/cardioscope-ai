@@ -17,7 +17,9 @@
     "heart": {
       "layer": "heart",
       "target_faces": 60000,
-      "parts": { "FMA7274": "wall of heart" }
+      "parts": {
+        "FMA7274": "wall of heart"
+      }
     },
     "coronary_LAD": {
       "layer": "coronary",
@@ -32,7 +34,9 @@
       "layer": "coronary",
       "vessel": "LCX",
       "target_faces": 4000,
-      "parts": { "FMA3895": "circumflex branch of left coronary artery" }
+      "parts": {
+        "FMA3895": "circumflex branch of left coronary artery"
+      }
     },
     "coronary_RCA": {
       "layer": "coronary",
@@ -49,7 +53,9 @@
     "coronary_left_main": {
       "layer": "coronary",
       "target_faces": 800,
-      "parts": { "FMA4685": "stem of left coronary artery" }
+      "parts": {
+        "FMA4685": "stem of left coronary artery"
+      }
     },
     "arteries": {
       "layer": "arteries",
@@ -82,23 +88,45 @@
     "pulmonary_artery": {
       "layer": "arteries",
       "target_faces": 14000,
-      "parts": { "FMA66326": "pulmonary artery" }
+      "parts": {
+        "FMA66326": "pulmonary artery"
+      }
     },
     "veins": {
       "layer": "veins",
-      "target_faces": 12000,
+      "target_faces": 5000,
       "parts": {
         "FMA4720": "superior vena cava",
         "FMA10951": "inferior vena cava",
         "FMA4751": "right brachiocephalic vein",
-        "FMA4761": "left brachiocephalic vein",
+        "FMA4761": "left brachiocephalic vein"
+      }
+    },
+    "pulmonary_veins": {
+      "layer": "veins",
+      "target_faces": 9000,
+      "parts": {
         "FMA66643": "pulmonary vein"
       }
     },
     "skin": {
       "layer": "body",
       "target_faces": 24000,
-      "parts": { "FMA7163": "skin" }
+      "parts": {
+        "FMA7163": "skin"
+      }
+    }
+  },
+  "flow_references": {
+    "aortic_root": {
+      "part": "FMA3736",
+      "pick": "lowest",
+      "note": "start of the ascending aorta"
+    },
+    "right_atrium_inflow": {
+      "part": "FMA4720",
+      "pick": "lowest",
+      "note": "lower end of the superior vena cava"
     }
   }
 }

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { AnatomyViewer } from "@/components/anatomy/AnatomyViewer";
 import { useAnatomy } from "@/hooks/useAnatomy";
 import asset from "@/lib/anatomyAsset.json";
+import { tissueStyle } from "@/lib/anatomyColors";
 import {
   ANATOMY_SOURCE,
   availableLayers,
@@ -16,6 +17,30 @@ import {
   vesselVisualStates,
 } from "@/lib/anatomy";
 import { FALLBACK_RISK_CATEGORIES, NO_PREDICTION_COLOR, RISK_COLORS } from "@/lib/constants";
+
+/** Hue in degrees and saturation (0-1) of a #rrggbb colour. */
+function hueAndSaturation(hex: string): { hue: number; saturation: number } {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+  let hue = 0;
+  if (delta > 0) {
+    if (max === r) hue = ((g - b) / delta) % 6;
+    else if (max === g) hue = (b - r) / delta + 2;
+    else hue = (r - g) / delta + 4;
+  }
+  return { hue: (hue * 60 + 360) % 360, saturation: max === 0 ? 0 : delta / max };
+}
+
+const isRed = (hex: string) => {
+  const { hue, saturation } = hueAndSaturation(hex);
+  return (hue < 20 || hue > 340) && saturation > 0.5;
+};
+const isBlue = (hex: string) => {
+  const { hue, saturation } = hueAndSaturation(hex);
+  return hue > 200 && hue < 250 && saturation > 0.5;
+};
 import type { AnatomySource } from "@/types/anatomy";
 import type { TargetPrediction, VesselName } from "@/types/prediction";
 
@@ -283,7 +308,9 @@ describe("anatomy asset configuration", () => {
     expect(Object.keys(layers).sort()).toEqual(["nerves", "organs", "skeleton"]);
     expect(layers.nerves!.url).toBe("/models/anatomy/layer-nervous-system.glb");
     expect(new Set(Object.values(layers).map((layer) => layer!.url)).size).toBe(3);
-    expect(Object.keys(asset.layers.nerves.nodes).sort()).toEqual(["cns", "peripheral_nerves"]);
+    expect(Object.keys(asset.layers.nerves.nodes).sort()).toEqual(["cns_brain", "cns_spinal", "peripheral_nerves"]);
+    expect(Object.keys(asset.layers.organs.nodes)).toContain("organs_liver");
+    expect(Object.keys(asset.layers.skeleton.nodes)).toContain("skeleton_bone");
     for (const layer of Object.values(asset.layers)) {
       expect(layer.attribution).toMatch(/Z-Anatomy.*CC BY-SA 4\.0/);
       expect(layer.file_bytes).toBeLessThan(8_000_000);
@@ -296,5 +323,96 @@ describe("anatomy asset configuration", () => {
     for (const name of [...nodes.heart, ...nodes.body, ...nodes.arteries, ...nodes.veins, ...nodes.neutralCoronary]) {
       expect(built).toContain(name);
     }
+  });
+});
+
+describe("anatomical colours", () => {
+  it("follows the oxygenated-red, deoxygenated-blue convention in the realistic scheme", () => {
+    for (const node of ["arteries", "pulmonary_veins", "coronary"]) {
+      expect(isRed(tissueStyle(node, "realistic").color), node).toBe(true);
+    }
+    for (const node of ["veins", "pulmonary_artery"]) {
+      expect(isBlue(tissueStyle(node, "realistic").color), node).toBe(true);
+    }
+  });
+
+  it("gives every built structure its own realistic style", () => {
+    const nodes = [
+      ...Object.keys(asset.nodes).filter((name) => !name.startsWith("coronary_")),
+      ...Object.values(asset.layers).flatMap((layer) => Object.keys(layer.nodes)),
+    ];
+    const fallback = tissueStyle("no-such-structure", "realistic").color;
+    for (const node of nodes) {
+      expect(tissueStyle(node, "realistic").color, node).not.toBe(fallback);
+    }
+    expect(tissueStyle("organs_liver", "realistic").color).not.toBe(tissueStyle("organs_lungs", "realistic").color);
+    expect(tissueStyle("peripheral_nerves", "realistic").color).not.toBe(tissueStyle("skeleton_bone", "realistic").color);
+  });
+
+  it("uses no saturated red or blue for context in the muted scheme", () => {
+    for (const node of ["heart", "arteries", "veins", "pulmonary_artery", "pulmonary_veins", "peripheral_nerves", "organs_liver"]) {
+      expect(hueAndSaturation(tissueStyle(node, "muted").color).saturation, node).toBeLessThan(0.4);
+    }
+  });
+
+  it("keeps translucent the structures that surround the heart", () => {
+    for (const node of ["skin", "skeleton_bone", "organs_lungs"]) {
+      expect(tissueStyle(node, "realistic").opacity, node).toBeLessThan(1);
+    }
+    expect(tissueStyle("heart", "realistic").opacity ?? 1).toBe(1);
+  });
+});
+
+describe("display options", () => {
+  it("starts with realistic colours and blood flow, each with its caveat", async () => {
+    enableWebgl();
+    render(<Harness vessels={null} />);
+    const scene = await screen.findByTestId("scene");
+    expect(scene).toHaveAttribute("data-scheme", "realistic");
+    await waitFor(() => expect(scene).toHaveAttribute("data-flow", "on"));
+    expect(screen.getByRole("checkbox", { name: "Realistic colours" })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Blood flow" })).toBeChecked();
+    expect(screen.getByText(/red for vessels carrying oxygenated blood, blue for deoxygenated/)).toBeInTheDocument();
+    expect(screen.getByText(/blood-flow animation is illustrative/)).toBeInTheDocument();
+    expect(screen.getByText(/is not affected by any prediction/)).toBeInTheDocument();
+    expect(screen.getByText(/glowing outline marks the three vessels that carry model output/)).toBeInTheDocument();
+  });
+
+  it("can switch to muted colours and turn the flow off", async () => {
+    enableWebgl();
+    render(<Harness vessels={predictionFixture().vessels} />);
+    const scene = await screen.findByTestId("scene");
+    await waitFor(() => expect(scene).toHaveAttribute("data-flow", "on"));
+    await userEvent.click(screen.getByRole("checkbox", { name: "Realistic colours" }));
+    expect(scene).toHaveAttribute("data-scheme", "muted");
+    expect(screen.getByText(/muted colours so that only model output is coloured/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("checkbox", { name: "Blood flow" }));
+    expect(scene).toHaveAttribute("data-flow", "off");
+    expect(screen.queryByText(/blood-flow animation is illustrative/)).not.toBeInTheDocument();
+    // Neither option changes what the modelled vessels show.
+    expect(screen.getByTestId("mesh-LAD")).toHaveAttribute("data-color", RISK_COLORS.very_high);
+  });
+
+  it("leaves the flow off when the system asks for reduced motion", async () => {
+    enableWebgl();
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn((query: string) => ({ matches: query.includes("reduce"), addEventListener() {}, removeEventListener() {} })),
+    );
+    render(<Harness vessels={null} />);
+    const scene = await screen.findByTestId("scene");
+    expect(scene).toHaveAttribute("data-flow", "off");
+    expect(screen.getByRole("checkbox", { name: "Blood flow" })).not.toBeChecked();
+    vi.unstubAllGlobals();
+  });
+
+  it("animates the flow identically whatever the predictions are", async () => {
+    enableWebgl();
+    const { rerender } = render(<Harness vessels={predictionFixture().vessels} />);
+    const scene = await screen.findByTestId("scene");
+    await waitFor(() => expect(scene).toHaveAttribute("data-flow", "on"));
+    rerender(<Harness vessels={predictionFixture({ CAD: 0.1, LAD: 0.05, LCX: 0.05, RCA: 0.05 }).vessels} />);
+    expect(scene).toHaveAttribute("data-flow", "on");
+    expect(asset.flow.aortic_root.point).toHaveLength(3);
   });
 });

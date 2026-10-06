@@ -16,6 +16,7 @@ import { type Group, Vector3 } from "three";
 
 import { ContextLayer } from "@/components/anatomy/ContextLayer";
 import { CoronaryArteries } from "@/components/anatomy/CoronaryArteries";
+import { flowAmount, flowClock } from "@/components/anatomy/flow";
 import { GltfAnatomy } from "@/components/anatomy/GltfAnatomy";
 import { HeartModel } from "@/components/anatomy/HeartModel";
 import { HumanBody } from "@/components/anatomy/HumanBody";
@@ -51,6 +52,20 @@ function CameraRig({ view, resetSignal }: { view: CameraView; resetSignal: numbe
       maxDistance={view.maxDistance}
     />
   );
+}
+
+/** Advances the shared flow clock while the animation is on. */
+function FlowTicker({ running }: { running: boolean }) {
+  const invalidate = useThree((state) => state.invalidate);
+  useEffect(() => {
+    flowAmount.value = running ? 1 : 0;
+    invalidate();
+  }, [running, invalidate]);
+  useFrame((_, delta) => {
+    // Clamp so a background tab coming back does not jump the animation.
+    if (running) flowClock.value += Math.min(delta, 0.1);
+  });
+  return null;
 }
 
 type LabelRefs = RefObject<Partial<Record<VesselName, HTMLDivElement | null>>>;
@@ -155,6 +170,8 @@ export default function AnatomyScene({
   source,
   mode,
   layers,
+  colorScheme,
+  flow,
   vessels,
   selected,
   hovered,
@@ -182,7 +199,8 @@ export default function AnatomyScene({
       <Canvas
         // Rendered on demand (interaction or prop change), capped pixel ratio, no shadows or
         // textures: keeps the view smooth on integrated graphics.
-        frameloop="demand"
+        // The flow animation needs a frame every tick; with it off, nothing is drawn at rest.
+        frameloop={flow && source.kind === "gltf" ? "always" : "demand"}
         dpr={[1, 1.5]}
         gl={{ antialias: true, powerPreference: "default" }}
         camera={{ fov: 38, near: 0.1, far: 120, position: view.position }}
@@ -194,7 +212,9 @@ export default function AnatomyScene({
         <ambientLight intensity={0.8} />
         <directionalLight position={[3, 5, 6]} intensity={1.6} />
         <directionalLight position={[-4, -1, -3]} intensity={0.5} />
+        <hemisphereLight args={["#ffffff", "#3a2a2a", 0.35]} />
         <CameraRig view={view} resetSignal={resetSignal} />
+        <FlowTicker running={flow && source.kind === "gltf"} />
         {source.kind === "gltf" ? (
           <AssetBoundary fallback={null} onError={onAssetError}>
             <Suspense fallback={null}>
@@ -202,6 +222,7 @@ export default function AnatomyScene({
                 source={source}
                 showBody={mode === "torso"}
                 layers={layers}
+                colorScheme={colorScheme}
                 vessels={vessels}
                 selected={selected}
                 hovered={hovered}
@@ -220,7 +241,7 @@ export default function AnatomyScene({
               return (
                 <LayerBoundary key={name}>
                   <Suspense fallback={null}>
-                    <ContextLayer layer={name} url={layerAsset.url} />
+                    <ContextLayer layer={name} url={layerAsset.url} colorScheme={colorScheme} />
                   </Suspense>
                 </LayerBoundary>
               );

@@ -9,11 +9,14 @@ import {
   ANATOMY_SOURCE,
   availableLayers,
   CONTEXT_LAYERS,
+  FLOW_NOTICE,
+  MODEL_OUTPUT_NOTICE,
   NERVE_THICKNESS_NOTICE,
   PLACEHOLDER_NOTICE,
   REFERENCE_ANATOMY_NOTICE,
   vesselVisualStates,
 } from "@/lib/anatomy";
+import { COLOR_LEGEND } from "@/lib/anatomyColors";
 import { formatPercent } from "@/lib/constants";
 import type { AnatomyLayer, AnatomySource, ViewMode } from "@/types/anatomy";
 import { type RiskCategory, type TargetPrediction, type VesselName, VESSELS } from "@/types/prediction";
@@ -118,6 +121,23 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
             ))}
           </fieldset>
         ) : null}
+        {active.kind === "gltf" ? (
+          <fieldset className="viewer__layers">
+            <legend className="visually-hidden">Display options</legend>
+            <label>
+              <input
+                type="checkbox"
+                checked={anatomy.colorScheme === "realistic"}
+                onChange={(event) => anatomy.setColorScheme(event.target.checked ? "realistic" : "muted")}
+              />
+              Realistic colours
+            </label>
+            <label>
+              <input type="checkbox" checked={anatomy.flow} onChange={(event) => anatomy.setFlow(event.target.checked)} />
+              Blood flow
+            </label>
+          </fieldset>
+        ) : null}
         <button type="button" className="button" onClick={anatomy.resetCamera}>
           Reset view
         </button>
@@ -166,6 +186,8 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
                 source={active}
                 mode={anatomy.mode}
                 layers={anatomy.layers}
+                colorScheme={anatomy.colorScheme}
+                flow={anatomy.flow}
                 vessels={states}
                 selected={anatomy.selected}
                 hovered={anatomy.hovered}
@@ -195,8 +217,9 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
       <p className="viewer__caption small muted">
         {active.kind === "gltf" ? (
           <>
-            {REFERENCE_ANATOMY_NOTICE} Only LAD, LCX and RCA are coloured by the models; other structures are
-            neutral context.{" "}
+            {REFERENCE_ANATOMY_NOTICE} {COLOR_LEGEND[anatomy.colorScheme]} Only LAD, LCX and RCA are coloured by
+            the models; every other structure is anatomical context. {MODEL_OUTPUT_NOTICE}{" "}
+            {anatomy.flow ? <>{FLOW_NOTICE} </> : null}
           </>
         ) : (
           `${PLACEHOLDER_NOTICE} `

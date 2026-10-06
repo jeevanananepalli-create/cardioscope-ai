@@ -54,10 +54,18 @@ Which asset is used, its node names, label anchors and credit lines come from
 `src/lib/anatomyAsset.json`, written by the anatomy build.
 
 **Colour rule.** `vesselVisualStates()` maps each vessel's probability to a band using the
-categories from the API. Context structures use muted colours outside the green/amber/orange/red
-risk palette so they cannot be mistaken for model output.
+categories from the API. Context structures are coloured from `src/lib/anatomyColors.ts`, one
+style per tissue group, in one of two schemes: *realistic* (anatomical convention, the default)
+or *muted* (greys and pastels outside the risk palette). Because realistic arteries are red, the
+three modelled vessels are also marked by a glowing outline, which appears only once there is a
+prediction; before that they look like any other coronary artery.
 
-**Performance.** The canvas renders on demand (interaction or prop change) rather than every frame,
+**Blood flow.** `flow.ts` adds travelling bright bands to vessel materials in the shader, as a
+function of distance from where blood leaves or returns to the heart, so bands move outward in
+arteries and inward in veins. It uses no patient data and is identical whatever the predictions
+are. While it is on the canvas renders every frame; with it off, rendering is on demand.
+
+**Performance.** With blood flow off the canvas renders on demand (interaction or prop change) rather than every frame,
 pixel ratio is capped at 1.5, there are no textures or shadows, and the main model is about
 150,000 triangles in a 3.7 MB file. Optional layers add their own cost only when enabled.
 

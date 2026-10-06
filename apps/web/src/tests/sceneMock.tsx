@@ -15,6 +15,8 @@ export default function SceneMock(
       data-selected={props.selected ?? ""}
       data-hovered={props.hovered ?? ""}
       data-reset={props.resetSignal}
+      data-scheme={props.colorScheme}
+      data-flow={props.flow ? "on" : "off"}
       data-layers={Object.entries(props.layers)
         .filter(([, shown]) => shown)
         .map(([name]) => name)

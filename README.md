@@ -200,7 +200,15 @@ torso-context mode, and optional layers for arteries, veins, the nervous system,
 - LAD, LCX and RCA are coloured by their model's predicted probability, through four visualization
   bands (low, moderate, high, very high). The band limits are configurable
   (`CARDIOSCOPE_RISK_THRESHOLDS`) and are **not clinically validated thresholds**.
-- Everything else is drawn in neutral colours and never carries model output.
+- Everything else is anatomical context and never carries model output. By default it is drawn
+  in conventional anatomical colours (red for vessels carrying oxygenated blood, blue for
+  deoxygenated, yellow nerves, ivory bone, each organ its own colour); a **Realistic colours**
+  switch changes to muted colours so that model output is the only colour on screen. A glowing
+  outline marks the three vessels that carry model output.
+- **Blood flow** is an optional animation of bright bands moving away from the heart in arteries
+  and toward it in veins. It is illustrative only: it shows the normal direction of circulation,
+  is identical for every input, and is never changed by a prediction. It is off when the system
+  asks for reduced motion.
 - The anatomy is generic reference anatomy of one adult, not the patient's. Colour on a vessel is a
   visualization of a model's output; it is not imaging and does not locate a lesion.
 - If the 3D asset cannot be loaded, a labelled schematic is shown instead; without WebGL the
