@@ -1,6 +1,6 @@
 import { SAFETY_DISCLAIMER } from "@/lib/constants";
 
-/** Always-visible safety statement (spec section 18). */
+/** Always-visible safety statement. */
 export function SafetyDisclaimer() {
   return (
     <div className="disclaimer" role="note" aria-label="Safety disclaimer">

@@ -190,7 +190,7 @@ def test_non_finite_number_is_rejected(client, patient):
 
 @pytest.mark.parametrize("forbidden", sorted(FORBIDDEN_COLUMNS))
 def test_target_columns_are_rejected_as_inputs(client, patient, forbidden):
-    """Leakage prevention at the API boundary (spec section 22)."""
+    """Leakage prevention at the API boundary."""
     patient[forbidden] = "Stenotic"
     error = _error(_predict(client, patient))
     assert error["details"] == [{"field": forbidden, "message": "This field is not accepted."}]

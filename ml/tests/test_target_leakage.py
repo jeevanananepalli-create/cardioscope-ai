@@ -1,4 +1,4 @@
-"""Target-leakage tests (spec section 22).
+"""Target-leakage tests.
 
 LAD, LCX, RCA and Cath are targets. These tests fail if any of them can reach
 a model's input features through the schema, the feature matrix or the
