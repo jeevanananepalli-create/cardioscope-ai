@@ -233,10 +233,9 @@ torso-context mode, and optional layers for arteries, veins, the nervous system,
 - If the 3D asset cannot be loaded, a labelled schematic is shown instead; without WebGL the
   vessel buttons still work.
 
-**Look and feel.** Azure, white and navy, following the colour scheme of BioDigital's Human Studio
-page (palette only; nothing copied), with the 3D view as the centrepiece on an azure stage and
-frosted-glass controls. The typeface is Source Sans 3, bundled with the app. A switch in the header
-changes to a navy dark theme.
+**Look and feel.** A light theme (lavender-grey page, white cards, indigo accent, top navigation)
+and a dark theme (deep navy, blue-edged panels, side navigation), switched from the header. The app
+has four pages: Home, Analyze, Model and About. The typeface is Source Sans 3, bundled with the app.
 
 ## 12. API
 
@@ -328,6 +327,10 @@ machine (the Docker daemon was unavailable), so treat them as untested.
 
 Open <http://localhost:3000> with the API running. The header shows **Models ready** when the four
 models are loaded; if it does not, see [Troubleshooting](#troubleshooting).
+
+The site opens on the **Home** page. Click **Start Analysis** (or **Analyze** in the navigation)
+to reach the dashboard. **Model** shows the performance of the four models on its own page, and
+**About** summarises the limitations and credits.
 
 1. **Enter a patient.** The left panel lists every model input, grouped (demographics, history,
    symptoms, examination, ECG, laboratory, echocardiography). Either:

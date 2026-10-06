@@ -32,6 +32,8 @@ interface AnatomyViewerProps {
   /** Shown over the view, e.g. "Exploratory model simulation". */
   banner?: string | null;
   source?: AnatomySource;
+  /** Only the 3D scene: no controls, vessel buttons or caption (used on the landing page). */
+  minimal?: boolean;
 }
 
 const MODES: { key: ViewMode; label: string }[] = [
@@ -63,7 +65,7 @@ function webglAvailable(): boolean {
  * The vessel buttons mirror the 3D selection, so every vessel is reachable by keyboard
  * and the view stays usable if WebGL or the 3D asset is unavailable.
  */
-export function AnatomyViewer({ vessels, categories, anatomy, banner = null, source = ANATOMY_SOURCE }: AnatomyViewerProps) {
+export function AnatomyViewer({ vessels, categories, anatomy, banner = null, source = ANATOMY_SOURCE, minimal = false }: AnatomyViewerProps) {
   const [canRender, setCanRender] = useState<boolean | null>(null);
   const [assetFailed, setAssetFailed] = useState(false);
   const [assetLoaded, setAssetLoaded] = useState(false);
@@ -89,10 +91,10 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
   );
 
   return (
-    <div className="viewer">
+    <div className="viewer" data-minimal={minimal ? "true" : undefined}>
       <div className="viewer__stage" data-testid="anatomy-stage">
         {banner ? <div className="viewer__banner">{banner}</div> : null}
-        <div className="viewer__toolbar">
+        <div className="viewer__toolbar" hidden={minimal}>
           <div className="toggle" role="group" aria-label="View mode">
             {MODES.map((mode) => (
               <button
@@ -170,7 +172,7 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
         ) : (
           <div className="viewer__loading">Loading 3D view…</div>
         )}
-        <div className="viewer__dock">
+        <div className="viewer__dock" hidden={minimal}>
           <div className="viewer__vessels" role="group" aria-label="Select a vessel">
             {VESSELS.map((name) => {
               const state = states[name];
@@ -214,7 +216,7 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
           Showing the schematic placeholder instead. Predictions are unaffected.
         </Notice>
       ) : null}
-      <p className="viewer__caption small muted">
+      <p className="viewer__caption small muted" hidden={minimal}>
         {active.kind === "gltf" ? (
           <>
             {REFERENCE_ANATOMY_NOTICE} {COLOR_LEGEND[anatomy.colorScheme]} Only LAD, LCX and RCA are coloured by

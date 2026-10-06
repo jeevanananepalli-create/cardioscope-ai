@@ -86,22 +86,30 @@ Hand-written SVG: `RiskGauge`, `SHAPBarChart`, `RocChart`, `ReliabilityChart`, `
 
 ## Visual design
 
-The colour scheme follows BioDigital's Human Studio page: a bright azure hero, crisp white cards on
-an off-white page, navy text and a navy footer. Only the palette and proportions were taken; no
-assets, branding, code or text were copied. The layout idea of the 3D model as centrepiece with
-controls floating over it comes from the same family of 3D anatomy products.
+The interface follows two design mock-ups supplied by the project owner, one per theme.
 
-- **The 3D view is the hero.** It sits on an azure gradient stage that fills the centre column. View
-  mode, layer and display switches float at the top on frosted white glass; the three vessel buttons
-  sit at its foot.
-- **One deliberate difference from the reference.** That page uses red for its call-to-action. Here
-  green, amber, orange and red are reserved for model output, so the interface accent is the azure.
-- **Two themes.** Light is the default; a navy dark theme (header switch, remembered in the browser)
-  suits dim rooms. The stage is azure in the light theme and deep navy in the dark one.
-- **Typeface.** Source Sans 3 (variable), bundled with the application through
-  `@fontsource-variable/source-sans-3` under the SIL Open Font License. Nothing is fetched from a
-  font service at run time.
+- **Light theme (default).** Soft lavender-grey page, white rounded cards, indigo accent, navigation
+  in the top bar.
+- **Dark theme.** Deep navy with blue-edged panels and a blue-violet accent. On wide screens the
+  navigation becomes a side rail. The header switch changes theme; the choice is remembered.
+- **Four pages.** Home (landing page with the reference heart), Analyze (the dashboard), Model
+  (performance of the four models) and About. All state lives in `Dashboard`, so moving between
+  pages keeps the entered patient and the prediction.
+- **Analyze layout.** Patient profile on the left, the 3D view in the centre, results on the right
+  (ring gauge for CAD, a bar per vessel, four "quick view" tiles), analysis tabs underneath.
+- **Vessel tags in the 3D view** show the vessel name and, after a prediction, its probability in
+  the colour of its band.
+- **Colour is reserved.** Green, amber, orange and red belong to model output. The only other red
+  is the logo.
+- **Typeface.** Source Sans 3 (variable), bundled through `@fontsource-variable/source-sans-3`
+  under the SIL Open Font License. Nothing is fetched from a font service at run time.
 - **Probabilities are never shown as a flat 0% or 100%**; they read "<1%" or ">99%".
+
+Parts of the mock-ups that were deliberately not built, because they would show invented or
+clinical content: the sample figures (every number on screen comes from the models or the
+evaluation pipeline), the named patient with an "online" status, the risk trend line (there is no
+time series), "key insights" that recommend clinical action or name causes, and the short input
+form (the models need all of their inputs).
 
 ## Styling
 

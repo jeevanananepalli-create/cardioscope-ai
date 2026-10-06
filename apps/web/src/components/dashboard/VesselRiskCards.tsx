@@ -26,31 +26,31 @@ export function VesselRiskCards({ vessels, categories, metadata, selected = null
         const holdout = metadata?.[name]?.holdout;
         const body = (
           <>
-            <div className="vessel-card__head">
+            <div className="vessel-card__row">
+              <span className="vessel-card__dot" style={{ background: color }} aria-hidden="true" />
               <span className="vessel-card__name">{name}</span>
+              <div
+                className="meter"
+                role="img"
+                aria-label={`${name} predicted stenosis probability ${formatPercent(prediction.probability)}`}
+              >
+                <div className="meter__fill" style={{ width: `${prediction.probability * 100}%`, background: color }} />
+                <div
+                  className="meter__mark"
+                  style={{ left: `${prediction.decision_threshold * 100}%` }}
+                  title={`Decision threshold ${formatPercent(prediction.decision_threshold)}`}
+                />
+              </div>
               <span className="vessel-card__value num" data-testid={`${name}-probability`}>
                 {formatPercent(prediction.probability)}
               </span>
-            </div>
-            <div className="vessel-card__full">{TARGET_NAMES[name]}</div>
-            <div
-              className="meter"
-              role="img"
-              aria-label={`${name} predicted stenosis probability ${formatPercent(prediction.probability)}`}
-            >
-              <div className="meter__fill" style={{ width: `${prediction.probability * 100}%`, background: color }} />
-              <div
-                className="meter__mark"
-                style={{ left: `${prediction.decision_threshold * 100}%` }}
-                title={`Decision threshold ${formatPercent(prediction.decision_threshold)}`}
-              />
-            </div>
-            <div className="vessel-card__foot">
-              <span className="chip chip--small" style={{ borderColor: color }}>
-                <span className="chip__dot" style={{ background: color }} aria-hidden="true" />
+              <span className="vessel-card__band" style={{ ["--band" as string]: color }}>
                 {category.label}
               </span>
-              <span className="small">{prediction.predicted_label}</span>
+            </div>
+            <div className="vessel-card__sub small muted">
+              <span className="vessel-card__full">{TARGET_NAMES[name]}</span>
+              <span>{prediction.predicted_label}</span>
             </div>
             {holdout ? (
               <div className="vessel-card__evidence small muted num">

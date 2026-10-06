@@ -35,6 +35,8 @@ function percent(probability: number): string {
 
 async function open(page: Page) {
   await page.goto("/");
+  // The site opens on the landing page.
+  await page.getByRole("button", { name: "Start Analysis" }).click();
   await expect(page.getByRole("button", { name: "Analyze Patient" })).toBeVisible();
 }
 
@@ -233,11 +235,18 @@ test("blood flow animates when on, is still when off, and is labelled illustrati
 
   // ...and are identical once it is switched off.
   await flow.uncheck();
-  await page.waitForTimeout(400);
-  const third = await canvas.screenshot();
-  await page.waitForTimeout(450);
-  const fourth = await canvas.screenshot();
-  expect(third.equals(fourth), "the canvas should be still while blood flow is off").toBe(true);
+  // The scene may still be finishing a frame, so wait until two frames a moment apart match.
+  await expect
+    .poll(
+      async () => {
+        const third = await canvas.screenshot();
+        await page.waitForTimeout(450);
+        const fourth = await canvas.screenshot();
+        return third.equals(fourth);
+      },
+      { message: "the canvas should be still while blood flow is off", timeout: 12_000 },
+    )
+    .toBe(true);
 });
 
 test("realistic colours can be switched to muted context colours", async ({ page }) => {

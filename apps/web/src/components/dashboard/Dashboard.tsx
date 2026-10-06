@@ -13,10 +13,14 @@ import { PatientForm } from "@/components/dashboard/PatientForm";
 import { RiskLegend } from "@/components/dashboard/RiskLegend";
 import { RiskOverview } from "@/components/dashboard/RiskOverview";
 import { SafetyDisclaimer } from "@/components/dashboard/SafetyDisclaimer";
+import { QuickView } from "@/components/dashboard/QuickView";
 import { VesselRiskCards } from "@/components/dashboard/VesselRiskCards";
 import { ExplanationPanel } from "@/components/explainability/ExplanationPanel";
 import { VesselExplanation } from "@/components/explainability/VesselExplanation";
+import { About } from "@/components/layout/About";
 import { AppHeader, type ServiceStatus } from "@/components/layout/AppHeader";
+import { Hero } from "@/components/layout/Hero";
+import type { AppView } from "@/components/layout/MainNav";
 import { WHAT_IF_LABEL, WhatIfSimulator } from "@/components/what-if/WhatIfSimulator";
 import { useAnatomy } from "@/hooks/useAnatomy";
 import { useExplanation } from "@/hooks/useExplanation";
@@ -35,6 +39,8 @@ type BottomTab = "why" | "measurements" | "whatif" | "performance";
 interface DashboardProps {
   /** Injected in tests; defaults to the real API client. */
   api?: Api;
+  /** Page shown first. The site opens on the landing page; tests start on the analysis. */
+  initialView?: AppView;
 }
 
 const FAILURE_TITLES: Record<PredictionFailure["kind"], string> = {
@@ -57,7 +63,8 @@ function fieldErrorsFrom(failure: PredictionFailure, schema: FeatureSchema): Fie
   return errors;
 }
 
-export function Dashboard({ api }: DashboardProps) {
+export function Dashboard({ api, initialView = "analyze" }: DashboardProps) {
+  const [view, setView] = useState<AppView>(initialView);
   const { data, reload } = useServiceData(api);
   const prediction = usePrediction(api);
   const anatomy = useAnatomy();
@@ -144,17 +151,34 @@ export function Dashboard({ api }: DashboardProps) {
   const shownVessels = simulated?.vessels ?? result?.vessels ?? null;
 
   return (
-    <div className="app">
-      <a className="skip-link" href="#results">
-        Skip to results
-      </a>
+    <div className="app" data-view={view}>
+      {view === "analyze" ? (
+        <a className="skip-link" href="#results">
+          Skip to results
+        </a>
+      ) : null}
       <AppHeader
         status={status}
         modelVersion={modelInfo?.model_version ?? null}
         theme={theme}
         onToggleTheme={toggleTheme}
+        view={view}
+        onNavigate={setView}
       />
       <SafetyDisclaimer />
+      {view === "home" ? <Hero onStart={() => setView("analyze")} /> : null}
+      {view === "about" ? <About /> : null}
+      {view === "model" ? (
+        <main className="page">
+          <Panel title="Model performance" subtitle="Cross-validated and holdout results for the four models">
+            <ErrorBoundary label="The model performance view">
+              <ModelPerformance modelInfo={modelInfo} />
+            </ErrorBoundary>
+          </Panel>
+        </main>
+      ) : null}
+      {view === "analyze" ? (
+      <>
       <main className="workspace">
         <div className="workspace__left">
           {data.state === "loading" ? (
@@ -296,7 +320,7 @@ export function Dashboard({ api }: DashboardProps) {
             </ErrorBoundary>
           </Panel>
 
-          <Panel title="Vessel risk" subtitle="Predicted stenosis probability per vessel">
+          <Panel title="Vessel stenosis probability" subtitle="Model prediction per vessel">
             <ErrorBoundary label="The vessel predictions">
               {result ? (
                 <VesselRiskCards
@@ -312,6 +336,12 @@ export function Dashboard({ api }: DashboardProps) {
               <RiskLegend categories={categories} note={modelInfo?.risk_category_note} />
             </ErrorBoundary>
           </Panel>
+
+          {result ? (
+            <Panel title="Quick view" subtitle="All four model outputs">
+              <QuickView prediction={result} categories={categories} />
+            </Panel>
+          ) : null}
 
           {result && result.warnings.length > 0 ? (
             <Notice tone="warning" title="Some inputs are outside the training data.">
@@ -388,6 +418,8 @@ export function Dashboard({ api }: DashboardProps) {
           </Tabs>
         </section>
       </div>
+      </>
+      ) : null}
 
       <footer className="app-footer">
         CardioScope AI is a research and education prototype. Model outputs are predictions from clinical

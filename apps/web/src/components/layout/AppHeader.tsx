@@ -1,3 +1,4 @@
+import { type AppView, MainNav } from "@/components/layout/MainNav";
 import type { Theme } from "@/hooks/useTheme";
 import { TAGLINE } from "@/lib/constants";
 
@@ -15,9 +16,11 @@ interface AppHeaderProps {
   modelVersion: string | null;
   theme?: Theme;
   onToggleTheme?: () => void;
+  view?: AppView;
+  onNavigate?: (view: AppView) => void;
 }
 
-export function AppHeader({ status, modelVersion, theme = "light", onToggleTheme }: AppHeaderProps) {
+export function AppHeader({ status, modelVersion, theme = "light", onToggleTheme, view = "analyze", onNavigate }: AppHeaderProps) {
   const tone = status === "ok" ? "badge--ok" : status === "checking" ? "" : "badge--problem";
   return (
     <header className="app-header">
@@ -46,6 +49,7 @@ export function AppHeader({ status, modelVersion, theme = "light", onToggleTheme
           <p className="brand__tagline">{TAGLINE}</p>
         </div>
       </div>
+      {onNavigate ? <MainNav view={view} onNavigate={onNavigate} /> : null}
       <div className="app-header__meta">
         <span className="badge badge--research">Research prototype · not a medical device</span>
         {modelVersion ? <span className="badge num">Model v{modelVersion}</span> : null}

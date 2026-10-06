@@ -21,24 +21,37 @@ export function holdoutSummary(metadata?: ModelMetadata): string | null {
 export function RiskOverview({ prediction, categories, metadata, stale = false }: RiskOverviewProps) {
   const category = categoryFor(prediction.probability, categories);
   const evidence = holdoutSummary(metadata);
+  const color = RISK_COLORS[category.key];
   return (
     <div className="overview" data-stale={stale ? "true" : undefined}>
-      <RiskGauge probability={prediction.probability} categories={categories} label="Predicted CAD probability" />
-      <div className="overview__value num" data-testid="cad-probability">
-        {formatPercent(prediction.probability)}
-      </div>
-      <div className="overview__caption">Predicted probability of coronary artery disease</div>
-      <div className="overview__row">
-        <span className="chip" style={{ borderColor: RISK_COLORS[category.key] }}>
-          <span className="chip__dot" style={{ background: RISK_COLORS[category.key] }} aria-hidden="true" />
-          {category.label} visualization category
-        </span>
+      <div className="overview__top">
+        <div className="overview__ring">
+          <RiskGauge probability={prediction.probability} categories={categories} label="Predicted CAD probability" />
+          <div className="overview__center">
+            <div className="overview__value num" data-testid="cad-probability">
+              {formatPercent(prediction.probability)}
+            </div>
+            <div className="overview__band" style={{ color }} aria-hidden="true">
+              {category.label}
+            </div>
+          </div>
+        </div>
+        <div className="overview__side">
+          <div className="overview__eyebrow">Model prediction</div>
+          <div className="overview__label">
+            <span className="chip__dot" style={{ background: color }} aria-hidden="true" />
+            {prediction.predicted_label}
+          </div>
+          <div className="overview__caption">Predicted probability of coronary artery disease</div>
+          <div className="overview__row">
+            <span className="chip" style={{ borderColor: color }}>
+              <span className="chip__dot" style={{ background: color }} aria-hidden="true" />
+              {category.label} visualization category
+            </span>
+          </div>
+        </div>
       </div>
       <dl className="facts">
-        <div>
-          <dt>Model prediction</dt>
-          <dd>{prediction.predicted_label}</dd>
-        </div>
         <div>
           <dt>Decision threshold</dt>
           <dd className="num">{formatPercent(prediction.decision_threshold)}</dd>

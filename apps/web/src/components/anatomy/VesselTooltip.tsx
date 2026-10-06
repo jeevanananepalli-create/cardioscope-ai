@@ -7,17 +7,23 @@ interface VesselTooltipProps {
   expanded: boolean;
 }
 
-/** In-scene label for a vessel: always its name, plus the prediction on hover or selection. */
+/** In-scene tag for a vessel: its name and predicted probability, plus the band on hover or selection. */
 export function VesselTooltip({ state, expanded }: VesselTooltipProps) {
   return (
-    <div className="vessel-label" data-expanded={expanded ? "true" : undefined}>
-      <span className="vessel-label__dot" style={{ background: state.color }} aria-hidden="true" />
+    <div
+      className="vessel-label"
+      data-expanded={expanded ? "true" : undefined}
+      data-predicted={state.probability === null ? undefined : "true"}
+      data-category={state.category ?? undefined}
+      style={{ ["--tag" as string]: state.color }}
+    >
       <span className="vessel-label__name">{state.vessel}</span>
+      {state.probability !== null ? (
+        <span className="vessel-label__value num">{formatPercent(state.probability)}</span>
+      ) : null}
       {expanded ? (
-        <span className="vessel-label__detail num">
-          {state.probability === null
-            ? "No prediction yet"
-            : `${formatPercent(state.probability)} · ${state.categoryLabel}`}
+        <span className="vessel-label__detail">
+          {state.probability === null ? "No prediction yet" : state.categoryLabel}
         </span>
       ) : null}
     </div>
