@@ -228,6 +228,29 @@ export function cameraFor(source: AnatomySource): Record<ViewMode, CameraView> {
   return source.kind === "gltf" ? source.camera : CAMERA_BY_MODE;
 }
 
+function viewDistance(view: CameraView): number {
+  return Math.hypot(
+    view.position[0] - view.target[0],
+    view.position[1] - view.target[1],
+    view.position[2] - view.target[2],
+  );
+}
+
+/**
+ * View mode implied by how far the camera has been zoomed. Zooming out of the heart view
+ * past the midpoint between the two default distances brings in the torso; zooming back in
+ * returns to the heart. The two thresholds differ so the mode does not flicker at the edge.
+ */
+export function modeForZoom(distance: number, current: ViewMode, views: Record<ViewMode, CameraView>): ViewMode {
+  const heart = viewDistance(views.heart);
+  const torso = viewDistance(views.torso);
+  const zoomOut = Math.sqrt(heart * torso);
+  const zoomIn = (heart + zoomOut) / 2;
+  if (current === "heart" && distance > zoomOut) return "torso";
+  if (current === "torso" && distance < zoomIn) return "heart";
+  return current;
+}
+
 export const DEFAULT_LAYERS: LayerVisibility = {
   arteries: true,
   veins: false,

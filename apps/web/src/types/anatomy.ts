@@ -87,4 +87,6 @@ export interface AnatomySceneProps {
   resetSignal: number;
   onSelect: (vessel: VesselName | null) => void;
   onHover: (vessel: VesselName | null) => void;
+  /** Called when zooming crosses into the other view mode. */
+  onModeChange?: (mode: ViewMode) => void;
 }

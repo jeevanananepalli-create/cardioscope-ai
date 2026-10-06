@@ -12,6 +12,7 @@ import {
   heartProfile,
   heartRadius,
   heartSurfacePoint,
+  modeForZoom,
   PLACEHOLDER_NOTICE,
   VESSEL_PATHS,
   vesselVisualStates,
@@ -414,5 +415,26 @@ describe("display options", () => {
     rerender(<Harness vessels={predictionFixture({ CAD: 0.1, LAD: 0.05, LCX: 0.05, RCA: 0.05 }).vessels} />);
     expect(scene).toHaveAttribute("data-flow", "on");
     expect(asset.flow.aortic_root.point).toHaveLength(3);
+  });
+});
+
+describe("zoom-driven view mode", () => {
+  const views = {
+    heart: { position: [0, 0, 2] as [number, number, number], target: [0, 0, 0] as [number, number, number], minDistance: 1, maxDistance: 5 },
+    torso: { position: [0, 0, 8] as [number, number, number], target: [0, 0, 0] as [number, number, number], minDistance: 2, maxDistance: 14 },
+  };
+
+  it("switches to the torso when zooming out of the heart view, and back when zooming in", () => {
+    // Defaults are 2 and 8 apart: out past 4, back in below 3.
+    expect(modeForZoom(2, "heart", views)).toBe("heart");
+    expect(modeForZoom(3.9, "heart", views)).toBe("heart");
+    expect(modeForZoom(4.1, "heart", views)).toBe("torso");
+    expect(modeForZoom(3.5, "torso", views)).toBe("torso");
+    expect(modeForZoom(2.9, "torso", views)).toBe("heart");
+  });
+
+  it("puts each default view in its own mode", () => {
+    expect(modeForZoom(2, "torso", views)).toBe("heart");
+    expect(modeForZoom(8, "heart", views)).toBe("torso");
   });
 });

@@ -21,17 +21,34 @@ import { GltfAnatomy } from "@/components/anatomy/GltfAnatomy";
 import { HeartModel } from "@/components/anatomy/HeartModel";
 import { HumanBody } from "@/components/anatomy/HumanBody";
 import { VesselTooltip } from "@/components/anatomy/VesselTooltip";
-import { cameraFor, CONTEXT_LAYERS, vesselLabelAnchor } from "@/lib/anatomy";
-import type { AnatomySceneProps, CameraView, Point3 } from "@/types/anatomy";
+import { cameraFor, CONTEXT_LAYERS, modeForZoom, vesselLabelAnchor } from "@/lib/anatomy";
+import type { AnatomySceneProps, CameraView, Point3, ViewMode } from "@/types/anatomy";
 import { type VesselName, VESSELS } from "@/types/prediction";
 
-/** Moves the camera to the default view when the view changes or a reset is requested. */
-function CameraRig({ view, resetSignal }: { view: CameraView; resetSignal: number }) {
+interface CameraRigProps {
+  views: Record<ViewMode, CameraView>;
+  mode: ViewMode;
+  resetSignal: number;
+  onModeChange?: (mode: ViewMode) => void;
+}
+
+/**
+ * Moves the camera to the default view when the mode is chosen or a reset is requested.
+ * Zooming far enough out of the heart view switches to the torso view (and back when
+ * zooming in); that switch keeps the camera where the user has put it.
+ */
+function CameraRig({ views, mode, resetSignal, onModeChange }: CameraRigProps) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
+  const view = views[mode];
+  const zoomSwitched = useRef(false);
 
   useEffect(() => {
+    if (zoomSwitched.current) {
+      zoomSwitched.current = false;
+      return;
+    }
     camera.position.set(...view.position);
     if (controls.current) {
       controls.current.target.set(...view.target);
@@ -48,8 +65,17 @@ function CameraRig({ view, resetSignal }: { view: CameraView; resetSignal: numbe
       makeDefault
       enablePan
       enableDamping={false}
-      minDistance={view.minDistance}
-      maxDistance={view.maxDistance}
+      // One zoom range across both modes, so zooming can carry from one into the other.
+      minDistance={onModeChange ? views.heart.minDistance : view.minDistance}
+      maxDistance={onModeChange ? views.torso.maxDistance : view.maxDistance}
+      onChange={() => {
+        if (!onModeChange || !controls.current) return;
+        const next = modeForZoom(controls.current.getDistance(), mode, views);
+        if (next !== mode) {
+          zoomSwitched.current = true;
+          onModeChange(next);
+        }
+      }}
     />
   );
 }
@@ -178,11 +204,13 @@ export default function AnatomyScene({
   resetSignal,
   onSelect,
   onHover,
+  onModeChange,
   onAssetError,
   onAssetLoaded,
 }: SceneProps) {
   const labels: LabelRefs = useRef({});
-  const view = cameraFor(source)[mode];
+  const views = cameraFor(source);
+  const view = views[mode];
 
   const placeholder = (
     <>
@@ -212,7 +240,7 @@ export default function AnatomyScene({
         <directionalLight position={[3, 5, 6]} intensity={1.6} />
         <directionalLight position={[-4, -1, -3]} intensity={0.5} />
         <hemisphereLight args={["#ffffff", "#3a2a2a", 0.35]} />
-        <CameraRig view={view} resetSignal={resetSignal} />
+        <CameraRig views={views} mode={mode} resetSignal={resetSignal} onModeChange={onModeChange} />
         <FlowTicker running={flow && source.kind === "gltf"} />
         {source.kind === "gltf" ? (
           <AssetBoundary fallback={null} onError={onAssetError}>

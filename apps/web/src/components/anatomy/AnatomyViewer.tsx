@@ -163,6 +163,7 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
                 resetSignal={anatomy.resetSignal}
                 onSelect={anatomy.select}
                 onHover={anatomy.setHovered}
+                onModeChange={anatomy.setMode}
                 onAssetError={handleAssetError}
                 onAssetLoaded={handleAssetLoaded}
               />
@@ -205,7 +206,7 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
             })}
           </div>
           <div className="viewer__hint">
-            <span className="viewer__hint-long">Drag to rotate · scroll to zoom · right-drag to pan · click a vessel</span>
+            <span className="viewer__hint-long">Drag to rotate · scroll to zoom (zoom out for the torso) · right-drag to pan · click a vessel</span>
             <span className="viewer__hint-short">Drag to rotate · pinch to zoom · tap a vessel</span>
           </div>
         </div>
