@@ -34,6 +34,7 @@ Main runtime dependencies and their licences (as published by each project; chec
 | Matplotlib | Matplotlib licence (BSD-style) |
 | FastAPI, Pydantic, Uvicorn | MIT / BSD |
 | Next.js, React, three.js, React Three Fiber, drei | MIT |
+| Source Sans 3 typeface (Adobe), via `@fontsource-variable/source-sans-3` | SIL Open Font License 1.1 |
 | trimesh, fast-simplification (anatomy build only) | MIT |
 | Blender (anatomy export only; not distributed) | GPL |
 

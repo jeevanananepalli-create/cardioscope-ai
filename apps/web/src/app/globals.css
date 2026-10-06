@@ -1,98 +1,105 @@
 /*
  * CardioScope AI — interface styles.
  *
- * Direction: a dark, cinematic "anatomy studio". The 3D view is the centrepiece; everything
- * else sits on quiet, slightly translucent surfaces with one teal accent and light type.
- * A light theme is available for bright rooms, projectors and printing.
+ * Colour scheme: bright azure, white and navy, taken from the look of BioDigital's Human
+ * Studio page (palette and proportions only; no assets, code or branding). The 3D view sits
+ * on an azure gradient stage with frosted-glass controls; everything else is crisp white
+ * cards on an off-white page with navy text. A navy dark theme is available.
  *
- * Colour is used sparingly on purpose: the risk palette (green, amber, orange, red) belongs
- * to model output, so chrome stays neutral and the accent is teal.
+ * One deliberate difference: that page uses red for its call-to-action. Here red, orange,
+ * amber and green are reserved for model output, so the interface accent is the azure.
  */
 
 /* ---------- Design tokens ---------- */
 
 :root,
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #0a1215;
-  --bg-glow: radial-gradient(1200px 600px at 50% -10%, rgba(46, 196, 190, 0.09), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(63, 147, 220, 0.06), transparent 55%);
-  --surface: rgba(255, 255, 255, 0.035);
-  --surface-solid: #111c21;
-  --surface-2: rgba(255, 255, 255, 0.055);
-  --surface-3: rgba(255, 255, 255, 0.09);
-  --ink: #eef4f5;
-  --ink-2: #c3ced2;
-  --muted: #8b9da4;
-  --border: rgba(255, 255, 255, 0.085);
-  --border-strong: rgba(255, 255, 255, 0.17);
-  --accent: #2ec4be;
-  --accent-hover: #4fd6d0;
-  --accent-ink: #04282a;
-  --accent-soft: rgba(46, 196, 190, 0.13);
-  --accent-border: rgba(46, 196, 190, 0.45);
-  --danger: #ff9086;
-  --danger-soft: rgba(224, 98, 90, 0.13);
-  --danger-border: rgba(224, 98, 90, 0.4);
-  --warn: #f1c56b;
-  --warn-ink: #f3dca6;
-  --warn-soft: rgba(217, 165, 20, 0.11);
-  --warn-border: rgba(217, 165, 20, 0.32);
-  --info-ink: #b9ecea;
-  --ok: #4fd1a5;
-  --track: rgba(255, 255, 255, 0.09);
-  --grid: rgba(255, 255, 255, 0.09);
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px rgba(0, 0, 0, 0.28);
-  --glass: rgba(10, 18, 21, 0.62);
-  --glass-border: rgba(255, 255, 255, 0.14);
-}
-
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f1f5f6;
-  --bg-glow: radial-gradient(1200px 600px at 50% -10%, rgba(14, 143, 138, 0.07), transparent 60%);
+  --bg: #f9fafb;
+  --bg-glow: none;
   --surface: #ffffff;
   --surface-solid: #ffffff;
-  --surface-2: #f5f8f9;
-  --surface-3: #e9eff1;
-  --ink: #122028;
-  --ink-2: #33454d;
-  --muted: #5a6b73;
-  --border: #dde5e8;
-  --border-strong: #c0ccd1;
-  --accent: #0b7f7a;
-  --accent-hover: #096a66;
+  --surface-2: #f3f4f5;
+  --surface-3: #eaecee;
+  --ink: #101823;
+  --ink-2: #1c2a3f;
+  --muted: #5a6779;
+  --border: #eaecee;
+  --border-strong: #cfd6de;
+  --accent: #1565d8;
+  --accent-hover: #0f52b5;
   --accent-ink: #ffffff;
-  --accent-soft: #e3f4f3;
-  --accent-border: #7cc9c5;
-  --danger: #b3261e;
+  --accent-soft: #e8f1fd;
+  --accent-border: #8fbdf5;
+  --danger: #bf1205;
   --danger-soft: #fdecea;
-  --danger-border: #f0c2bd;
+  --danger-border: #f2c1bc;
   --warn: #8a5a00;
   --warn-ink: #5a3d00;
-  --warn-soft: #fff5db;
+  --warn-soft: #fff6dd;
   --warn-border: #ecd9a0;
-  --info-ink: #0b4f4c;
+  --info-ink: #0f3f86;
   --ok: #1e7a52;
-  --track: #e4eaed;
-  --grid: #e3e9ec;
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 6px 18px rgba(16, 24, 40, 0.05);
-  --glass: rgba(10, 18, 21, 0.62);
-  --glass-border: rgba(255, 255, 255, 0.16);
+  --track: #e6eaee;
+  --grid: #e6eaee;
+  --shadow: 0 1px 2px rgba(16, 24, 35, 0.04), 0 8px 24px rgba(16, 24, 35, 0.06);
+  --footer-bg: #142034;
+  --footer-ink: #dde2e7;
+  /* The 3D stage: an azure gradient, as in the reference page's hero. */
+  --stage-bg: radial-gradient(ellipse at 50% 44%, #7cc2fb 0%, #3f98f1 42%, #1b68d6 78%, #1557c7 100%);
+  --stage-accent: #1557c7;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e1726;
+  --bg-glow: radial-gradient(1100px 520px at 50% -10%, rgba(69, 163, 245, 0.1), transparent 60%);
+  --surface: #142034;
+  --surface-solid: #142034;
+  --surface-2: #1a2942;
+  --surface-3: #223452;
+  --ink: #f3f6fa;
+  --ink-2: #c9d3e0;
+  --muted: #8f9db2;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --accent: #4d9ff5;
+  --accent-hover: #74b5f8;
+  --accent-ink: #06162b;
+  --accent-soft: rgba(77, 159, 245, 0.15);
+  --accent-border: rgba(77, 159, 245, 0.5);
+  --danger: #ff9086;
+  --danger-soft: rgba(222, 56, 56, 0.14);
+  --danger-border: rgba(222, 56, 56, 0.45);
+  --warn: #f1c56b;
+  --warn-ink: #f3dca6;
+  --warn-soft: rgba(217, 165, 20, 0.12);
+  --warn-border: rgba(217, 165, 20, 0.34);
+  --info-ink: #cfe3fb;
+  --ok: #4fd1a5;
+  --track: rgba(255, 255, 255, 0.1);
+  --grid: rgba(255, 255, 255, 0.1);
+  --shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+  --footer-bg: #0a111d;
+  --footer-ink: #c9d3e0;
+  --stage-bg: linear-gradient(155deg, #23406e 0%, #162a4b 50%, #0c1524 100%);
+  --stage-accent: #1557c7;
 }
 
 :root {
-  /* Fixed colours of the 3D stage, which stays dark in both themes. */
-  --scene: #0a1215;
-  --scene-ink: #e6eef0;
-  --scene-muted: rgba(230, 238, 240, 0.66);
+  /* Controls on the 3D stage are frosted white glass in both themes. */
+  --scene-ink: #ffffff;
+  --scene-muted: rgba(255, 255, 255, 0.84);
+  --glass: rgba(255, 255, 255, 0.16);
+  --glass-hover: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(255, 255, 255, 0.5);
   --risk-low: #2f9e6e;
   --risk-moderate: #d9a514;
   --risk-high: #e0752d;
   --risk-very_high: #cf3f3f;
-  --radius: 14px;
-  --radius-sm: 8px;
-  --font: "Source Sans 3", "Source Sans Pro", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system,
+  --radius: 10px;
+  --radius-sm: 6px;
+  --font: "Source Sans 3 Variable", "Source Sans 3", "Source Sans Pro", "Segoe UI", system-ui, -apple-system,
     "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
 }
@@ -226,6 +233,7 @@ code {
   align-items: center;
   gap: 16px;
   padding: 14px 28px;
+  background: var(--surface-solid);
   border-bottom: 1px solid var(--border);
 }
 
@@ -284,11 +292,11 @@ code {
   gap: 7px;
   padding: 4px 11px;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
   color: var(--ink-2);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -327,9 +335,9 @@ code {
   width: 32px;
   height: 32px;
   padding: 0;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-solid);
   color: var(--ink-2);
   cursor: pointer;
 }
@@ -353,11 +361,10 @@ code {
   gap: 10px;
   align-items: flex-start;
   padding: 9px 28px;
-  background: color-mix(in srgb, var(--bg) 82%, #d9a514 18%);
+  background: color-mix(in srgb, var(--surface-solid) 78%, #f1c56b 22%);
   border-bottom: 1px solid var(--warn-border);
   color: var(--warn-ink);
   font-size: 13px;
-  backdrop-filter: blur(10px);
 }
 
 .disclaimer__icon {
@@ -398,10 +405,10 @@ code {
 
 .app-footer {
   margin-top: auto;
-  padding: 14px 28px 20px;
-  color: var(--muted);
-  font-size: 12px;
-  border-top: 1px solid var(--border);
+  padding: 22px 28px 26px;
+  background: var(--footer-bg);
+  color: var(--footer-ink);
+  font-size: 12.5px;
 }
 
 /* ---------- Panels ---------- */
@@ -458,7 +465,7 @@ code {
 }
 
 .panel--hero .panel__body {
-  padding: 0 10px 14px;
+  padding: 0 12px 14px;
 }
 
 /* ---------- Buttons ---------- */
@@ -469,10 +476,10 @@ code {
   justify-content: center;
   gap: 6px;
   padding: 7px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-strong);
   background: transparent;
-  font-weight: 550;
+  font-weight: 600;
   font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
@@ -493,7 +500,9 @@ code {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-ink);
-  font-weight: 650;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
 }
 
 .button--primary:hover:not(:disabled) {
@@ -503,9 +512,8 @@ code {
 
 .button--block {
   width: 100%;
-  padding: 11px 14px;
-  font-size: 14px;
-  letter-spacing: 0.02em;
+  padding: 12px 14px;
+  font-size: 13px;
 }
 
 .button--quiet {
@@ -520,11 +528,16 @@ code {
   border-color: var(--glass-border);
   color: var(--scene-ink);
   backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .button--glass:hover:not(:disabled) {
-  background: rgba(10, 18, 21, 0.8);
-  border-color: #2ec4be;
+  background: #ffffff;
+  border-color: #ffffff;
+  color: var(--stage-accent);
 }
 
 .button-row {
@@ -890,12 +903,11 @@ output.field__control {
 .viewer__stage {
   position: relative;
   height: clamp(460px, 70vh, 780px);
-  border-radius: 12px;
+  border-radius: var(--radius);
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 42%, #14242b 0%, var(--scene) 70%);
+  background: var(--stage-bg);
   color: var(--scene-ink);
   touch-action: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .viewer__stage canvas {
@@ -951,8 +963,8 @@ output.field__control {
 }
 
 .toggle__option[aria-pressed="true"] {
-  background: #2ec4be;
-  color: #04282a;
+  background: #ffffff;
+  color: var(--stage-accent);
 }
 
 /* Layer and display switches: pill toggles built on real checkboxes. */
@@ -1005,17 +1017,18 @@ output.field__control {
 }
 
 .viewer__layers label:has(input:checked) {
-  background: rgba(46, 196, 190, 0.2);
-  color: #9ff0ec;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--stage-accent);
+  font-weight: 600;
 }
 
 .viewer__layers label:has(input:checked)::before {
-  background: #2ec4be;
-  border-color: #2ec4be;
+  background: var(--stage-accent);
+  border-color: var(--stage-accent);
 }
 
 .viewer__layers label:has(input:focus-visible) {
-  outline: 2px solid #2ec4be;
+  outline: 2px solid #ffffff;
   outline-offset: 1px;
 }
 
@@ -1054,25 +1067,26 @@ output.field__control {
   gap: 9px;
   padding: 9px 13px;
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--glass);
   backdrop-filter: blur(10px);
   color: var(--scene-ink);
   cursor: pointer;
   min-width: 0;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .vessel-chip:hover,
 .vessel-chip[data-hovered="true"] {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(10, 18, 21, 0.78);
+  border-color: #ffffff;
+  background: var(--glass-hover);
 }
 
 .vessel-chip[aria-pressed="true"] {
-  border-color: #2ec4be;
-  box-shadow: 0 0 0 1px #2ec4be, 0 6px 20px rgba(46, 196, 190, 0.2);
-  background: rgba(8, 40, 42, 0.82);
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #101823;
+  box-shadow: 0 8px 24px rgba(16, 24, 35, 0.25);
 }
 
 .vessel-chip__dot {
@@ -1080,7 +1094,7 @@ output.field__control {
   height: 10px;
   border-radius: 50%;
   flex: none;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
 }
 
 .vessel-chip__name {
@@ -1100,7 +1114,7 @@ output.field__control {
   font-size: 11.5px;
   line-height: 1.3;
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 1px 2px rgba(16, 24, 35, 0.45);
 }
 
 .viewer__hint-short {
@@ -1115,14 +1129,14 @@ output.field__control {
   align-items: center;
   justify-content: center;
   padding: 80px 20px;
-  color: var(--scene-muted);
+  color: var(--scene-ink);
   font-size: 13px;
   letter-spacing: 0.04em;
 }
 
 .viewer__loading--overlay {
   pointer-events: none;
-  background: rgba(10, 18, 21, 0.55);
+  background: rgba(21, 87, 199, 0.35);
 }
 
 .viewer__banner {
@@ -1165,9 +1179,9 @@ output.field__control {
   gap: 6px;
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(10, 18, 21, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: #f2f6f7;
+  background: rgba(16, 24, 35, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
   font-family: var(--font);
   font-size: 11px;
   font-weight: 650;
@@ -1177,8 +1191,8 @@ output.field__control {
 }
 
 .vessel-label[data-expanded="true"] {
-  background: rgba(10, 18, 21, 0.92);
-  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(16, 24, 35, 0.95);
+  border-color: #ffffff;
 }
 
 .vessel-label__dot {

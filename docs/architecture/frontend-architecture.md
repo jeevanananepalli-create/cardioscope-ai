@@ -86,17 +86,21 @@ Hand-written SVG: `RiskGauge`, `SHAPBarChart`, `RocChart`, `ReliabilityChart`, `
 
 ## Visual design
 
-The interface is a dark, cinematic "anatomy studio". The direction was taken from the leading 3D
-anatomy products, Complete Anatomy in particular: a near-black blue-green canvas, the model as the
-centrepiece, controls floating over it on dark glass, one teal accent, and light-weight type for
-large numbers. Only the principles were borrowed; no assets, branding, code or text were copied.
+The colour scheme follows BioDigital's Human Studio page: a bright azure hero, crisp white cards on
+an off-white page, navy text and a navy footer. Only the palette and proportions were taken; no
+assets, branding, code or text were copied. The layout idea of the 3D model as centrepiece with
+controls floating over it comes from the same family of 3D anatomy products.
 
-- **The 3D view is the hero.** It fills the centre column edge to edge; view mode, layer and display
-  switches float at the top of the stage and the three vessel buttons at its foot.
-- **Colour is reserved.** Green, amber, orange and red belong to model output, so the chrome is
-  neutral and the single accent is teal.
-- **Two themes.** Dark is the default; a light theme (header switch, remembered in the browser)
-  suits bright rooms, projectors and printing. The 3D stage stays dark in both.
+- **The 3D view is the hero.** It sits on an azure gradient stage that fills the centre column. View
+  mode, layer and display switches float at the top on frosted white glass; the three vessel buttons
+  sit at its foot.
+- **One deliberate difference from the reference.** That page uses red for its call-to-action. Here
+  green, amber, orange and red are reserved for model output, so the interface accent is the azure.
+- **Two themes.** Light is the default; a navy dark theme (header switch, remembered in the browser)
+  suits dim rooms. The stage is azure in the light theme and deep navy in the dark one.
+- **Typeface.** Source Sans 3 (variable), bundled with the application through
+  `@fontsource-variable/source-sans-3` under the SIL Open Font License. Nothing is fetched from a
+  font service at run time.
 - **Probabilities are never shown as a flat 0% or 100%**; they read "<1%" or ">99%".
 
 ## Styling

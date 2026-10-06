@@ -17,7 +17,7 @@ interface AppHeaderProps {
   onToggleTheme?: () => void;
 }
 
-export function AppHeader({ status, modelVersion, theme = "dark", onToggleTheme }: AppHeaderProps) {
+export function AppHeader({ status, modelVersion, theme = "light", onToggleTheme }: AppHeaderProps) {
   const tone = status === "ok" ? "badge--ok" : status === "checking" ? "" : "badge--problem";
   return (
     <header className="app-header">

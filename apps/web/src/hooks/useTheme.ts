@@ -7,11 +7,11 @@ export type Theme = "dark" | "light";
 const STORAGE_KEY = "cardioscope-theme";
 
 /**
- * Colour theme. Dark is the default (it suits the 3D anatomy); light is offered for
- * bright rooms, projectors and printing. The choice is remembered in this browser.
+ * Colour theme. Light is the default; a navy dark theme is offered for dim rooms.
+ * The choice is remembered in this browser.
  */
 export function useTheme(): { theme: Theme; toggleTheme: () => void } {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
     try {

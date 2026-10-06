@@ -23,8 +23,8 @@ const REALISTIC: Record<string, TissueStyle> = {
   pulmonary_veins: { color: "#bf3a30", roughness: 0.4, sheen: 0.4 },
   coronary: { color: "#b8241c", roughness: 0.38, sheen: 0.4 },
   // Systemic veins and pulmonary arteries carry deoxygenated blood.
-  veins: { color: "#2c4d9e", roughness: 0.4, sheen: 0.4 },
-  pulmonary_artery: { color: "#3a61ad", roughness: 0.4, sheen: 0.4 },
+  veins: { color: "#253d94", roughness: 0.4, sheen: 0.4 },
+  pulmonary_artery: { color: "#2c49a6", roughness: 0.4, sheen: 0.4 },
   cns_brain: { color: "#dbaea6", roughness: 0.6, sheen: 0.3 },
   cns_spinal: { color: "#f0dfa6", roughness: 0.6 },
   peripheral_nerves: { color: "#f2d56b", roughness: 0.55 },

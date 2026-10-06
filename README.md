@@ -214,9 +214,10 @@ torso-context mode, and optional layers for arteries, veins, the nervous system,
 - If the 3D asset cannot be loaded, a labelled schematic is shown instead; without WebGL the
   vessel buttons still work.
 
-**Look and feel.** The interface is dark by default, modelled on the visual language of leading 3D
-anatomy software (the 3D view as centrepiece, floating glass controls, one teal accent). A switch
-in the header changes to a light theme.
+**Look and feel.** Azure, white and navy, following the colour scheme of BioDigital's Human Studio
+page (palette only; nothing copied), with the 3D view as the centrepiece on an azure stage and
+frosted-glass controls. The typeface is Source Sans 3, bundled with the app. A switch in the header
+changes to a navy dark theme.
 
 ## 12. API
 
