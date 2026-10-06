@@ -1,10 +1,10 @@
 import type { HoldoutEvaluation, ReliabilityCurve, TargetName } from "@/types/prediction";
 
 export const TARGET_COLORS: Record<TargetName, string> = {
-  CAD: "#1f4e79",
-  LAD: "#b5532a",
-  LCX: "#2a7f62",
-  RCA: "#7a4a9e",
+  CAD: "#3f93dc",
+  LAD: "#e2793f",
+  LCX: "#2fb088",
+  RCA: "#a184e6",
 };
 
 const SIZE = 240;
@@ -127,7 +127,7 @@ export function ReliabilityChart({ target, crossValidated, holdout }: Reliabilit
                 width={7}
                 height={7}
                 fill="none"
-                stroke="#15202b"
+                stroke="currentColor"
                 strokeWidth={1.3}
               />
             ))

@@ -22,6 +22,7 @@ import { useAnatomy } from "@/hooks/useAnatomy";
 import { useExplanation } from "@/hooks/useExplanation";
 import { type PredictionFailure, usePrediction } from "@/hooks/usePrediction";
 import { useServiceData } from "@/hooks/useServiceData";
+import { useTheme } from "@/hooks/useTheme";
 import { useWhatIf } from "@/hooks/useWhatIf";
 import type { Api } from "@/lib/api";
 import { FALLBACK_RISK_CATEGORIES } from "@/lib/constants";
@@ -60,6 +61,7 @@ export function Dashboard({ api }: DashboardProps) {
   const { data, reload } = useServiceData(api);
   const prediction = usePrediction(api);
   const anatomy = useAnatomy();
+  const { theme, toggleTheme } = useTheme();
   const [values, setValues] = useState<FormValues | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [edited, setEdited] = useState(false);
@@ -146,7 +148,12 @@ export function Dashboard({ api }: DashboardProps) {
       <a className="skip-link" href="#results">
         Skip to results
       </a>
-      <AppHeader status={status} modelVersion={modelInfo?.model_version ?? null} />
+      <AppHeader
+        status={status}
+        modelVersion={modelInfo?.model_version ?? null}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
       <SafetyDisclaimer />
       <main className="workspace">
         <div className="workspace__left">
@@ -199,13 +206,31 @@ export function Dashboard({ api }: DashboardProps) {
         </div>
 
         <div className="workspace__center">
-          <Panel title="Coronary anatomy" subtitle="Interactive 3D view · visualization of model output">
+          <Panel
+            title="Coronary anatomy"
+            subtitle="Interactive 3D view · visualization of model output"
+            className="panel--hero"
+          >
             <AnatomyViewer
               vessels={shownVessels}
               categories={categories}
               anatomy={anatomy}
               banner={simulated ? WHAT_IF_LABEL : null}
             />
+          </Panel>
+
+          <Panel title="Selected vessel" subtitle="Prediction and top contributors">
+            <ErrorBoundary label="The vessel details">
+              <VesselExplanation
+                vessel={anatomy.selected}
+                prediction={result}
+                explanation={explanation}
+                categories={categories}
+                metadata={anatomy.selected ? modelInfo?.targets[anatomy.selected] : undefined}
+                onShowFullExplanation={() => setBottomTab("why")}
+                schema={schema}
+              />
+            </ErrorBoundary>
           </Panel>
         </div>
 
@@ -285,20 +310,6 @@ export function Dashboard({ api }: DashboardProps) {
                 <EmptyState title="LAD · LCX · RCA">Vessel predictions appear after analysis.</EmptyState>
               )}
               <RiskLegend categories={categories} note={modelInfo?.risk_category_note} />
-            </ErrorBoundary>
-          </Panel>
-
-          <Panel title="Selected vessel" subtitle="Prediction and top contributors">
-            <ErrorBoundary label="The vessel details">
-              <VesselExplanation
-                vessel={anatomy.selected}
-                prediction={result}
-                explanation={explanation}
-                categories={categories}
-                metadata={anatomy.selected ? modelInfo?.targets[anatomy.selected] : undefined}
-                onShowFullExplanation={() => setBottomTab("why")}
-                schema={schema}
-              />
             </ErrorBoundary>
           </Panel>
 

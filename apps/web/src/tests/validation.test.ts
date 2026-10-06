@@ -1,4 +1,4 @@
-import { categoryFor, FALLBACK_RISK_CATEGORIES } from "@/lib/constants";
+import { categoryFor, FALLBACK_RISK_CATEGORIES, formatPercent } from "@/lib/constants";
 import {
   emptyFormValues,
   inputFeatures,
@@ -85,5 +85,18 @@ describe("risk categories", () => {
     ];
     expect(categoryFor(0.25, custom).key).toBe("high");
     expect(categoryFor(0.25, FALLBACK_RISK_CATEGORIES).key).toBe("moderate");
+  });
+});
+
+describe("formatPercent", () => {
+  it("never shows a model probability as a flat 0% or 100%", () => {
+    expect(formatPercent(0.999)).toBe(">99%");
+    expect(formatPercent(0.9949)).toBe("99%");
+    expect(formatPercent(0.001)).toBe("<1%");
+    expect(formatPercent(0.0051)).toBe("1%");
+    expect(formatPercent(0.5)).toBe("50%");
+    expect(formatPercent(0.922, 1)).toBe("92.2%");
+    expect(formatPercent(1)).toBe("100%");
+    expect(formatPercent(0)).toBe("0%");
   });
 });

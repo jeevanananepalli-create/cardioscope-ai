@@ -214,6 +214,10 @@ torso-context mode, and optional layers for arteries, veins, the nervous system,
 - If the 3D asset cannot be loaded, a labelled schematic is shown instead; without WebGL the
   vessel buttons still work.
 
+**Look and feel.** The interface is dark by default, modelled on the visual language of leading 3D
+anatomy software (the 3D view as centrepiece, floating glass controls, one teal accent). A switch
+in the header changes to a light theme.
+
 ## 12. API
 
 Base path `/api/v1`. Interactive documentation is served at `/api/v1/docs`.

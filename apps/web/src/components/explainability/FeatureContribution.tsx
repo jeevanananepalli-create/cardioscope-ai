@@ -1,8 +1,8 @@
 import type { FeatureSchema } from "@/types/patient";
 import type { FeatureContribution as Contribution } from "@/types/prediction";
 
-export const INCREASE_COLOR = "#c0504a";
-export const DECREASE_COLOR = "#3f72b3";
+export const INCREASE_COLOR = "#e0625a";
+export const DECREASE_COLOR = "#4f93dc";
 
 /** The patient's value as shown to the user; yes/no inputs read "Yes"/"No" when the schema is known. */
 export function formatValue(contribution: Contribution, schema?: FeatureSchema | null): string {

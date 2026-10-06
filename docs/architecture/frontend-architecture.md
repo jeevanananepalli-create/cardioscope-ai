@@ -84,10 +84,26 @@ Hand-written SVG: `RiskGauge`, `SHAPBarChart`, `RocChart`, `ReliabilityChart`, `
 - Risk category is conveyed by text as well as colour; coloured text is avoided for contrast.
 - A skip link jumps to the results; the disclaimer has `role="note"`.
 
+## Visual design
+
+The interface is a dark, cinematic "anatomy studio". The direction was taken from the leading 3D
+anatomy products, Complete Anatomy in particular: a near-black blue-green canvas, the model as the
+centrepiece, controls floating over it on dark glass, one teal accent, and light-weight type for
+large numbers. Only the principles were borrowed; no assets, branding, code or text were copied.
+
+- **The 3D view is the hero.** It fills the centre column edge to edge; view mode, layer and display
+  switches float at the top of the stage and the three vessel buttons at its foot.
+- **Colour is reserved.** Green, amber, orange and red belong to model output, so the chrome is
+  neutral and the single accent is teal.
+- **Two themes.** Dark is the default; a light theme (header switch, remembered in the browser)
+  suits bright rooms, projectors and printing. The 3D stage stays dark in both.
+- **Probabilities are never shown as a flat 0% or 100%**; they read "<1%" or ">99%".
+
 ## Styling
 
-One stylesheet, `src/app/globals.css`, with CSS custom properties. Desktop-first with breakpoints
-at 1280, 860 and 420 px. No component library.
+One stylesheet, `src/app/globals.css`. Every colour is a CSS custom property defined once per
+theme at the top of the file. Desktop-first with breakpoints at 1320, 860, 640 and 420 px; on
+phones the 3D view comes first and its controls become one swipeable row. No component library.
 
 ## Tests
 

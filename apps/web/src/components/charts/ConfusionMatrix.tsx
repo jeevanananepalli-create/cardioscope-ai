@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import type { ClassDistributionEntry, ConfusionMatrix as Matrix, TargetName } from "@/types/prediction";
 
 import { TARGET_COLORS } from "./RocChart";
@@ -39,7 +41,7 @@ export function ConfusionMatrix({ target, matrix, threshold }: ConfusionMatrixPr
                 className="confusion__cell num"
                 data-correct={cell.correct ? "true" : "false"}
                 data-testid={`confusion-${target}-${cell.key}`}
-                style={{ background: `rgba(31, 78, 121, ${(0.08 + 0.5 * (matrix[cell.key] / Math.max(total, 1))).toFixed(3)})` }}
+                style={{ "--share": (0.1 + 0.6 * (matrix[cell.key] / Math.max(total, 1))).toFixed(3) } as CSSProperties}
               >
                 <span className="confusion__count">{matrix[cell.key]}</span>
                 <span className="confusion__label">{cell.label}</span>

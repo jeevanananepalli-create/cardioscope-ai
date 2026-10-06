@@ -51,6 +51,13 @@ export function categoryFor(probability: number, categories: RiskCategory[]): Ri
   return match ?? sorted[sorted.length - 1]!;
 }
 
+/**
+ * A probability as a percentage. A model never justifies a flat 0% or 100%, so values that
+ * would round to those are shown as below 1% or above 99%.
+ */
 export function formatPercent(probability: number, digits = 0): string {
-  return `${(probability * 100).toFixed(digits)}%`;
+  const text = (probability * 100).toFixed(digits);
+  if (Number(text) >= 100 && probability < 1) return ">99%";
+  if (Number(text) <= 0 && probability > 0) return "<1%";
+  return `${text}%`;
 }

@@ -208,7 +208,7 @@ export default function AnatomyScene({
         aria-label="Interactive 3D view of the heart and coronary vessels"
         role="img"
       >
-        <color attach="background" args={["#0f1722"]} />
+        <color attach="background" args={["#0a1215"]} />
         <ambientLight intensity={0.8} />
         <directionalLight position={[3, 5, 6]} intensity={1.6} />
         <directionalLight position={[-4, -1, -3]} intensity={0.5} />

@@ -27,7 +27,10 @@ interface Prediction {
 }
 
 function percent(probability: number): string {
-  return `${(probability * 100).toFixed(0)}%`;
+  const text = (probability * 100).toFixed(0);
+  if (Number(text) >= 100 && probability < 1) return ">99%";
+  if (Number(text) <= 0 && probability > 0) return "<1%";
+  return `${text}%`;
 }
 
 async function open(page: Page) {

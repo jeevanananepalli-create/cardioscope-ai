@@ -43,8 +43,8 @@ export function RiskGauge({ probability, categories, label }: RiskGaugeProps) {
           opacity={band.key === category.key ? 1 : 0.35}
         />
       ))}
-      <line x1={CENTER_X} y1={CENTER_Y} x2={needleX} y2={needleY} stroke="#15202b" strokeWidth={2.5} strokeLinecap="round" />
-      <circle cx={CENTER_X} cy={CENTER_Y} r={4.5} fill="#15202b" />
+      <line x1={CENTER_X} y1={CENTER_Y} x2={needleX} y2={needleY} stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" />
+      <circle cx={CENTER_X} cy={CENTER_Y} r={4.5} fill="currentColor" />
       <text x={12} y={110} className="gauge__tick">
         0%
       </text>

@@ -83,100 +83,67 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
   const unavailable = (
     <div className="viewer__fallback">
       <Notice tone="warning" title="The 3D view is not available in this browser.">
-        Predictions are unaffected. Use the vessel buttons above to inspect LAD, LCX and RCA.
+        Predictions are unaffected. Use the vessel buttons to inspect LAD, LCX and RCA.
       </Notice>
     </div>
   );
 
   return (
     <div className="viewer">
-      <div className="viewer__toolbar">
-        <div className="toggle" role="group" aria-label="View mode">
-          {MODES.map((mode) => (
-            <button
-              key={mode.key}
-              type="button"
-              className="toggle__option"
-              aria-pressed={anatomy.mode === mode.key}
-              onClick={() => anatomy.setMode(mode.key)}
-            >
-              {mode.label}
-            </button>
-          ))}
-        </div>
-        {active.kind === "gltf" ? (
-          <fieldset className="viewer__layers">
-            <legend className="visually-hidden">Context layers (not model output)</legend>
-            {LAYERS.map((layer) => (
-              <label key={layer.key} data-disabled={layersAvailable[layer.key] ? undefined : "true"}>
-                <input
-                  type="checkbox"
-                  checked={layersAvailable[layer.key] && anatomy.layers[layer.key]}
-                  disabled={!layersAvailable[layer.key]}
-                  onChange={() => anatomy.toggleLayer(layer.key)}
-                />
-                {layer.label}
-                {layersAvailable[layer.key] ? null : <span className="muted"> (not available yet)</span>}
-              </label>
-            ))}
-          </fieldset>
-        ) : null}
-        {active.kind === "gltf" ? (
-          <fieldset className="viewer__layers">
-            <legend className="visually-hidden">Display options</legend>
-            <label>
-              <input
-                type="checkbox"
-                checked={anatomy.colorScheme === "realistic"}
-                onChange={(event) => anatomy.setColorScheme(event.target.checked ? "realistic" : "muted")}
-              />
-              Realistic colours
-            </label>
-            <label>
-              <input type="checkbox" checked={anatomy.flow} onChange={(event) => anatomy.setFlow(event.target.checked)} />
-              Blood flow
-            </label>
-          </fieldset>
-        ) : null}
-        <button type="button" className="button" onClick={anatomy.resetCamera}>
-          Reset view
-        </button>
-      </div>
-
-      <div className="viewer__vessels" role="group" aria-label="Select a vessel">
-        {VESSELS.map((name) => {
-          const state = states[name];
-          return (
-            <button
-              key={name}
-              type="button"
-              className="vessel-chip"
-              aria-pressed={anatomy.selected === name}
-              aria-label={
-                state.probability === null
-                  ? `${name}, no prediction yet`
-                  : `${name} ${formatPercent(state.probability)}, ${state.categoryLabel} category`
-              }
-              data-hovered={anatomy.hovered === name ? "true" : undefined}
-              data-category={state.category ?? "none"}
-              onClick={() => anatomy.toggle(name)}
-              onMouseEnter={() => anatomy.setHovered(name)}
-              onMouseLeave={() => anatomy.setHovered(null)}
-              onFocus={() => anatomy.setHovered(name)}
-              onBlur={() => anatomy.setHovered(null)}
-            >
-              <span className="vessel-chip__dot" style={{ background: state.color }} aria-hidden="true" />
-              <span className="vessel-chip__name">{name}</span>
-              <span className="vessel-chip__value num">
-                {state.probability === null ? "—" : formatPercent(state.probability)}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
       <div className="viewer__stage" data-testid="anatomy-stage">
         {banner ? <div className="viewer__banner">{banner}</div> : null}
+        <div className="viewer__toolbar">
+          <div className="toggle" role="group" aria-label="View mode">
+            {MODES.map((mode) => (
+              <button
+                key={mode.key}
+                type="button"
+                className="toggle__option"
+                aria-pressed={anatomy.mode === mode.key}
+                onClick={() => anatomy.setMode(mode.key)}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
+          {active.kind === "gltf" ? (
+            <fieldset className="viewer__layers">
+              <legend className="visually-hidden">Context layers (not model output)</legend>
+              {LAYERS.map((layer) => (
+                <label key={layer.key} data-disabled={layersAvailable[layer.key] ? undefined : "true"}>
+                  <input
+                    type="checkbox"
+                    checked={layersAvailable[layer.key] && anatomy.layers[layer.key]}
+                    disabled={!layersAvailable[layer.key]}
+                    onChange={() => anatomy.toggleLayer(layer.key)}
+                  />
+                  {layer.label}
+                  {layersAvailable[layer.key] ? null : <span className="muted"> (not available yet)</span>}
+                </label>
+              ))}
+            </fieldset>
+          ) : null}
+          {active.kind === "gltf" ? (
+            <fieldset className="viewer__layers">
+              <legend className="visually-hidden">Display options</legend>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={anatomy.colorScheme === "realistic"}
+                  onChange={(event) => anatomy.setColorScheme(event.target.checked ? "realistic" : "muted")}
+                />
+                Realistic colours
+              </label>
+              <label>
+                <input type="checkbox" checked={anatomy.flow} onChange={(event) => anatomy.setFlow(event.target.checked)} />
+                Blood flow
+              </label>
+            </fieldset>
+          ) : null}
+          <button type="button" className="button button--glass" onClick={anatomy.resetCamera}>
+            Reset view
+          </button>
+        </div>
         {canRender === false ? (
           unavailable
         ) : canRender ? (
@@ -203,9 +170,42 @@ export function AnatomyViewer({ vessels, categories, anatomy, banner = null, sou
         ) : (
           <div className="viewer__loading">Loading 3D view…</div>
         )}
-        <div className="viewer__hint">
-          <span className="viewer__hint-long">Drag to rotate · scroll to zoom · right-drag to pan · click a vessel</span>
-          <span className="viewer__hint-short">Drag to rotate · pinch to zoom · tap a vessel</span>
+        <div className="viewer__dock">
+          <div className="viewer__vessels" role="group" aria-label="Select a vessel">
+            {VESSELS.map((name) => {
+              const state = states[name];
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  className="vessel-chip"
+                  aria-pressed={anatomy.selected === name}
+                  aria-label={
+                    state.probability === null
+                      ? `${name}, no prediction yet`
+                      : `${name} ${formatPercent(state.probability)}, ${state.categoryLabel} category`
+                  }
+                  data-hovered={anatomy.hovered === name ? "true" : undefined}
+                  data-category={state.category ?? "none"}
+                  onClick={() => anatomy.toggle(name)}
+                  onMouseEnter={() => anatomy.setHovered(name)}
+                  onMouseLeave={() => anatomy.setHovered(null)}
+                  onFocus={() => anatomy.setHovered(name)}
+                  onBlur={() => anatomy.setHovered(null)}
+                >
+                  <span className="vessel-chip__dot" style={{ background: state.color }} aria-hidden="true" />
+                  <span className="vessel-chip__name">{name}</span>
+                  <span className="vessel-chip__value num">
+                    {state.probability === null ? "—" : formatPercent(state.probability)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="viewer__hint">
+            <span className="viewer__hint-long">Drag to rotate · scroll to zoom · right-drag to pan · click a vessel</span>
+            <span className="viewer__hint-short">Drag to rotate · pinch to zoom · tap a vessel</span>
+          </div>
         </div>
       </div>
 
