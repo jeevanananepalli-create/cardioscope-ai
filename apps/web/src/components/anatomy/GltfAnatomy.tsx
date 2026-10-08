@@ -1,11 +1,18 @@
 "use client";
 
 import { useGLTF } from "@react-three/drei";
-import type { ThreeEvent } from "@react-three/fiber";
+import { type ThreeEvent, useThree } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
 import { Color, DoubleSide, type Mesh, MeshPhysicalMaterial, MeshStandardMaterial, type Object3D } from "three";
 
 import { addFlow, type FlowConfig } from "@/components/anatomy/flow";
+import {
+  addTissueLook,
+  HEART_LOOK,
+  isSoftwareRenderer,
+  MODELLED_VESSEL_LOOK,
+  VESSEL_LOOK,
+} from "@/components/anatomy/tissue";
 import { type TissueStyle, tissueStyle } from "@/lib/anatomyColors";
 import type { ColorScheme, GltfAnatomySource, LayerVisibility, VesselVisualStates } from "@/types/anatomy";
 import { type VesselName, VESSELS } from "@/types/prediction";
@@ -38,7 +45,8 @@ function styleKey(role: Role, node: string): string {
   return node;
 }
 
-export function tissueMaterial(style: TissueStyle): MeshStandardMaterial {
+/** `rich` adds the sheen layer; leave it off where WebGL runs without a graphics chip. */
+export function tissueMaterial(style: TissueStyle, rich = true): MeshStandardMaterial {
   const translucent = style.opacity !== undefined && style.opacity < 1;
   const common = {
     color: style.color,
@@ -48,9 +56,18 @@ export function tissueMaterial(style: TissueStyle): MeshStandardMaterial {
     opacity: style.opacity ?? 1,
     depthWrite: !translucent,
   };
-  // A light clear coat gives vessels and muscle the slightly wet look of living tissue.
+  // A clear coat gives the wet surface of living tissue; the sheen softens its edges.
+  if (!style.sheen) return new MeshStandardMaterial(common);
+  if (!rich) return new MeshPhysicalMaterial({ ...common, clearcoat: style.sheen * 0.6, clearcoatRoughness: 0.45 });
   return style.sheen
-    ? new MeshPhysicalMaterial({ ...common, clearcoat: style.sheen, clearcoatRoughness: 0.45 })
+    ? new MeshPhysicalMaterial({
+        ...common,
+        clearcoat: style.sheen,
+        clearcoatRoughness: 0.28,
+        sheen: translucent ? 0 : 0.22,
+        sheenRoughness: 0.5,
+        sheenColor: new Color(style.color).lerp(new Color("#ffb09c"), 0.35),
+      })
     : new MeshStandardMaterial(common);
 }
 
@@ -73,6 +90,9 @@ export function GltfAnatomy({
   onLoaded,
 }: GltfAnatomyProps) {
   const { scene } = useGLTF(source.url);
+  const gl = useThree((state) => state.gl);
+  // Detailed tissue shading needs a graphics chip; without one the plain materials are used.
+  const rich = useMemo(() => !isSoftwareRenderer(gl), [gl]);
 
   const lookup = useMemo(() => {
     const roles = new Map<string, Role>();
@@ -136,10 +156,15 @@ export function GltfAnatomy({
         // Invisible pointing target, also drawn as a faint halo in the vessel's risk colour.
         material = new MeshStandardMaterial({ transparent: true, opacity: 0, depthWrite: false, roughness: 1 });
       } else {
-        material = tissueMaterial(tissueStyle(styleKey(role, node), colorScheme));
+        material = tissueMaterial(tissueStyle(styleKey(role, node), colorScheme), rich);
         if (role === "body") material.side = DoubleSide;
         const flow = flowFor(node, role);
         if (flow) addFlow(material, flow);
+        if (!rich) {
+          // Plain materials.
+        } else if (role === "heart") addTissueLook(material, HEART_LOOK);
+        else if (role === "arteries" || role === "veins") addTissueLook(material, VESSEL_LOOK);
+        else if (role === "vessel" || role === "neutralCoronary") addTissueLook(material, MODELLED_VESSEL_LOOK);
       }
       object.material = material;
       object.userData.role = role;
@@ -148,7 +173,7 @@ export function GltfAnatomy({
       if (role === "body") object.renderOrder = 2;
     });
     return clone;
-  }, [scene, lookup, colorScheme, source]);
+  }, [scene, lookup, colorScheme, source, rich]);
 
   useEffect(() => {
     onLoaded();

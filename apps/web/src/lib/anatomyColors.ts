@@ -16,15 +16,15 @@ export interface TissueStyle {
  * are not measurements, and none of them is model output.
  */
 const REALISTIC: Record<string, TissueStyle> = {
-  heart: { color: "#8f3d38", roughness: 0.5, sheen: 0.45 },
+  heart: { color: "#a3352e", roughness: 0.46, sheen: 0.7 },
   skin: { color: "#e3b9a1", roughness: 0.85, opacity: 0.15 },
   // Systemic arteries and pulmonary veins carry oxygenated blood.
-  arteries: { color: "#b8241c", roughness: 0.4, sheen: 0.4 },
-  pulmonary_veins: { color: "#bf3a30", roughness: 0.4, sheen: 0.4 },
-  coronary: { color: "#b8241c", roughness: 0.38, sheen: 0.4 },
+  arteries: { color: "#c0221b", roughness: 0.36, sheen: 0.65 },
+  pulmonary_veins: { color: "#cc4034", roughness: 0.36, sheen: 0.65 },
+  coronary: { color: "#d1342a", roughness: 0.34, sheen: 0.65 },
   // Systemic veins and pulmonary arteries carry deoxygenated blood.
-  veins: { color: "#253d94", roughness: 0.4, sheen: 0.4 },
-  pulmonary_artery: { color: "#2c49a6", roughness: 0.4, sheen: 0.4 },
+  veins: { color: "#2c46b4", roughness: 0.36, sheen: 0.65 },
+  pulmonary_artery: { color: "#3a54c2", roughness: 0.36, sheen: 0.65 },
   cns_brain: { color: "#dbaea6", roughness: 0.6, sheen: 0.3 },
   cns_spinal: { color: "#f0dfa6", roughness: 0.6 },
   peripheral_nerves: { color: "#f2d56b", roughness: 0.55 },

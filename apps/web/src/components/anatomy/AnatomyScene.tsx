@@ -12,10 +12,12 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { type Group, Vector3 } from "three";
+import { type Group, PMREMGenerator, Vector3 } from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 import { ContextLayer } from "@/components/anatomy/ContextLayer";
 import { CoronaryArteries } from "@/components/anatomy/CoronaryArteries";
+import { isSoftwareRenderer } from "@/components/anatomy/tissue";
 import { flowAmount, flowClock } from "@/components/anatomy/flow";
 import { GltfAnatomy } from "@/components/anatomy/GltfAnatomy";
 import { HeartModel } from "@/components/anatomy/HeartModel";
@@ -78,6 +80,31 @@ function CameraRig({ views, mode, resetSignal, onModeChange }: CameraRigProps) {
       }}
     />
   );
+}
+
+/**
+ * Soft studio lighting for reflections, generated in the browser (no image is downloaded).
+ * It is what makes the clear coat on the tissue read as a wet surface.
+ */
+function StudioEnvironment() {
+  const gl = useThree((state) => state.gl);
+  const scene = useThree((state) => state.scene);
+  const invalidate = useThree((state) => state.invalidate);
+  useEffect(() => {
+    // Reflections are skipped where WebGL runs without a graphics chip.
+    if (isSoftwareRenderer(gl)) return;
+    const generator = new PMREMGenerator(gl);
+    const target = generator.fromScene(new RoomEnvironment(), 0.04);
+    scene.environment = target.texture;
+    scene.environmentIntensity = 0.32;
+    invalidate();
+    return () => {
+      scene.environment = null;
+      target.dispose();
+      generator.dispose();
+    };
+  }, [gl, scene, invalidate]);
+  return null;
 }
 
 /** Advances the shared flow clock while the animation is on. */
@@ -236,10 +263,13 @@ export default function AnatomyScene({
         aria-label="Interactive 3D view of the heart and coronary vessels"
         role="img"
       >
-        <ambientLight intensity={0.8} />
-        <directionalLight position={[3, 5, 6]} intensity={1.6} />
-        <directionalLight position={[-4, -1, -3]} intensity={0.5} />
-        <hemisphereLight args={["#ffffff", "#3a2a2a", 0.35]} />
+        <StudioEnvironment />
+        <ambientLight intensity={0.3} />
+        {/* Warm key from the upper front, cool fill from the side, rim from behind. */}
+        <directionalLight position={[3, 5, 6]} intensity={1.8} color="#fff3e8" />
+        <directionalLight position={[-5, 1, 3]} intensity={0.55} color="#c9d6ff" />
+        <directionalLight position={[-2, 3, -6]} intensity={0.9} color="#ffe1d6" />
+        <hemisphereLight args={["#ffffff", "#3a2a2a", 0.3]} />
         <CameraRig views={views} mode={mode} resetSignal={resetSignal} onModeChange={onModeChange} />
         <FlowTicker running={flow && source.kind === "gltf"} />
         {source.kind === "gltf" ? (

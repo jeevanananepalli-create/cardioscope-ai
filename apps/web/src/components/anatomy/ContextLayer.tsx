@@ -6,6 +6,7 @@ import { useEffect, useMemo } from "react";
 import type { Mesh, Object3D } from "three";
 
 import { tissueMaterial } from "@/components/anatomy/GltfAnatomy";
+import { isSoftwareRenderer } from "@/components/anatomy/tissue";
 import { tissueStyle } from "@/lib/anatomyColors";
 import type { ColorScheme, ContextLayerName } from "@/types/anatomy";
 
@@ -29,20 +30,22 @@ function isMesh(object: Object3D): object is Mesh {
 export function ContextLayer({ layer, url, colorScheme }: ContextLayerProps) {
   const { scene } = useGLTF(url);
   const invalidate = useThree((state) => state.invalidate);
+  const gl = useThree((state) => state.gl);
+  const rich = useMemo(() => !isSoftwareRenderer(gl), [gl]);
 
   const model = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((object) => {
       if (!isMesh(object)) return;
       const node = object.name || object.parent?.name || "";
-      const material = tissueMaterial(tissueStyle(node, colorScheme));
+      const material = tissueMaterial(tissueStyle(node, colorScheme), rich);
       object.material = material;
       object.raycast = NO_RAYCAST;
       // Translucent structures are drawn after opaque ones so they do not hide them.
       if (material.transparent) object.renderOrder = layer === "skeleton" ? 1 : 1.5;
     });
     return clone;
-  }, [scene, layer, colorScheme]);
+  }, [scene, layer, colorScheme, rich]);
 
   useEffect(() => {
     invalidate();
